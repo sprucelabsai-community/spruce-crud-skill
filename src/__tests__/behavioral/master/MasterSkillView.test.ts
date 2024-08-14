@@ -5,12 +5,12 @@ import {
 import { fake } from '@sprucelabs/spruce-test-fixtures'
 import { AbstractSpruceFixtureTest } from '@sprucelabs/spruce-test-fixtures'
 import { test, assert, errorAssert, generateId } from '@sprucelabs/test-utils'
-import { MasterListCardViewController } from '../../master/MasterListCardViewController'
+import { MasterListCardViewController } from '../../../master/MasterListCardViewController'
 import {
     MasterSkillViewController,
     MasterSkillViewControllerOptions,
     MasterSkilLViewEntity,
-} from '../../master/MasterSkillViewController'
+} from '../../../master/MasterSkillViewController'
 
 @fake.login()
 export default class MasterSkillViewTest extends AbstractSpruceFixtureTest {
