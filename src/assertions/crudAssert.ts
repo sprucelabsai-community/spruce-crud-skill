@@ -12,7 +12,11 @@ let views: ViewFixture | undefined
 
 const crudAssert = {
     beforeEach(viewFixture: ViewFixture) {
-        assertOptions({ viewFixture }, ['viewFixture'])
+        assertOptions(
+            { viewFixture },
+            ['viewFixture'],
+            `You gotta call me like this: crudAssert.beforeEach(this.views)`
+        )
         views = viewFixture
     },
 
