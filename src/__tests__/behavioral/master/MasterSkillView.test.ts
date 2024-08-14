@@ -1,27 +1,15 @@
-import {
-    SkillViewControllerLoadOptions,
-    vcAssert,
-} from '@sprucelabs/heartwood-view-controllers'
+import { vcAssert } from '@sprucelabs/heartwood-view-controllers'
 import { fake } from '@sprucelabs/spruce-test-fixtures'
-import { AbstractSpruceFixtureTest } from '@sprucelabs/spruce-test-fixtures'
-import { test, assert, errorAssert, generateId } from '@sprucelabs/test-utils'
+import { test, assert, errorAssert } from '@sprucelabs/test-utils'
 import { MasterListCardViewController } from '../../../master/MasterListCardViewController'
-import {
-    MasterSkillViewController,
-    MasterSkillViewControllerOptions,
-    MasterSkilLViewEntity,
-} from '../../../master/MasterSkillViewController'
+import { MasterSkillViewControllerOptions } from '../../../master/MasterSkillViewController'
+import AbstractCrudTest from '../../support/AbstractCrudTest'
+import MockMasterListCard from '../../support/MockMasterListCard'
+import SpyMasterSkillView from '../../support/SpyMasterSkillView'
 
 @fake.login()
-export default class MasterSkillViewTest extends AbstractSpruceFixtureTest {
+export default class MasterSkillViewTest extends AbstractCrudTest {
     private static vc: SpyMasterSkillView
-
-    protected static async beforeEach() {
-        await super.beforeEach()
-
-        this.views.setController('crud.master-skill-view', SpyMasterSkillView)
-        this.views.setController('crud.master-list-card', MockMasterListCard)
-    }
 
     @test()
     protected static async throwsWithMissingEntities() {
@@ -107,6 +95,7 @@ export default class MasterSkillViewTest extends AbstractSpruceFixtureTest {
     @test()
     protected static async callsLoadOnFirstListCard() {
         this.VcWithTotalEntities(2)
+
         await this.load()
 
         this.listCardVcs[0].assertWasLoaded()
@@ -141,19 +130,8 @@ export default class MasterSkillViewTest extends AbstractSpruceFixtureTest {
         this.vc = this.Vc({
             entities,
         })
+
         return entities
-    }
-
-    private static buildEntities(total: number) {
-        return Array.from({ length: total }, () => this.buildEntity())
-    }
-
-    private static buildEntity(): MasterSkilLViewEntity {
-        return {
-            id: generateId(),
-            title: generateId(),
-            loadEvent: 'list-locations::v2020_12_25',
-        }
     }
 
     private static assertThrowsMissingEntityParameters(
@@ -172,30 +150,5 @@ export default class MasterSkillViewTest extends AbstractSpruceFixtureTest {
             'crud.master-skill-view',
             options
         ) as SpyMasterSkillView
-    }
-}
-
-class SpyMasterSkillView extends MasterSkillViewController {
-    public getListCardVcs() {
-        return this.listCardVcs
-    }
-}
-
-class MockMasterListCard extends MasterListCardViewController {
-    private wasLoaded = false
-    private loadOptions?: SkillViewControllerLoadOptions
-
-    public assertWasLoaded() {
-        assert.isTrue(this.wasLoaded, 'List card was not loaded')
-    }
-
-    public async load(options: SkillViewControllerLoadOptions) {
-        await super.load(options)
-        this.loadOptions = options
-        this.wasLoaded = true
-    }
-
-    public assertWasLoadedWithOptions(options: SkillViewControllerLoadOptions) {
-        assert.isEqualDeep(this.loadOptions, options)
     }
 }

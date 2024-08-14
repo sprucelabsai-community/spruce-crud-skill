@@ -47,6 +47,7 @@ export class MasterSkillViewController extends AbstractSkillViewController {
 
     public render(): SkillView {
         return {
+            controller: this,
             layouts: [
                 {
                     cards: this.listCardVcs.map((vc) => vc.render()),

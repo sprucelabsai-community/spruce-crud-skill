@@ -24,6 +24,9 @@ export class MasterListCardViewController extends AbstractViewController<Card> {
 
         this.cardVc = this.Controller('card', {
             id: entity.id,
+            header: {
+                title: entity.title,
+            },
         })
     }
 
