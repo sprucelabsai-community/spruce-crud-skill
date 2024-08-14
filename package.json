@@ -9,8 +9,24 @@
   "bugs": {
     "url": "https://github.com/[YOUR REPO PATH]/issues"
   },
-  "keywords": [],
+  "files": [
+    "build"
+  ],
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "module": "./build/esm/index.js",
+  "sideEffects": false,
+  "keywords": [
+    "node",
+    "components",
+    "sprucebot",
+    "sprucelabs"
+  ],
   "scripts": {
+    "build.dist": "tsc --project tsconfig.dist.json && yarn build.resolve-paths && mv build esm && yarn build.esm-postbuild && yarn build.tsc && yarn build.resolve-paths && mv esm build/ && yarn clean.dist",
+    "build.esm-postbuild": "esm-postbuild --target esm --patterns '**/*.js'",
+    "clean.dist": "rm -rf build/__tests__ build/esm/__tests__",
+    "release": "semantic-release",
     "boot": "node build/index",
     "boot.local": "node -r ts-node/register -r tsconfig-paths/register ./src/index",
     "health": "yarn boot --health",
