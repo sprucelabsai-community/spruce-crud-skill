@@ -6,7 +6,7 @@ import {
 import { assertOptions } from '@sprucelabs/schema'
 import { ViewFixture } from '@sprucelabs/spruce-test-fixtures'
 import { assert } from '@sprucelabs/test-utils'
-import { MasterSkillViewController } from '../master/MasterSkillViewController'
+import MasterSkillViewController from '../master/MasterSkillViewController'
 
 let views: ViewFixture | undefined
 

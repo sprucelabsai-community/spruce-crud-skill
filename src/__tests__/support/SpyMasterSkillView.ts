@@ -1,4 +1,4 @@
-import { MasterSkillViewController } from '../../master/MasterSkillViewController'
+import MasterSkillViewController from '../../master/MasterSkillViewController'
 
 export default class SpyMasterSkillView extends MasterSkillViewController {
     public getListCardVcs() {

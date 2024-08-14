@@ -1,7 +1,7 @@
 import { vcAssert } from '@sprucelabs/heartwood-view-controllers'
 import { fake } from '@sprucelabs/spruce-test-fixtures'
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import { MasterListCardViewController } from '../../../master/MasterListCardViewController'
+import MasterListCardViewController from '../../../master/MasterListCardViewController'
 import { MasterSkillViewControllerOptions } from '../../../master/MasterSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import MockMasterListCard from '../../support/MockMasterListCard'

@@ -3,8 +3,8 @@ import {
     ViewControllerOptions,
     SkillView,
 } from '@sprucelabs/heartwood-view-controllers'
-import { MasterListCardViewController } from '../master/MasterListCardViewController'
-import { MasterSkillViewController } from '../master/MasterSkillViewController'
+import MasterListCardViewController from '../master/MasterListCardViewController'
+import MasterSkillViewController from '../master/MasterSkillViewController'
 
 export default class RootSkillViewController extends AbstractSkillViewController {
     public static id = 'root'

@@ -5,7 +5,7 @@ import {
 import { fake } from '@sprucelabs/spruce-test-fixtures'
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
 import crudAssert from '../../../assertions/crudAssert'
-import { MasterSkillViewController } from '../../../master/MasterSkillViewController'
+import MasterSkillViewController from '../../../master/MasterSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import { buildEntity } from '../../support/test.utils'
 

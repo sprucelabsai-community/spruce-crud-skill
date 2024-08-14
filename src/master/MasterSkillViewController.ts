@@ -6,9 +6,9 @@ import {
 } from '@sprucelabs/heartwood-view-controllers'
 import { EventName } from '@sprucelabs/mercury-types'
 import { assertOptions, SchemaError } from '@sprucelabs/schema'
-import { MasterListCardViewController } from './MasterListCardViewController'
+import MasterListCardViewController from './MasterListCardViewController'
 
-export class MasterSkillViewController extends AbstractSkillViewController {
+export default class MasterSkillViewController extends AbstractSkillViewController {
     protected listCardVcs: MasterListCardViewController[] = []
 
     public constructor(

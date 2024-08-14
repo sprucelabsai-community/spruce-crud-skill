@@ -8,7 +8,7 @@ import {
 import { assertOptions } from '@sprucelabs/schema'
 import { MasterSkilLViewEntity } from './MasterSkillViewController'
 
-export class MasterListCardViewController extends AbstractViewController<Card> {
+export default class MasterListCardViewController extends AbstractViewController<Card> {
     private cardVc: CardViewController
 
     public constructor(
