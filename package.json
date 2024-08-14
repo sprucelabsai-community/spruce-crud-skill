@@ -54,8 +54,11 @@
     "dotenv": "^16.4.5"
   },
   "devDependencies": {
+    "@sprucelabs/esm-postbuild": "^6.0.182",
     "@sprucelabs/jest-json-reporter": "^8.0.200",
+    "@sprucelabs/jest-sheets-reporter": "^3.0.86",
     "@sprucelabs/resolve-path-aliases": "^2.0.177",
+    "@sprucelabs/semantic-release": "^5.0.2",
     "@sprucelabs/spruce-test-fixtures": "^62.2.146",
     "@sprucelabs/test": "^9.0.41",
     "@sprucelabs/test-utils": "^5.1.138",
