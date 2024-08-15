@@ -1,8 +1,7 @@
 import { AbstractSpruceFixtureTest } from '@sprucelabs/spruce-test-fixtures'
-import { MasterSkilLViewEntity } from '../../master/MasterSkillViewController'
 import MockMasterListCard from './MockMasterListCard'
 import SpyMasterSkillView from './SpyMasterSkillView'
-import { buildEntity } from './test.utils'
+import { buildTestEntity } from './test.utils'
 
 export default abstract class AbstractCrudTest extends AbstractSpruceFixtureTest {
     protected static async beforeEach() {
@@ -16,7 +15,7 @@ export default abstract class AbstractCrudTest extends AbstractSpruceFixtureTest
         return Array.from({ length: total }, () => this.buildEntity())
     }
 
-    protected static buildEntity(): MasterSkilLViewEntity {
-        return buildEntity()
+    protected static buildEntity() {
+        return buildTestEntity()
     }
 }

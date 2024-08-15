@@ -4,7 +4,9 @@ import {
     SkillView,
 } from '@sprucelabs/heartwood-view-controllers'
 import MasterListCardViewController from '../master/MasterListCardViewController'
-import MasterSkillViewController from '../master/MasterSkillViewController'
+import MasterSkillViewController, {
+    buildMasterListEntity,
+} from '../master/MasterSkillViewController'
 
 export default class RootSkillViewController extends AbstractSkillViewController {
     public static id = 'root'
@@ -27,11 +29,24 @@ export default class RootSkillViewController extends AbstractSkillViewController
     private MasterVc(): MasterSkillViewController {
         return this.Controller('crud.master-skill-view', {
             entities: [
-                {
+                buildMasterListEntity({
                     id: 'locations',
-                    loadEvent: 'list-locations::v2020_12_25',
                     title: 'Locations',
-                },
+                    load: {
+                        fqen: 'list-locations::v2020_12_25',
+                        responseKey: 'locations',
+                        rowTransformer: (location) => ({
+                            id: location.id,
+                            cells: [
+                                {
+                                    text: {
+                                        content: location.name,
+                                    },
+                                },
+                            ],
+                        }),
+                    },
+                }),
             ],
         })
     }

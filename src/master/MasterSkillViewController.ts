@@ -3,9 +3,20 @@ import {
     ViewControllerOptions,
     SkillView,
     SkillViewControllerLoadOptions,
+    ListRow,
 } from '@sprucelabs/heartwood-view-controllers'
-import { EventName } from '@sprucelabs/mercury-types'
-import { assertOptions, SchemaError } from '@sprucelabs/schema'
+import {
+    EventContract,
+    EventName,
+    EventSignature,
+    SkillEventContract,
+} from '@sprucelabs/mercury-types'
+import {
+    assertOptions,
+    Schema,
+    SchemaError,
+    SchemaValues,
+} from '@sprucelabs/schema'
 import MasterListCardViewController from './MasterListCardViewController'
 
 export default class MasterSkillViewController extends AbstractSkillViewController {
@@ -21,7 +32,7 @@ export default class MasterSkillViewController extends AbstractSkillViewControll
         this.buildCards(entities)
     }
 
-    private validateEntities(entities: MasterSkilLViewEntity[]) {
+    private validateEntities(entities: MasterSkillViewListEntity[]) {
         if (entities.length === 0) {
             throw new SchemaError({
                 code: 'INVALID_PARAMETERS',
@@ -31,7 +42,7 @@ export default class MasterSkillViewController extends AbstractSkillViewControll
         }
     }
 
-    private buildCards(entities: MasterSkilLViewEntity[]) {
+    private buildCards(entities: MasterSkillViewListEntity[]) {
         for (const entity of entities) {
             this.listCardVcs.push(
                 this.Controller('crud.master-list-card', {
@@ -58,13 +69,82 @@ export default class MasterSkillViewController extends AbstractSkillViewControll
 }
 
 export interface MasterSkillViewControllerOptions {
-    entities: MasterSkilLViewEntity[]
+    entities: MasterSkillViewListEntity<SkillEventContract>[]
 }
 
-export interface MasterSkilLViewEntity {
+export interface MasterSkillViewListEntity<
+    Contract extends EventContract = SkillEventContract,
+    Fqen extends EventName<Contract> = EventName<Contract>,
+    IEventSignature extends EventSignature = Contract['eventSignatures'][Fqen],
+    EmitSchema extends
+        Schema = IEventSignature['emitPayloadSchema'] extends Schema
+        ? IEventSignature['emitPayloadSchema']
+        : never,
+    ResponseSchema extends
+        Schema = IEventSignature['responsePayloadSchema'] extends Schema
+        ? IEventSignature['responsePayloadSchema']
+        : never,
+    Response extends
+        SchemaValues<ResponseSchema> = SchemaValues<ResponseSchema>,
+    ResponseKey extends keyof Response = keyof Response,
+> {
     id: string
     title: string
-    loadEvent: EventName
+    load: {
+        fqen: Fqen
+        responseKey: ResponseKey
+        rowTransformer: (entity: Response[ResponseKey][number]) => ListRow
+        //@ts-ignore
+        payload?: SchemaValues<EmitSchema>['payload']
+        /** @ts-ignore */
+        target?: SchemaValues<EmitSchema>['target']
+    }
+}
+
+type MasterListCardViewControllerBuilder<Contract extends EventContract> = <
+    Fqen extends EventName<Contract> = EventName<Contract>,
+    IEventSignature extends EventSignature = Contract['eventSignatures'][Fqen],
+    EmitSchema extends
+        Schema = IEventSignature['emitPayloadSchema'] extends Schema
+        ? IEventSignature['emitPayloadSchema']
+        : never,
+    ResponseSchema extends
+        Schema = IEventSignature['responsePayloadSchema'] extends Schema
+        ? IEventSignature['responsePayloadSchema']
+        : never,
+    Response extends
+        SchemaValues<ResponseSchema> = SchemaValues<ResponseSchema>,
+    ResponseKey extends keyof Response = keyof Response,
+>(
+    options: MasterSkillViewListEntity<
+        Contract,
+        Fqen,
+        IEventSignature,
+        EmitSchema,
+        ResponseSchema,
+        Response,
+        ResponseKey
+    >
+) => MasterSkillViewListEntity<
+    Contract,
+    Fqen,
+    IEventSignature,
+    EmitSchema,
+    ResponseSchema,
+    Response,
+    ResponseKey
+>
+
+export const buildMasterListEntity: MasterListCardViewControllerBuilder<
+    SkillEventContract
+> = (options) => {
+    return options
+}
+
+export const buildMasterSkillViewOptions = (
+    options: MasterSkillViewControllerOptions
+) => {
+    return options
 }
 
 declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.types' {

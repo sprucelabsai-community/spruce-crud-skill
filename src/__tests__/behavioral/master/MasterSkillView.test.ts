@@ -141,7 +141,13 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
         const err = assert.doesThrow(() => this.Vc(options))
 
         errorAssert.assertError(err, 'MISSING_PARAMETERS', {
-            parameters: ['entity.id', 'entity.title', 'entity.loadEvent'],
+            parameters: [
+                'entity.id',
+                'entity.title',
+                'entity.load.fqen',
+                'entity.load.responseKey',
+                'entity.load.rowTransformer',
+            ],
         })
     }
 

@@ -1,15 +1,17 @@
 import {
     AbstractViewController,
+    ActiveRecordCardViewController,
+    buildActiveRecordCard,
     Card,
-    CardViewController,
     SkillViewControllerLoadOptions,
     ViewControllerOptions,
 } from '@sprucelabs/heartwood-view-controllers'
+import { SkillEventContract } from '@sprucelabs/mercury-types'
 import { assertOptions } from '@sprucelabs/schema'
-import { MasterSkilLViewEntity } from './MasterSkillViewController'
+import { MasterSkillViewListEntity } from './MasterSkillViewController'
 
 export default class MasterListCardViewController extends AbstractViewController<Card> {
-    private cardVc: CardViewController
+    private activeRecordCardVc: ActiveRecordCardViewController
 
     public constructor(
         options: ViewControllerOptions & MasterListCardViewControllerOptions
@@ -19,26 +21,34 @@ export default class MasterListCardViewController extends AbstractViewController
         const { entity } = assertOptions(options, [
             'entity.id',
             'entity.title',
-            'entity.loadEvent',
+            'entity.load.fqen',
+            'entity.load.responseKey',
+            'entity.load.rowTransformer',
         ])
 
-        this.cardVc = this.Controller('card', {
-            id: entity.id,
-            header: {
-                title: entity.title,
-            },
-        })
+        this.activeRecordCardVc = this.Controller(
+            'active-record-card',
+            buildActiveRecordCard({
+                id: entity.id,
+                header: {
+                    title: entity.title,
+                },
+                eventName: 'list-locations::v2020_12_25',
+                rowTransformer: () => ({ id: 'aoeu', cells: [] }),
+                responseKey: 'locations',
+            })
+        )
     }
 
     public async load(_options: SkillViewControllerLoadOptions) {}
 
     public render(): Card {
-        return this.cardVc.render()
+        return this.activeRecordCardVc.render()
     }
 }
 
 export interface MasterListCardViewControllerOptions {
-    entity: MasterSkilLViewEntity
+    entity: MasterSkillViewListEntity<SkillEventContract>
 }
 
 declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.types' {

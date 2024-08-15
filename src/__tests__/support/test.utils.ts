@@ -1,10 +1,25 @@
+import { ListRow } from '@sprucelabs/heartwood-view-controllers'
 import { generateId } from '@sprucelabs/test-utils'
-import { MasterSkilLViewEntity } from '../../master/MasterSkillViewController'
+import { buildMasterListEntity } from '../../master/MasterSkillViewController'
 
-export function buildEntity(): MasterSkilLViewEntity {
-    return {
+export function buildTestEntity() {
+    return buildMasterListEntity({
         id: generateId(),
         title: generateId(),
-        loadEvent: 'list-locations::v2020_12_25',
-    }
+        load: {
+            fqen: 'list-locations::v2020_12_25',
+            responseKey: 'locations',
+            rowTransformer: (location) =>
+                ({
+                    id: location.id,
+                    cells: [
+                        {
+                            text: {
+                                content: location.name,
+                            },
+                        },
+                    ],
+                }) as ListRow,
+        },
+    })
 }

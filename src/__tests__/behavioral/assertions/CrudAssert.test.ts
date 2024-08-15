@@ -7,7 +7,7 @@ import { test, assert, errorAssert } from '@sprucelabs/test-utils'
 import crudAssert from '../../../assertions/crudAssert'
 import MasterSkillViewController from '../../../master/MasterSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
-import { buildEntity } from '../../support/test.utils'
+import { buildTestEntity } from '../../support/test.utils'
 
 @fake.login()
 export default class CrudAssertTest extends AbstractCrudTest {
@@ -110,7 +110,7 @@ class FakeSkillView extends AbstractSkillViewController {
     private masterSkillView?: MasterSkillViewController
     public dropInMasterSkillView() {
         this.masterSkillView = this.Controller('crud.master-skill-view', {
-            entities: [buildEntity()],
+            entities: [buildTestEntity()],
         })
     }
     public render(): SkillView {
