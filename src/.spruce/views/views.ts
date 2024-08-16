@@ -13,15 +13,15 @@ type LoadOptions<Args extends Record<string,any>[]> = Args[0]['args'] extends Re
 
 declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.types' {
 	interface SkillViewControllerMap {
-		'crud-views.root': RootSkillViewController
+		'crud.root': RootSkillViewController
 	}
 
 	interface SkillViewControllerArgsMap {
-		'crud-views.root': LoadOptions<Parameters<RootSkillViewController['load']>>
+		'crud.root': LoadOptions<Parameters<RootSkillViewController['load']>>
 	}
 
 	interface ViewControllerMap {
-		'crud-views.root': RootSkillViewController
+		'crud.root': RootSkillViewController
 	}
 
     interface ViewControllerOptionsMap {

@@ -11,7 +11,7 @@ export default class RootSkillViewTest extends AbstractCrudTest {
     protected static async beforeEach() {
         await super.beforeEach()
         crudAssert.beforeEach(this.views)
-        this.vc = this.views.Controller('crud-views.root', {})
+        this.vc = this.views.Controller('crud.root', {})
     }
 
     @test()
