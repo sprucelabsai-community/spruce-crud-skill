@@ -30,18 +30,20 @@ export default class RootSkillViewController extends AbstractSkillViewController
     private MasterVc(): MasterSkillViewController {
         return this.Controller('crud.master-skill-view', {
             entities: [
+                this.buildOrganizationsListEntity(),
+                this.buildLocationsListEntity(),
                 buildMasterListEntity({
-                    id: 'organizations',
-                    title: 'Organizations',
+                    id: 'skills',
+                    title: 'Skills',
                     load: {
-                        fqen: 'list-organizations::v2020_12_25',
-                        responseKey: 'organizations',
-                        rowTransformer: (organization) => ({
-                            id: organization.id,
+                        fqen: 'list-skills::v2020_12_25',
+                        responseKey: 'skills',
+                        rowTransformer: (skill) => ({
+                            id: skill.id,
                             cells: [
                                 {
                                     text: {
-                                        content: organization.name,
+                                        content: skill.name,
                                     },
                                 },
                             ],
@@ -49,6 +51,51 @@ export default class RootSkillViewController extends AbstractSkillViewController
                     },
                 }),
             ],
+        })
+    }
+
+    private buildLocationsListEntity() {
+        return buildMasterListEntity({
+            id: 'locations',
+            title: 'Locations',
+            load: {
+                fqen: 'list-locations::v2020_12_25',
+                responseKey: 'locations',
+                payload: {
+                    shouldOnlyShowWhereIAmEmployed: true,
+                },
+                rowTransformer: (location) => ({
+                    id: location.id,
+                    cells: [
+                        {
+                            text: {
+                                content: location.name,
+                            },
+                        },
+                    ],
+                }),
+            },
+        })
+    }
+
+    private buildOrganizationsListEntity() {
+        return buildMasterListEntity({
+            id: 'organizations',
+            title: 'Organizations',
+            load: {
+                fqen: 'list-organizations::v2020_12_25',
+                responseKey: 'organizations',
+                rowTransformer: (organization) => ({
+                    id: organization.id,
+                    cells: [
+                        {
+                            text: {
+                                content: organization.name,
+                            },
+                        },
+                    ],
+                }),
+            },
         })
     }
 
