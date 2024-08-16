@@ -1,3 +1,10 @@
+# [1.0.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v0.2.0...v1.0.0) (2024-08-16)
+
+
+### Breaking Changes
+
+* rename ([2749a32](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/2749a32))
+
 # [0.2.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v0.1.0...v0.2.0) (2024-08-16)
 
 
