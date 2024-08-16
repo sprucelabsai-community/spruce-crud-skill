@@ -1,3 +1,10 @@
+# [0.2.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v0.1.0...v0.2.0) (2024-08-16)
+
+
+### Features
+
+* can assert rows rendering ([4c46c56](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/4c46c56))
+
 # [0.1.0](https://github.com/sprucelabsai-community/spruce-crud-views-skill/compare/v0.0.2...v0.1.0) (2024-08-16)
 
 
