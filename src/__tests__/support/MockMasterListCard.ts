@@ -1,4 +1,7 @@
-import { SkillViewControllerLoadOptions } from '@sprucelabs/heartwood-view-controllers'
+import {
+    listAssert,
+    SkillViewControllerLoadOptions,
+} from '@sprucelabs/heartwood-view-controllers'
 import { assert } from '@sprucelabs/test-utils'
 import MasterListCardViewController from '../../master/MasterListCardViewController'
 
@@ -19,5 +22,9 @@ export default class MockMasterListCard extends MasterListCardViewController {
 
     public assertWasLoadedWithOptions(options: SkillViewControllerLoadOptions) {
         assert.isEqualDeep(this.loadOptions, options)
+    }
+
+    public assertRendersRow(id: string) {
+        listAssert.listRendersRow(this.activeRecordCardVc.getListVc(), id)
     }
 }

@@ -6,6 +6,7 @@ import { MasterSkillViewControllerOptions } from '../../../master/MasterSkillVie
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import MockMasterListCard from '../../support/MockMasterListCard'
 import SpyMasterSkillView from '../../support/SpyMasterSkillView'
+import { buildLocationTestEntity } from '../../support/test.utils'
 
 @fake.login()
 export default class MasterSkillViewTest extends AbstractCrudTest {
@@ -54,11 +55,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
             entities: [
                 {
                     entities: [
-                        {
-                            id: 'my-entity',
-                            title: 'My Entity',
-                            loadEvent: 'list-locations::v2020_12_25',
-                        },
+                        buildLocationTestEntity(),
                         //@ts-ignore
                         {},
                     ],

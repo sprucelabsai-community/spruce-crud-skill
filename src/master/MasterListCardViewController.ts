@@ -11,7 +11,8 @@ import { assertOptions } from '@sprucelabs/schema'
 import { MasterSkillViewListEntity } from './MasterSkillViewController'
 
 export default class MasterListCardViewController extends AbstractViewController<Card> {
-    private activeRecordCardVc: ActiveRecordCardViewController
+    protected activeRecordCardVc: ActiveRecordCardViewController
+    protected entity: MasterSkillViewListEntity
 
     public constructor(
         options: ViewControllerOptions & MasterListCardViewControllerOptions
@@ -26,6 +27,11 @@ export default class MasterListCardViewController extends AbstractViewController
             'entity.load.rowTransformer',
         ])
 
+        this.entity = entity
+
+        const { load } = entity
+        const { fqen, ...activeOptions } = load
+
         this.activeRecordCardVc = this.Controller(
             'active-record-card',
             buildActiveRecordCard({
@@ -33,14 +39,15 @@ export default class MasterListCardViewController extends AbstractViewController
                 header: {
                     title: entity.title,
                 },
-                eventName: 'list-locations::v2020_12_25',
-                rowTransformer: () => ({ id: 'aoeu', cells: [] }),
-                responseKey: 'locations',
+                eventName: fqen,
+                ...activeOptions,
             })
         )
     }
 
-    public async load(_options: SkillViewControllerLoadOptions) {}
+    public async load(_options: SkillViewControllerLoadOptions) {
+        await this.activeRecordCardVc.load()
+    }
 
     public render(): Card {
         return this.activeRecordCardVc.render()

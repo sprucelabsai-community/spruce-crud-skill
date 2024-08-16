@@ -1,13 +1,18 @@
 import {
     AbstractSkillViewController,
     SkillView,
+    SkillViewControllerLoadOptions,
 } from '@sprucelabs/heartwood-view-controllers'
 import { fake } from '@sprucelabs/spruce-test-fixtures'
-import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import crudAssert from '../../../assertions/crudAssert'
-import MasterSkillViewController from '../../../master/MasterSkillViewController'
+import { test, assert, errorAssert, generateId } from '@sprucelabs/test-utils'
+import crudAssert, {
+    ExpectedListEntityOptions,
+} from '../../../assertions/crudAssert'
+import MasterSkillViewController, {
+    MasterSkillViewListEntity,
+} from '../../../master/MasterSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
-import { buildTestEntity } from '../../support/test.utils'
+import { buildLocationTestEntity } from '../../support/test.utils'
 
 @fake.login()
 export default class CrudAssertTest extends AbstractCrudTest {
@@ -80,8 +85,111 @@ export default class CrudAssertTest extends AbstractCrudTest {
     @test()
     protected static async doesNotThrowIfActuallyRenderingMasterViewController() {
         this.runBeforeEach()
-        this.fakeSvc.dropInMasterSkillView()
+        this.dropInMasterSkillView()
         this.assertRendersMasterSkillView()
+    }
+
+    @test()
+    protected static async loadsTheMasterViewOnLoadThrowsWithMissing() {
+        const err = await assert.doesThrowAsync(() =>
+            //@ts-ignore
+            crudAssert.skillViewLoadsMasterView()
+        )
+        errorAssert.assertError(err, 'MISSING_PARAMETERS', {
+            parameters: ['skillView'],
+        })
+    }
+
+    @test()
+    protected static async throwsWhenMasterNotLoaded() {
+        await assert.doesThrowAsync(
+            () => crudAssert.skillViewLoadsMasterView(this.fakeSvc),
+            'not loading'
+        )
+    }
+
+    @test()
+    protected static async passesWhenLoadsMaster() {
+        this.dropInMasterSkillView()
+        await crudAssert.skillViewLoadsMasterView(this.fakeSvc)
+    }
+
+    @test()
+    protected static async assertingConfigurationThrowsWithMissing() {
+        const err = await assert.doesThrowAsync(() =>
+            //@ts-ignore
+            crudAssert.assertMasterSkillViewRendersList()
+        )
+
+        errorAssert.assertError(err, 'MISSING_PARAMETERS', {
+            parameters: ['skillView', 'id'],
+        })
+    }
+
+    @test()
+    protected static async throwsIfDoesNotRenderCard() {
+        this.dropInMasterSkillView()
+        await assert.doesThrowAsync(
+            () =>
+                crudAssert.assertMasterSkillViewRendersList(
+                    this.fakeSvc,
+                    generateId()
+                ),
+            'is not rendering a list card'
+        )
+    }
+
+    @test()
+    protected static async passesIfRenderingCardById() {
+        this.dropInMasterSkillView()
+        await crudAssert.assertMasterSkillViewRendersList(
+            this.fakeSvc,
+            this.firstEntityId
+        )
+    }
+
+    @test()
+    protected static async throwsIfConfigDoesNotMatch() {
+        this.dropInMasterSkillView()
+        await assert.doesThrowAsync(() =>
+            this.assertMasterSkillviewRendersList({
+                load: {
+                    fqen: 'list-roles::v2020_12_25',
+                },
+            })
+        )
+    }
+
+    @test()
+    protected static async passesIfFqenMatches() {
+        this.dropInMasterSkillView()
+        await this.assertMasterSkillviewRendersList({
+            load: {
+                fqen: 'list-locations::v2020_12_25',
+            },
+        })
+    }
+
+    private static async assertMasterSkillviewRendersList(
+        expected: ExpectedListEntityOptions
+    ) {
+        await crudAssert.assertMasterSkillViewRendersList(
+            this.fakeSvc,
+            this.firstEntityId,
+            expected
+        )
+    }
+
+    private static get firstEntityId(): string {
+        return this.firstEntity.id!
+    }
+
+    private static get firstEntity() {
+        return this.fakeSvc.entities![0]
+    }
+
+    private static dropInMasterSkillView() {
+        this.fakeSvc.dropInMasterSkillView()
     }
 
     private static assertMissingViewControllerThrowsAsExpected(
@@ -108,11 +216,18 @@ export default class CrudAssertTest extends AbstractCrudTest {
 
 class FakeSkillView extends AbstractSkillViewController {
     private masterSkillView?: MasterSkillViewController
+    public entities?: MasterSkillViewListEntity[]
     public dropInMasterSkillView() {
+        this.entities = [buildLocationTestEntity()]
         this.masterSkillView = this.Controller('crud.master-skill-view', {
-            entities: [buildTestEntity()],
+            entities: this.entities,
         })
     }
+
+    public async load(options: SkillViewControllerLoadOptions) {
+        await this.masterSkillView?.load(options)
+    }
+
     public render(): SkillView {
         return (
             this.masterSkillView?.render() ?? {

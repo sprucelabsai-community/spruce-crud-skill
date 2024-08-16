@@ -1,22 +1,19 @@
 import { vcAssert } from '@sprucelabs/heartwood-view-controllers'
-import { fake } from '@sprucelabs/spruce-test-fixtures'
+import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
 import { test, assert } from '@sprucelabs/test-utils'
-import MasterListCardViewController from '../../../master/MasterListCardViewController'
 import { MasterSkillViewListEntity } from '../../../master/MasterSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
+import MockMasterListCard from '../../support/MockMasterListCard'
+import { buildOrganizationTestEntity } from '../../support/test.utils'
 
 @fake.login()
 export default class MasterListCardTest extends AbstractCrudTest {
     private static entity: MasterSkillViewListEntity
-    private static vc: MasterListCardViewController
+    private static vc: MockMasterListCard
 
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
-
-        this.entity = this.buildEntity()
-        this.vc = this.views.Controller('crud.master-list-card', {
-            entity: this.entity,
-        })
+        this.setupWithEntity(this.buildLocationTestEntity())
     }
 
     @test()
@@ -28,5 +25,31 @@ export default class MasterListCardTest extends AbstractCrudTest {
     @test()
     protected static async rendersAnActiveRecordCard() {
         vcAssert.assertIsActiveRecordCard(this.vc)
+    }
+
+    @test()
+    @seed('locations', 1)
+    protected static async rendersRowForLocationOnLoad() {
+        await this.load()
+        this.vc.assertRendersRow(this.fakedLocations[0].id)
+    }
+
+    @test()
+    @seed('organizations', 1)
+    protected static async rendersRowForOrganizationOnLoad() {
+        this.setupWithEntity(buildOrganizationTestEntity())
+        await this.load()
+        this.vc.assertRendersRow(this.fakedOrganizations[0].id)
+    }
+
+    private static setupWithEntity(entity: MasterSkillViewListEntity) {
+        this.entity = entity
+        this.vc = this.views.Controller('crud.master-list-card', {
+            entity: this.entity,
+        }) as MockMasterListCard
+    }
+
+    private static async load() {
+        await this.views.load(this.vc)
     }
 }

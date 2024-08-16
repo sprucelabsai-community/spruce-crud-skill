@@ -21,6 +21,7 @@ import MasterListCardViewController from './MasterListCardViewController'
 
 export default class MasterSkillViewController extends AbstractSkillViewController {
     protected listCardVcs: MasterListCardViewController[] = []
+    protected wasLoaded = false
 
     public constructor(
         options: ViewControllerOptions & MasterSkillViewControllerOptions
@@ -53,6 +54,7 @@ export default class MasterSkillViewController extends AbstractSkillViewControll
     }
 
     public async load(options: SkillViewControllerLoadOptions) {
+        this.wasLoaded = true
         await Promise.all(this.listCardVcs.map((vc) => vc.load(options)))
     }
 

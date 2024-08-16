@@ -2,6 +2,7 @@ import {
     AbstractSkillViewController,
     ViewControllerOptions,
     SkillView,
+    SkillViewControllerLoadOptions,
 } from '@sprucelabs/heartwood-view-controllers'
 import MasterListCardViewController from '../master/MasterListCardViewController'
 import MasterSkillViewController, {
@@ -49,6 +50,10 @@ export default class RootSkillViewController extends AbstractSkillViewController
                 }),
             ],
         })
+    }
+
+    public async load(options: SkillViewControllerLoadOptions) {
+        await this.masterSkillView.load(options)
     }
 
     public render(): SkillView {

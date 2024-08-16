@@ -2,7 +2,7 @@ import { ListRow } from '@sprucelabs/heartwood-view-controllers'
 import { generateId } from '@sprucelabs/test-utils'
 import { buildMasterListEntity } from '../../master/MasterSkillViewController'
 
-export function buildTestEntity() {
+export function buildLocationTestEntity() {
     return buildMasterListEntity({
         id: generateId(),
         title: generateId(),
@@ -16,6 +16,28 @@ export function buildTestEntity() {
                         {
                             text: {
                                 content: location.name,
+                            },
+                        },
+                    ],
+                }) as ListRow,
+        },
+    })
+}
+
+export function buildOrganizationTestEntity() {
+    return buildMasterListEntity({
+        id: generateId(),
+        title: generateId(),
+        load: {
+            fqen: 'list-organizations::v2020_12_25',
+            responseKey: 'organizations',
+            rowTransformer: (organization) =>
+                ({
+                    id: organization.id,
+                    cells: [
+                        {
+                            text: {
+                                content: organization.name,
                             },
                         },
                     ],
