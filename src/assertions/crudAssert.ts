@@ -92,7 +92,7 @@ const crudAssert = {
             ) as SpyMasterListCard
         } catch {
             assert.fail(
-                `Your MasterSkillView is not rendering a list card for the entity with the expected id.`
+                `Your MasterSkillView is not rendering a list card for the entity with the id of '${id}'.`
             )
         }
 

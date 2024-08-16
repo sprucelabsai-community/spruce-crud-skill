@@ -31,11 +31,11 @@ export default class RootSkillViewController extends AbstractSkillViewController
         return this.Controller('crud.master-skill-view', {
             entities: [
                 buildMasterListEntity({
-                    id: 'locations',
-                    title: 'Locations',
+                    id: 'organizations',
+                    title: 'Organizations',
                     load: {
-                        fqen: 'list-locations::v2020_12_25',
-                        responseKey: 'locations',
+                        fqen: 'list-organizations::v2020_12_25',
+                        responseKey: 'organizations',
                         rowTransformer: (location) => ({
                             id: location.id,
                             cells: [

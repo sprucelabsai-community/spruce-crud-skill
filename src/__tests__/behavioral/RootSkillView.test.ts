@@ -23,4 +23,19 @@ export default class RootSkillViewTest extends AbstractCrudTest {
     protected static async loadsMasterOnLoad() {
         await crudAssert.skillViewLoadsMasterView(this.vc)
     }
+
+    @test()
+    protected static async loadsExpectedListCards() {
+        await crudAssert.assertMasterSkillViewRendersList(
+            this.vc,
+            'organizations',
+            {
+                title: 'Organizations',
+                load: {
+                    fqen: 'list-organizations::v2020_12_25',
+                    responseKey: 'organizations',
+                },
+            }
+        )
+    }
 }
