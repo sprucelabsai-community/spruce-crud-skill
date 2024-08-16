@@ -8,7 +8,7 @@ import {
 import { assertOptions } from '@sprucelabs/schema'
 import { ViewFixture } from '@sprucelabs/spruce-test-fixtures'
 import { assert, RecursivePartial } from '@sprucelabs/test-utils'
-import { MasterListCardViewController } from '../index-utils'
+import MasterListCardViewController from '../master/MasterListCardViewController'
 import MasterSkillViewController, {
     MasterSkillViewListEntity,
 } from '../master/MasterSkillViewController'

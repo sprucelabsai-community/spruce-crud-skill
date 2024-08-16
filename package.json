@@ -1,13 +1,13 @@
 {
-  "name": "@sprucelabsai-community/spruce-crud-utils",
+  "name": "@sprucelabsai-community/spruce-crud-skill",
   "description": "Abstractions and assertion utilities to make enable the rapid building of CRUD based behaviors in your skill!",
   "version": "1.0.0",
   "skill": {
     "namespace": "crud"
   },
-  "homepage": "https://github.com/[YOUR REPO PATH]",
+  "homepage": "https://github.com/sprucelabsai-community/spruce-crud-skill",
   "bugs": {
-    "url": "https://github.com/[YOUR REPO PATH]/issues"
+    "url": "https://github.com/sprucelabsai-community/spruce-crud-skill/issues"
   },
   "files": [
     "build"

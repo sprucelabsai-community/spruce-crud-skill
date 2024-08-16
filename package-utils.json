@@ -1,0 +1,53 @@
+{
+	"name": "@sprucelabsai-community/spruce-crud-utils",
+	"description": "Crud Utilities",
+	"version": "{{version}}",
+	"skill": {
+		"namespace": "crud"
+	},
+	"homepage": "https://github.com/sprucelabsai-community/spruce-crud-skill",
+	"bugs": {
+		"url": "https://github.com/sprucelabsai-community/spruce-crud-skill/issues"
+	},
+	"main": "./build/index-module.js",
+	"types": "./build/index-module.d.ts",
+	"module": "./build/esm/index-module.js",
+	"sideEffects": false,
+	"files": [
+		"build/index-module.js",
+		"build/index-module.d.ts",
+		"build/esm/index-module.js",
+		"build/esm/index-module.d.ts",
+		
+		
+		
+		"build/master/MasterSkillViewController.js",
+		"build/master/MasterSkillViewController.d.ts",
+		"build/esm/master/MasterSkillViewController.js",
+		"build/esm/master/MasterSkillViewController.d.ts",
+
+		"build/master/MasterListCardViewController.js",
+		"build/master/MasterListCardViewController.d.ts",
+		"build/esm/master/MasterListCardViewController.js",
+		"build/esm/master/MasterListCardViewController.d.ts",
+		
+		"build/assertions/crudAssert.js",
+		"build/assertions/crudAssert.d.ts",
+		"build/esm/assertions/crudAssert.js",
+		"build/esm/assertions/crudAssert.d.ts"
+	],
+	"keywords": [],
+	"scripts": {
+		"release": "npm publish"
+	},
+	"dependencies": {
+		"@sprucelabs/heartwood-view-controllers": "latest",
+		"@sprucelabs/mercury-types": "latest",
+		"@sprucelabs/schema": "latest",
+		"@sprucelabs/spruce-test-fixtures": "latest",
+		"@sprucelabs/test-utils": "latest"
+	},
+	"engines": {
+		"yarn": "1.x"
+	}
+}
