@@ -6,6 +6,7 @@ import {
 import { assertOptions } from '@sprucelabs/schema'
 import { ViewFixture } from '@sprucelabs/spruce-test-fixtures'
 import { assert, RecursivePartial } from '@sprucelabs/test-utils'
+import { MasterListCardViewController } from '../index-utils'
 import MasterSkillViewController, {
     MasterSkillViewListEntity,
 } from '../master/MasterSkillViewController'
@@ -80,8 +81,15 @@ const crudAssert = {
     ) {
         assertOptions({ skillView, id }, ['skillView', 'id'])
 
+        let spyMasterListCard: SpyMasterListCard | undefined
+
         try {
-            vcAssert.assertSkillViewRendersCard(skillView, id)
+            const cardVc = vcAssert.assertSkillViewRendersCard(skillView, id)
+
+            spyMasterListCard = vcAssert.assertRendersAsInstanceOf(
+                cardVc,
+                MasterListCardViewController
+            ) as SpyMasterListCard
         } catch {
             assert.fail(
                 `Your MasterSkillView is not rendering a list card for the entity with the expected id.`
@@ -89,10 +97,10 @@ const crudAssert = {
         }
 
         if (expected) {
-            assert.isEqual(
-                expected.load?.fqen,
-                'list-locations::v2020_12_25',
-                'does include coming soon'
+            assert.doesInclude(
+                spyMasterListCard?.entity,
+                expected,
+                'Your configuration does not match!'
             )
         }
     },
@@ -118,6 +126,10 @@ function assertBeforeEachRan() {
 
 class SpyMasterSkillView extends MasterSkillViewController {
     public wasLoaded = false
+}
+
+class SpyMasterListCard extends MasterListCardViewController {
+    public entity!: MasterSkillViewListEntity
 }
 
 export type ExpectedListEntityOptions = Omit<

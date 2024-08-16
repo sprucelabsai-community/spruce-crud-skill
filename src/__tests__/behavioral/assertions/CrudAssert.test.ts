@@ -1,5 +1,6 @@
 import {
     AbstractSkillViewController,
+    ListRow,
     SkillView,
     SkillViewControllerLoadOptions,
 } from '@sprucelabs/heartwood-view-controllers'
@@ -149,28 +150,66 @@ export default class CrudAssertTest extends AbstractCrudTest {
     }
 
     @test()
-    protected static async throwsIfConfigDoesNotMatch() {
+    protected static async throwsIfFirstConfigDoesNotMatch() {
         this.dropInMasterSkillView()
-        await assert.doesThrowAsync(() =>
-            this.assertMasterSkillviewRendersList({
-                load: {
-                    fqen: 'list-roles::v2020_12_25',
-                },
-            })
-        )
+        await this.assertMasterListRendersListThrows({
+            load: {
+                fqen: 'list-roles::v2020_12_25',
+            },
+        })
     }
 
     @test()
-    protected static async passesIfFqenMatches() {
+    protected static async passesIfFirstFqenMatches() {
         this.dropInMasterSkillView()
-        await this.assertMasterSkillviewRendersList({
+        await this.assertMasterSkillViewRendersList({
             load: {
                 fqen: 'list-locations::v2020_12_25',
             },
         })
     }
 
-    private static async assertMasterSkillviewRendersList(
+    @test()
+    protected static async throwsIfFqenDoesNotMatch() {
+        this.dropInMasterSkillView([
+            {
+                id: 'test-1',
+                title: generateId(),
+                load: {
+                    fqen: 'list-installed-skills::v2020_12_25',
+                    responseKey: 'skills',
+                    rowTransformer: () => ({}) as ListRow,
+                },
+            },
+        ])
+
+        await this.assertMasterListRendersListThrows({
+            load: {
+                fqen: 'list-locations::v2020_12_25',
+            },
+        })
+    }
+
+    @test()
+    protected static async throwsIfTitleDoesNotMatch() {
+        this.dropInMasterSkillView()
+        await this.assertMasterListRendersListThrows({
+            title: generateId(),
+            load: {
+                fqen: 'list-locations::v2020_12_25',
+            },
+        })
+    }
+
+    private static async assertMasterListRendersListThrows(
+        options: ExpectedListEntityOptions
+    ) {
+        await assert.doesThrowAsync(() =>
+            this.assertMasterSkillViewRendersList(options)
+        )
+    }
+
+    private static async assertMasterSkillViewRendersList(
         expected: ExpectedListEntityOptions
     ) {
         await crudAssert.assertMasterSkillViewRendersList(
@@ -188,8 +227,10 @@ export default class CrudAssertTest extends AbstractCrudTest {
         return this.fakeSvc.entities![0]
     }
 
-    private static dropInMasterSkillView() {
-        this.fakeSvc.dropInMasterSkillView()
+    private static dropInMasterSkillView(
+        entities?: MasterSkillViewListEntity[]
+    ) {
+        this.fakeSvc.dropInMasterSkillView(entities)
     }
 
     private static assertMissingViewControllerThrowsAsExpected(
@@ -217,8 +258,8 @@ export default class CrudAssertTest extends AbstractCrudTest {
 class FakeSkillView extends AbstractSkillViewController {
     private masterSkillView?: MasterSkillViewController
     public entities?: MasterSkillViewListEntity[]
-    public dropInMasterSkillView() {
-        this.entities = [buildLocationTestEntity()]
+    public dropInMasterSkillView(entities?: MasterSkillViewListEntity[]) {
+        this.entities = entities ?? [buildLocationTestEntity()]
         this.masterSkillView = this.Controller('crud.master-skill-view', {
             entities: this.entities,
         })
