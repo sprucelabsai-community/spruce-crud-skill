@@ -1,5 +1,5 @@
 {
-	"name": "@sprucelabsai-community/spruce-crud-utils",
+	"name": "@sprucelabs/spruce-crud-utils",
 	"description": "Crud Utilities",
 	"version": "{{version}}",
 	"skill": {
