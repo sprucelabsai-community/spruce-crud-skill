@@ -36,12 +36,12 @@ export default class RootSkillViewController extends AbstractSkillViewController
                     load: {
                         fqen: 'list-organizations::v2020_12_25',
                         responseKey: 'organizations',
-                        rowTransformer: (location) => ({
-                            id: location.id,
+                        rowTransformer: (organization) => ({
+                            id: organization.id,
                             cells: [
                                 {
                                     text: {
-                                        content: location.name,
+                                        content: organization.name,
                                     },
                                 },
                             ],

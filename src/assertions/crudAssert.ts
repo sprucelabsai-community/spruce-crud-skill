@@ -1,4 +1,6 @@
 import {
+    ActiveRecordCardViewController,
+    listAssert,
     renderUtil,
     SkillViewController,
     vcAssert,
@@ -74,10 +76,10 @@ const crudAssert = {
         )
     },
 
-    async assertMasterSkillViewRendersList(
+    async masterSkillViewRendersList(
         skillView: SkillViewController,
         id: string,
-        expected?: ExpectedListEntityOptions
+        expectedOptions?: ExpectedListEntityOptions
     ) {
         assertOptions({ skillView, id }, ['skillView', 'id'])
 
@@ -96,13 +98,42 @@ const crudAssert = {
             )
         }
 
-        if (expected) {
+        if (expectedOptions) {
             assert.doesInclude(
                 spyMasterListCard?.entity,
-                expected,
+                expectedOptions,
                 'Your configuration does not match!'
             )
         }
+
+        return spyMasterListCard!
+    },
+
+    async masterListCardRendersRow(
+        skillView: SkillViewController,
+        listCardId: string,
+        rowId: string
+    ) {
+        assertOptions(
+            {
+                skillView,
+                listCardId,
+                rowId,
+            },
+            ['skillView', 'listCardId', 'rowId']
+        )
+
+        const cardListVc = await this.masterSkillViewRendersList(
+            skillView,
+            listCardId
+        )
+
+        await views?.load(skillView)
+
+        listAssert.listRendersRow(
+            cardListVc.activeRecordCardVc.getListVc(),
+            rowId
+        )
     },
 }
 
@@ -130,6 +161,7 @@ class SpyMasterSkillView extends MasterSkillViewController {
 
 class SpyMasterListCard extends MasterListCardViewController {
     public entity!: MasterSkillViewListEntity
+    public activeRecordCardVc!: ActiveRecordCardViewController
 }
 
 export type ExpectedListEntityOptions = Omit<

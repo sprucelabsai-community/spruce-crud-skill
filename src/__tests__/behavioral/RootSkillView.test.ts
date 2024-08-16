@@ -1,4 +1,4 @@
-import { fake } from '@sprucelabs/spruce-test-fixtures'
+import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
 import { test } from '@sprucelabs/test-utils'
 import crudAssert from '../../assertions/crudAssert'
 import RootSkillViewController from '../../skillViewControllers/Root.svc'
@@ -25,17 +25,23 @@ export default class RootSkillViewTest extends AbstractCrudTest {
     }
 
     @test()
-    protected static async loadsExpectedListCards() {
-        await crudAssert.assertMasterSkillViewRendersList(
+    protected static async loadsOrganizationsListCard() {
+        await crudAssert.masterSkillViewRendersList(this.vc, 'organizations', {
+            title: 'Organizations',
+            load: {
+                fqen: 'list-organizations::v2020_12_25',
+                responseKey: 'organizations',
+            },
+        })
+    }
+
+    @test()
+    @seed('organizations', 1)
+    protected static async rendersOrganizationsRow() {
+        await crudAssert.masterListCardRendersRow(
             this.vc,
             'organizations',
-            {
-                title: 'Organizations',
-                load: {
-                    fqen: 'list-organizations::v2020_12_25',
-                    responseKey: 'organizations',
-                },
-            }
+            this.fakedOrganizations[0].id
         )
     }
 }
