@@ -32,25 +32,29 @@ export default class RootSkillViewController extends AbstractSkillViewController
             entities: [
                 this.buildOrganizationsListEntity(),
                 this.buildLocationsListEntity(),
-                buildMasterListEntity({
-                    id: 'skills',
-                    title: 'Skills',
-                    load: {
-                        fqen: 'list-skills::v2020_12_25',
-                        responseKey: 'skills',
-                        rowTransformer: (skill) => ({
-                            id: skill.id,
-                            cells: [
-                                {
-                                    text: {
-                                        content: skill.name,
-                                    },
-                                },
-                            ],
-                        }),
-                    },
-                }),
+                this.buildSkillsListEntity(),
             ],
+        })
+    }
+
+    private buildSkillsListEntity() {
+        return buildMasterListEntity({
+            id: 'skills',
+            title: 'Skills',
+            load: {
+                fqen: 'list-skills::v2020_12_25',
+                responseKey: 'skills',
+                rowTransformer: (skill) => ({
+                    id: skill.id,
+                    cells: [
+                        {
+                            text: {
+                                content: skill.name,
+                            },
+                        },
+                    ],
+                }),
+            },
         })
     }
 
