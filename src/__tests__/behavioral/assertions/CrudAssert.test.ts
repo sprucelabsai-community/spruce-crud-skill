@@ -318,9 +318,11 @@ class FakeSkillView extends AbstractSkillViewController {
     private masterSkillView?: MasterSkillViewController
     public entities?: MasterSkillViewListEntity[]
     public dropInMasterSkillView(entities?: MasterSkillViewListEntity[]) {
-        this.entities = entities ?? [buildLocationTestEntity()]
+        this.entities = (entities ?? [
+            buildLocationTestEntity(),
+        ]) as MasterSkillViewListEntity[]
         this.masterSkillView = this.Controller('crud.master-skill-view', {
-            entities: this.entities,
+            entities: this.entities!,
         })
     }
 

@@ -1,7 +1,10 @@
 import { vcAssert } from '@sprucelabs/heartwood-view-controllers'
 import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
-import { test, assert } from '@sprucelabs/test-utils'
-import { MasterSkillViewListEntity } from '../../../master/MasterSkillViewController'
+import { test, assert, generateId } from '@sprucelabs/test-utils'
+import {
+    buildMasterListEntity,
+    MasterSkillViewListEntity,
+} from '../../../master/MasterSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import MockMasterListCard from '../../support/MockMasterListCard'
 import { buildOrganizationTestEntity } from '../../support/test.utils'
@@ -40,6 +43,34 @@ export default class MasterListCardTest extends AbstractCrudTest {
         this.setupWithEntity(buildOrganizationTestEntity())
         await this.load()
         this.vc.assertRendersRow(this.fakedOrganizations[0].id)
+    }
+
+    @test('can pass through paging options 1', 10, true)
+    @test('can pass through paging options 2', 5, false)
+    protected static async canPassThroughPaging(
+        pageSize: number,
+        shouldPageClientSide: boolean
+    ) {
+        this.setupWithEntity(
+            buildMasterListEntity({
+                id: generateId(),
+                title: generateId(),
+                load: {
+                    fqen: 'list-organizations::v2020_12_25',
+                    responseKey: 'organizations',
+                    rowTransformer: () => ({ id: generateId(), cells: [] }),
+                    paging: {
+                        shouldPageClientSide,
+                        pageSize,
+                    },
+                },
+            })
+        )
+
+        this.vc.assertPagingOptionsEqual({
+            shouldPageClientSide,
+            pageSize,
+        })
     }
 
     private static setupWithEntity(entity: MasterSkillViewListEntity) {

@@ -5,6 +5,7 @@ import {
     SkillViewControllerLoadOptions,
     ListRow,
 } from '@sprucelabs/heartwood-view-controllers'
+import { ActiveRecordPagingOptions } from '@sprucelabs/heartwood-view-controllers/build/builders/buildActiveRecordCard'
 import {
     EventContract,
     EventName,
@@ -100,6 +101,7 @@ export interface MasterSkillViewListEntity<
         payload?: SchemaValues<EmitSchema>['payload']
         /** @ts-ignore */
         target?: SchemaValues<EmitSchema>['target']
+        paging?: ActiveRecordPagingOptions
     }
 }
 
