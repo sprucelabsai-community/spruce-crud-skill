@@ -73,7 +73,9 @@ export default class MasterListCardTest extends AbstractCrudTest {
         })
     }
 
-    private static setupWithEntity(entity: MasterSkillViewListEntity) {
+    private static setupWithEntity(
+        entity: MasterSkillViewListEntity<any, any>
+    ) {
         this.entity = entity
         this.vc = this.views.Controller('crud.master-list-card', {
             entity: this.entity,

@@ -72,7 +72,7 @@ export default class MasterSkillViewController extends AbstractSkillViewControll
 }
 
 export interface MasterSkillViewControllerOptions {
-    entities: MasterSkillViewListEntity<SkillEventContract>[]
+    entities: MasterSkillViewListEntity<any, any>[]
 }
 
 export interface MasterSkillViewListEntity<
@@ -105,7 +105,8 @@ export interface MasterSkillViewListEntity<
     }
 }
 
-type MasterListCardViewControllerBuilder<Contract extends EventContract> = <
+type MasterListCardViewControllerBuilder = <
+    Contract extends EventContract = SkillEventContract,
     Fqen extends EventName<Contract> = EventName<Contract>,
     IEventSignature extends EventSignature = Contract['eventSignatures'][Fqen],
     EmitSchema extends
@@ -139,9 +140,9 @@ type MasterListCardViewControllerBuilder<Contract extends EventContract> = <
     ResponseKey
 >
 
-export const buildMasterListEntity: MasterListCardViewControllerBuilder<
-    SkillEventContract
-> = (options) => {
+export const buildMasterListEntity: MasterListCardViewControllerBuilder = (
+    options
+) => {
     return options
 }
 

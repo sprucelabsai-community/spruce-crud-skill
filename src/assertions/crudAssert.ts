@@ -5,6 +5,11 @@ import {
     SkillViewController,
     vcAssert,
 } from '@sprucelabs/heartwood-view-controllers'
+import {
+    EventContract,
+    EventName,
+    SkillEventContract,
+} from '@sprucelabs/mercury-types'
 import { assertOptions } from '@sprucelabs/schema'
 import { ViewFixture } from '@sprucelabs/spruce-test-fixtures'
 import { assert, RecursivePartial } from '@sprucelabs/test-utils'
@@ -76,10 +81,13 @@ const crudAssert = {
         )
     },
 
-    async masterSkillViewRendersList(
+    async masterSkillViewRendersList<
+        Contract extends EventContract = SkillEventContract,
+        Fqen extends EventName<Contract> = EventName<Contract>,
+    >(
         skillView: SkillViewController,
         id: string,
-        expectedOptions?: ExpectedListEntityOptions
+        expectedOptions?: ExpectedListEntityOptions<Contract, Fqen>
     ) {
         assertOptions({ skillView, id }, ['skillView', 'id'])
 
@@ -164,7 +172,7 @@ class SpyMasterListCard extends MasterListCardViewController {
     public activeRecordCardVc!: ActiveRecordCardViewController
 }
 
-export type ExpectedListEntityOptions = Omit<
-    RecursivePartial<MasterSkillViewListEntity>,
-    'id'
->
+export type ExpectedListEntityOptions<
+    Contract extends EventContract = SkillEventContract,
+    Fqen extends EventName<Contract> = EventName<Contract>,
+> = Omit<RecursivePartial<MasterSkillViewListEntity<Contract, Fqen>>, 'id'>
