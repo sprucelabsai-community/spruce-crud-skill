@@ -143,7 +143,7 @@ function assertViewSetToFactory(id: string, className: string) {
         views?.getFactory().hasController(id),
         `You need to drop the '${id}' SkillView into the ViewFactory. Here's how:
 		
-1. Import the MasterSkillViewController into your SkillView: import { ${className} } from '@sprucelabsai-community/spruce-crud-views-utils'.
+1. Import the ${className} into your SkillView: import { ${className} } from '@sprucelabsai-community/spruce-crud-views-utils'.
 2. Drop in the Controller in your SkillView's constructor: this.getVcFactory().setController('${id}', ${className}).`
     )
 }
