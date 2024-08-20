@@ -1,9 +1,9 @@
 import {
     activeRecordCardAssert,
+    ActiveRecordPagingOptions,
     listAssert,
     SkillViewControllerLoadOptions,
 } from '@sprucelabs/heartwood-view-controllers'
-import { ActiveRecordPagingOptions } from '@sprucelabs/heartwood-view-controllers/build/builders/buildActiveRecordCard'
 import { assert } from '@sprucelabs/test-utils'
 import MasterListCardViewController from '../../master/MasterListCardViewController'
 

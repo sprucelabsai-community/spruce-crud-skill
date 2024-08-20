@@ -4,8 +4,8 @@ import {
     SkillView,
     SkillViewControllerLoadOptions,
     ListRow,
+    ActiveRecordPagingOptions,
 } from '@sprucelabs/heartwood-view-controllers'
-import { ActiveRecordPagingOptions } from '@sprucelabs/heartwood-view-controllers/build/builders/buildActiveRecordCard'
 import {
     EventContract,
     EventName,
