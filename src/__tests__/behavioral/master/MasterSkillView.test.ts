@@ -1,8 +1,11 @@
 import { vcAssert } from '@sprucelabs/heartwood-view-controllers'
 import { fake } from '@sprucelabs/spruce-test-fixtures'
-import { test, assert, errorAssert } from '@sprucelabs/test-utils'
+import { test, assert, errorAssert, generateId } from '@sprucelabs/test-utils'
 import MasterListCardViewController from '../../../master/MasterListCardViewController'
-import { MasterSkillViewControllerOptions } from '../../../master/MasterSkillViewController'
+import {
+    MasterSkillViewControllerOptions,
+    MasterSkillViewListEntity,
+} from '../../../master/MasterSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import MockMasterListCard from '../../support/MockMasterListCard'
 import SpyMasterSkillView from '../../support/SpyMasterSkillView'
@@ -113,6 +116,56 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
         this.listCardVcs[0].assertWasLoadedWithOptions(options)
     }
 
+    @test()
+    protected static async canPassTargetThroughToListCard() {
+        const id = generateId()
+
+        const entity = this.buildLocationTestEntity(id)
+        this.setupWithEntities([entity])
+
+        const target = {
+            organizationId: generateId(),
+        }
+
+        this.setTarget(id, target)
+        this.assertTargetForListAtIndexEquals(0, target)
+    }
+
+    @test()
+    protected static async canSetTargetOnSecondListCard() {
+        const id = generateId()
+        const entity = this.buildLocationTestEntity(id)
+        this.setupWithEntities([this.buildLocationTestEntity(), entity])
+
+        const target = {
+            locationId: generateId(),
+        }
+
+        this.setTarget(id, target)
+        this.assertTargetForListAtIndexEquals(1, target)
+    }
+
+    @test()
+    protected static async tryingToSetTargetOnNonExistentListCardThrows() {
+        const err = assert.doesThrow(() =>
+            this.setTarget(generateId(), undefined)
+        )
+        errorAssert.assertError(err, 'INVALID_PARAMETERS', {
+            parameters: ['listId'],
+        })
+    }
+
+    private static assertTargetForListAtIndexEquals(
+        idx: number,
+        target?: Record<string, any>
+    ) {
+        this.listCardVcs[idx].assertTargetEquals(target)
+    }
+
+    private static setTarget(id: string, target?: Record<string, any>) {
+        this.vc.setTarget(id, target)
+    }
+
     private static get listCardVcs() {
         return this.vc.getListCardVcs() as MockMasterListCard[]
     }
@@ -124,11 +177,17 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
     private static VcWithTotalEntities(total: number) {
         const entities = this.buildEntities(total)
 
+        this.setupWithEntities(entities)
+
+        return entities
+    }
+
+    private static setupWithEntities(
+        entities: MasterSkillViewListEntity<any, any>[]
+    ) {
         this.vc = this.Vc({
             entities,
         })
-
-        return entities
     }
 
     private static assertThrowsMissingEntityParameters(

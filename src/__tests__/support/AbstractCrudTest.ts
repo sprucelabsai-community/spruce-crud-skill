@@ -17,7 +17,7 @@ export default abstract class AbstractCrudTest extends AbstractSpruceFixtureTest
         )
     }
 
-    protected static buildLocationTestEntity() {
-        return buildLocationTestEntity()
+    protected static buildLocationTestEntity(id?: string) {
+        return buildLocationTestEntity(id)
     }
 }

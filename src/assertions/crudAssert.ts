@@ -65,6 +65,8 @@ const crudAssert = {
     },
 
     async skillViewLoadsMasterView(skillView: SkillViewController) {
+        assertBeforeEachRan()
+
         assertOptions({ skillView }, ['skillView'])
 
         await views?.load(skillView)
@@ -89,6 +91,7 @@ const crudAssert = {
         id: string,
         expectedOptions?: ExpectedListEntityOptions<Contract, Fqen>
     ) {
+        assertBeforeEachRan()
         assertOptions({ skillView, id }, ['skillView', 'id'])
 
         let spyMasterListCard: SpyMasterListCard | undefined
@@ -122,6 +125,7 @@ const crudAssert = {
         listCardId: string,
         rowId: string
     ) {
+        assertBeforeEachRan()
         assertOptions(
             {
                 skillView,
@@ -141,6 +145,36 @@ const crudAssert = {
         listAssert.listRendersRow(
             cardListVc.activeRecordCardVc.getListVc(),
             rowId
+        )
+    },
+
+    async assertListsLoadTargetAfterMasterLoad(
+        skillView: SkillViewController,
+        listCardId: string,
+        expectedTarget?: Record<string, any>
+    ) {
+        assertBeforeEachRan()
+
+        assertOptions(
+            {
+                skillView,
+                listCardId,
+                expectedTarget,
+            },
+            ['skillView', 'listCardId', 'expectedTarget']
+        )
+
+        await views?.load(skillView)
+
+        const cardListVc = await this.masterSkillViewRendersList(
+            skillView,
+            listCardId
+        )
+
+        assert.isEqualDeep(
+            cardListVc.activeRecordCardVc.getTarget(),
+            expectedTarget,
+            `The target of list ${listCardId} is not being set to the expected value. Try 'this.masterSkillView.setListTarget(...)'`
         )
     },
 }

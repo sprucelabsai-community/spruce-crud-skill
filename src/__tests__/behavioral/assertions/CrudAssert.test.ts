@@ -22,6 +22,7 @@ export default class CrudAssertTest extends AbstractCrudTest {
         await super.beforeEach()
         this.views.setController('fake', FakeSkillView)
         this.fakeSvc = this.views.Controller('fake', {})
+        this.runBeforeEach()
     }
 
     @test()
@@ -34,18 +35,7 @@ export default class CrudAssertTest extends AbstractCrudTest {
     }
 
     @test()
-    protected static async throwsIfNotSetupInBeforeEach() {
-        assert.doesThrow(
-            //@ts-ignore
-            () => crudAssert.skillViewRendersMasterView(),
-            'crudAssert.beforeEach'
-        )
-    }
-
-    @test()
     protected static async throwsWithMissing() {
-        this.runBeforeEach()
-
         const err = assert.doesThrow(() =>
             //@ts-ignore
             crudAssert.skillViewRendersMasterView()
@@ -58,7 +48,6 @@ export default class CrudAssertTest extends AbstractCrudTest {
 
     @test()
     protected static async throwsIfMasterSkillViewHasNotBeenSet() {
-        this.runBeforeEach()
         this.assertMissingViewControllerThrowsAsExpected(
             'crud.master-skill-view',
             'MasterSkillViewController'
@@ -67,7 +56,6 @@ export default class CrudAssertTest extends AbstractCrudTest {
 
     @test()
     protected static async throwsIfMasterListCardHasNotBeenSet() {
-        this.runBeforeEach()
         this.assertMissingViewControllerThrowsAsExpected(
             'crud.master-list-card',
             'MasterListCardViewController'
@@ -76,7 +64,6 @@ export default class CrudAssertTest extends AbstractCrudTest {
 
     @test()
     protected static async throwsIfNotRenderingAsMaster() {
-        this.runBeforeEach()
         assert.doesThrow(
             () => this.assertRendersMasterSkillView(),
             'not rendering a MasterSkillViewController'
@@ -85,7 +72,6 @@ export default class CrudAssertTest extends AbstractCrudTest {
 
     @test()
     protected static async doesNotThrowIfActuallyRenderingMasterViewController() {
-        this.runBeforeEach()
         this.dropInMasterSkillView()
         this.assertRendersMasterSkillView()
     }
@@ -244,6 +230,48 @@ export default class CrudAssertTest extends AbstractCrudTest {
         )
     }
 
+    @test()
+    protected static async assertTargetAfterLoadThrowsIfMissingRequired() {
+        this.dropInMasterSkillView()
+        const err = await assert.doesThrowAsync(() =>
+            //@ts-ignore
+            crudAssert.assertListsLoadTargetAfterMasterLoad()
+        )
+
+        errorAssert.assertError(err, 'MISSING_PARAMETERS', {
+            parameters: ['skillView', 'listCardId', 'expectedTarget'],
+        })
+    }
+
+    @test()
+    protected static async targetAfterLoadThrowsIfDoesNotMatchExpected() {
+        await assert.doesThrowAsync(
+            () =>
+                //@ts-ignore
+                crudAssert.assertListsLoadTargetAfterMasterLoad(),
+            'target'
+        )
+    }
+
+    @test()
+    protected static async passesIfTargetMatchesOnFirstList() {
+        const id = generateId()
+        const entity = this.buildLocationTestEntity(id)
+        this.dropInMasterSkillView([entity])
+
+        const target = { organizationId: generateId() }
+
+        this.fakeSvc.onWillLoad = () => {
+            this.fakeSvc.setTarget(id, target)
+        }
+
+        await crudAssert.assertListsLoadTargetAfterMasterLoad(
+            this.fakeSvc,
+            id,
+            target
+        )
+    }
+
     private static async assertMasterListRendersListThrows(
         options: ExpectedListEntityOptions
     ) {
@@ -276,7 +304,7 @@ export default class CrudAssertTest extends AbstractCrudTest {
     }
 
     private static dropInMasterSkillView(
-        entities?: MasterSkillViewListEntity[]
+        entities?: MasterSkillViewListEntity<any, any>[]
     ) {
         this.fakeSvc.dropInMasterSkillView(entities)
     }
@@ -317,6 +345,8 @@ export default class CrudAssertTest extends AbstractCrudTest {
 class FakeSkillView extends AbstractSkillViewController {
     private masterSkillView?: MasterSkillViewController
     public entities?: MasterSkillViewListEntity[]
+    public onWillLoad?: () => void
+
     public dropInMasterSkillView(entities?: MasterSkillViewListEntity[]) {
         this.entities = (entities ?? [
             buildLocationTestEntity(),
@@ -327,7 +357,12 @@ class FakeSkillView extends AbstractSkillViewController {
     }
 
     public async load(options: SkillViewControllerLoadOptions) {
+        this.onWillLoad?.()
         await this.masterSkillView?.load(options)
+    }
+
+    public setTarget(id: string, target?: Record<string, any>) {
+        this.masterSkillView?.setTarget(id, target)
     }
 
     public render(): SkillView {

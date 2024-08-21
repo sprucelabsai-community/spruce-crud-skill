@@ -45,6 +45,10 @@ export default class MasterListCardViewController extends AbstractViewController
         )
     }
 
+    public setTarget(target?: Record<string, any>) {
+        this.activeRecordCardVc.setTarget(target)
+    }
+
     public async load(_options: SkillViewControllerLoadOptions) {
         await this.activeRecordCardVc.load()
     }

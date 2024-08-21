@@ -21,7 +21,7 @@ import {
 import MasterListCardViewController from './MasterListCardViewController'
 
 export default class MasterSkillViewController extends AbstractSkillViewController {
-    protected listCardVcs: MasterListCardViewController[] = []
+    protected listCardsById: Record<string, MasterListCardViewController> = {}
     protected wasLoaded = false
 
     public constructor(
@@ -46,10 +46,11 @@ export default class MasterSkillViewController extends AbstractSkillViewControll
 
     private buildCards(entities: MasterSkillViewListEntity[]) {
         for (const entity of entities) {
-            this.listCardVcs.push(
-                this.Controller('crud.master-list-card', {
+            this.listCardsById[entity.id] = this.Controller(
+                'crud.master-list-card',
+                {
                     entity,
-                })
+                }
             )
         }
     }
@@ -57,6 +58,22 @@ export default class MasterSkillViewController extends AbstractSkillViewControll
     public async load(options: SkillViewControllerLoadOptions) {
         this.wasLoaded = true
         await Promise.all(this.listCardVcs.map((vc) => vc.load(options)))
+    }
+
+    protected get listCardVcs() {
+        return Object.values(this.listCardsById)
+    }
+
+    public setTarget(listId: string, target?: Record<string, any>) {
+        const listVc = this.listCardsById[listId]
+        if (!listVc) {
+            throw new SchemaError({
+                code: 'INVALID_PARAMETERS',
+                friendlyMessage: `Could not find list with id ${listId}`,
+                parameters: ['listId'],
+            })
+        }
+        listVc.setTarget(target)
     }
 
     public render(): SkillView {

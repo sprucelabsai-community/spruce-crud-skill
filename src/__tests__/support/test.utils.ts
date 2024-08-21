@@ -2,9 +2,9 @@ import { ListRow } from '@sprucelabs/heartwood-view-controllers'
 import { generateId } from '@sprucelabs/test-utils'
 import { buildMasterListEntity } from '../../master/MasterSkillViewController'
 
-export function buildLocationTestEntity() {
+export function buildLocationTestEntity(id?: string) {
     return buildMasterListEntity({
-        id: generateId(),
+        id: id ?? generateId(),
         title: generateId(),
         load: {
             fqen: 'list-locations::v2020_12_25',
