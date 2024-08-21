@@ -18,7 +18,6 @@ import {
     SchemaError,
     SchemaValues,
 } from '@sprucelabs/schema'
-import { list } from 'pm2'
 import MasterListCardViewController from './MasterListCardViewController'
 
 export default class MasterSkillViewController extends AbstractSkillViewController {
