@@ -23,9 +23,9 @@ export default class CrudAssertTest extends AbstractCrudTest {
     private static fakeSvc: FakeSkillView
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
+        this.runBeforeEach()
         this.views.setController('fake', FakeSkillView)
         this.fakeSvc = this.views.Controller('fake', {})
-        this.runBeforeEach()
     }
 
     @test()
@@ -218,7 +218,7 @@ export default class CrudAssertTest extends AbstractCrudTest {
                     this.firstEntityId,
                     generateId()
                 ),
-            `Can't find a row`
+            `renders row`
         )
     }
 
