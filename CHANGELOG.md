@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v1.0.5...v1.1.0) (2024-08-21)
+
+
+### Features
+
+* can assert list target ([1bdeebf](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/1bdeebf))
+
 ## [1.0.5](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v1.0.4...v1.0.5) (2024-08-21)
 
 ## [1.0.4](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v1.0.3...v1.0.4) (2024-08-20)
