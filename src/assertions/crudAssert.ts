@@ -1,5 +1,4 @@
 import {
-    listAssert,
     MockActiveRecordCard,
     renderUtil,
     SkillViewController,
