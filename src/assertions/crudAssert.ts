@@ -1,6 +1,5 @@
 import {
-    ActiveRecordCardViewController,
-    listAssert,
+    MockActiveRecordCard,
     renderUtil,
     SkillViewController,
     vcAssert,
@@ -29,6 +28,7 @@ const crudAssert = {
         )
 
         views = viewFixture
+        views.setController('active-record-card', MockActiveRecordCard)
     },
 
     skillViewRendersMasterView(skillView: SkillViewController) {
@@ -142,10 +142,7 @@ const crudAssert = {
 
         await views?.load(skillView)
 
-        listAssert.listRendersRow(
-            cardListVc.activeRecordCardVc.getListVc(),
-            rowId
-        )
+        cardListVc.activeRecordCardVc.assertRendersRow(rowId)
     },
 
     async assertListsLoadTargetAfterMasterLoad(
@@ -203,7 +200,7 @@ class SpyMasterSkillView extends MasterSkillViewController {
 
 class SpyMasterListCard extends MasterListCardViewController {
     public entity!: MasterSkillViewListEntity
-    public activeRecordCardVc!: ActiveRecordCardViewController
+    public activeRecordCardVc!: MockActiveRecordCard
 }
 
 export type ExpectedListEntityOptions<
