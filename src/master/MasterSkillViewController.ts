@@ -5,6 +5,7 @@ import {
     SkillViewControllerLoadOptions,
     ListRow,
     ActiveRecordPagingOptions,
+    splitCardsIntoLayouts,
 } from '@sprucelabs/heartwood-view-controllers'
 import {
     EventContract,
@@ -89,11 +90,10 @@ export default class MasterSkillViewController extends AbstractSkillViewControll
     public render(): SkillView {
         return {
             controller: this,
-            layouts: [
-                {
-                    cards: this.listCardVcs.map((vc) => vc.render()),
-                },
-            ],
+            layouts: splitCardsIntoLayouts(
+                this.listCardVcs.map((vc) => vc.render()),
+                3
+            ),
         }
     }
 }
