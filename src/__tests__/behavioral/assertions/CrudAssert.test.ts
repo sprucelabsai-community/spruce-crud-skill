@@ -13,7 +13,10 @@ import MasterSkillViewController, {
     MasterSkillViewListEntity,
 } from '../../../master/MasterSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
-import { buildLocationTestEntity } from '../../support/test.utils'
+import {
+    buildLocationTestEntity,
+    buildLocationTestPagingEntity,
+} from '../../support/test.utils'
 
 @fake.login()
 export default class CrudAssertTest extends AbstractCrudTest {
@@ -269,6 +272,18 @@ export default class CrudAssertTest extends AbstractCrudTest {
             this.fakeSvc,
             id,
             target
+        )
+    }
+
+    @test()
+    @seed('locations', 10)
+    protected static async canAssertIfListRendersRowWithPaging() {
+        const entity = buildLocationTestPagingEntity()
+        this.dropInMasterSkillView([entity])
+        await crudAssert.masterListCardRendersRow(
+            this.fakeSvc,
+            this.firstEntityId,
+            this.fakedLocations[0].id
         )
     }
 

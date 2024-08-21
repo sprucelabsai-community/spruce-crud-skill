@@ -24,6 +24,32 @@ export function buildLocationTestEntity(id?: string) {
     })
 }
 
+export function buildLocationTestPagingEntity(id?: string) {
+    return buildMasterListEntity({
+        id: id ?? generateId(),
+        title: generateId(),
+        load: {
+            fqen: 'list-locations::v2020_12_25',
+            responseKey: 'locations',
+            paging: {
+                pageSize: 5,
+                shouldPageClientSide: true,
+            },
+            rowTransformer: (location) =>
+                ({
+                    id: location.id,
+                    cells: [
+                        {
+                            text: {
+                                content: location.name,
+                            },
+                        },
+                    ],
+                }) as ListRow,
+        },
+    })
+}
+
 export function buildOrganizationTestEntity() {
     return buildMasterListEntity({
         id: generateId(),
