@@ -18,6 +18,7 @@ import {
     SchemaError,
     SchemaValues,
 } from '@sprucelabs/schema'
+import { list } from 'pm2'
 import MasterListCardViewController from './MasterListCardViewController'
 
 export default class MasterSkillViewController extends AbstractSkillViewController {
@@ -65,6 +66,11 @@ export default class MasterSkillViewController extends AbstractSkillViewControll
     }
 
     public setTarget(listId: string, target?: Record<string, any>) {
+        const listVc = this.getListById(listId)
+        listVc.setTarget(target)
+    }
+
+    private getListById(listId: string) {
         const listVc = this.listCardsById[listId]
         if (!listVc) {
             throw new SchemaError({
@@ -73,7 +79,12 @@ export default class MasterSkillViewController extends AbstractSkillViewControll
                 parameters: ['listId'],
             })
         }
-        listVc.setTarget(target)
+        return listVc
+    }
+
+    public setPayload(listId: string, payload?: Record<string, any>) {
+        const listVc = this.getListById(listId)
+        listVc.setPayload(payload)
     }
 
     public render(): SkillView {

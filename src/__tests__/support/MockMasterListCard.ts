@@ -44,4 +44,12 @@ export default class MockMasterListCard extends MasterListCardViewController {
             'Your target does not match!'
         )
     }
+
+    public assertPayloadEquals(payload?: Record<string, any>) {
+        assert.isEqualDeep(
+            this.activeRecordCardVc.getPayload(),
+            payload,
+            'Your payload does not match!'
+        )
+    }
 }

@@ -117,11 +117,18 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
     }
 
     @test()
-    protected static async canPassTargetThroughToListCard() {
-        const id = generateId()
+    protected static async tryingToSetTargetOnNonExistentListCardThrows() {
+        const err = assert.doesThrow(() =>
+            this.setTarget(generateId(), undefined)
+        )
+        errorAssert.assertError(err, 'INVALID_PARAMETERS', {
+            parameters: ['listId'],
+        })
+    }
 
-        const entity = this.buildLocationTestEntity(id)
-        this.setupWithEntities([entity])
+    @test()
+    protected static async canPassTargetThroughToListCard() {
+        const id = this.setupWith1EntityAndGetId()
 
         const target = {
             organizationId: generateId(),
@@ -133,9 +140,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
 
     @test()
     protected static async canSetTargetOnSecondListCard() {
-        const id = generateId()
-        const entity = this.buildLocationTestEntity(id)
-        this.setupWithEntities([this.buildLocationTestEntity(), entity])
+        const id = this.setupWith2EntitiesAndGetSecondId()
 
         const target = {
             locationId: generateId(),
@@ -146,13 +151,56 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
     }
 
     @test()
-    protected static async tryingToSetTargetOnNonExistentListCardThrows() {
+    protected static async tryingToSetPayloadOnNonExistentListCardThrows() {
         const err = assert.doesThrow(() =>
-            this.setTarget(generateId(), undefined)
+            this.setPayload(generateId(), undefined)
         )
         errorAssert.assertError(err, 'INVALID_PARAMETERS', {
             parameters: ['listId'],
         })
+    }
+
+    @test()
+    protected static async canPassPayloadToFirstListCard() {
+        const id = this.setupWith1EntityAndGetId()
+
+        const payload = {
+            organizationId: generateId(),
+        }
+
+        this.setPayload(id, payload)
+        this.assertPayloadForListAtIndexEquals(0, payload)
+    }
+
+    @test()
+    protected static async canPassPayloadToSecondListCard() {
+        const id = this.setupWith2EntitiesAndGetSecondId()
+
+        const payload = {
+            locationId: generateId(),
+        }
+
+        this.setPayload(id, payload)
+        this.assertPayloadForListAtIndexEquals(1, payload)
+    }
+
+    private static setPayload(id: string, payload?: Record<string, any>) {
+        this.vc.setPayload(id, payload)
+    }
+
+    private static setupWith2EntitiesAndGetSecondId() {
+        const id = generateId()
+        const entity = this.buildLocationTestEntity(id)
+        this.setupWithEntities([this.buildLocationTestEntity(), entity])
+        return id
+    }
+
+    private static setupWith1EntityAndGetId() {
+        const id = generateId()
+
+        const entity = this.buildLocationTestEntity(id)
+        this.setupWithEntities([entity])
+        return id
     }
 
     private static assertTargetForListAtIndexEquals(
@@ -160,6 +208,13 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
         target?: Record<string, any>
     ) {
         this.listCardVcs[idx].assertTargetEquals(target)
+    }
+
+    private static assertPayloadForListAtIndexEquals(
+        idx: number,
+        payload: Record<string, any>
+    ) {
+        this.listCardVcs[idx].assertPayloadEquals(payload)
     }
 
     private static setTarget(id: string, target?: Record<string, any>) {
