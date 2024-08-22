@@ -5,6 +5,7 @@ import {
     ViewControllerOptions,
 } from '@sprucelabs/heartwood-view-controllers'
 import { assertOptions } from '@sprucelabs/schema'
+import { FormCardViewControllerOptions } from '@sprucelabs/spruce-form-utils'
 import DetailsFormCardViewController from './DetailFormCardViewController'
 
 export default class DetailSkillViewController extends AbstractSkillViewController {
@@ -31,6 +32,7 @@ export interface DetailSkillViewControllerOptions {
 
 export interface DetailSkillViewEntity {
     id: string
+    form: FormCardViewControllerOptions
 }
 
 declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.types' {
