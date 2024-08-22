@@ -1,4 +1,6 @@
 import { AbstractSpruceFixtureTest } from '@sprucelabs/spruce-test-fixtures'
+import DetailsFormCardViewController from '../../detail/DetailFormCardViewController'
+import DetailSkillViewController from '../../detail/DetailSkillViewController'
 import MockMasterListCard from './MockMasterListCard'
 import SpyMasterSkillView from './SpyMasterSkillView'
 import { buildLocationTestEntity } from './test.utils'
@@ -9,6 +11,14 @@ export default abstract class AbstractCrudTest extends AbstractSpruceFixtureTest
 
         this.views.setController('crud.master-skill-view', SpyMasterSkillView)
         this.views.setController('crud.master-list-card', MockMasterListCard)
+        this.views.setController(
+            'crud.detail-skill-view',
+            DetailSkillViewController
+        )
+        this.views.setController(
+            'crud.detail-form-card',
+            DetailsFormCardViewController
+        )
     }
 
     protected static buildEntities(total: number) {
