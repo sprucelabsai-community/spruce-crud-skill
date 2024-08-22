@@ -19,8 +19,6 @@ import {
     SchemaError,
     SchemaValues,
 } from '@sprucelabs/schema'
-import DetailsFormCardViewController from '../detail/DetailFormCardViewController'
-import DetailSkillViewController from '../detail/DetailSkillViewController'
 import MasterListCardViewController from './MasterListCardViewController'
 
 export default class MasterSkillViewController extends AbstractSkillViewController {
@@ -184,13 +182,10 @@ export const buildMasterSkillViewOptions = (
 declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.types' {
     interface SkillViewControllerMap {
         'crud.master-skill-view': MasterSkillViewController
-        'crud.detail-skill-view': DetailSkillViewController
     }
 
     interface ViewControllerMap {
         'crud.master-skill-view': MasterSkillViewController
-        'crud.detail-skill-view': DetailSkillViewController
-        'crud.detail-form-card': DetailsFormCardViewController
     }
 
     interface ViewControllerOptionsMap {

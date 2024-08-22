@@ -24,3 +24,19 @@ export default class DetailsFormCardViewController extends AbstractViewControlle
         return this.cardVc.render()
     }
 }
+
+export interface DetailFormCardViewControllerOptions {}
+
+declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.types' {
+    interface SkillViewControllerMap {
+        'crud.detail-form-card': DetailsFormCardViewController
+    }
+
+    interface ViewControllerMap {
+        'crud.detail-form-card': DetailsFormCardViewController
+    }
+
+    interface ViewControllerOptionsMap {
+        'crud.detail-form-card': DetailFormCardViewControllerOptions
+    }
+}

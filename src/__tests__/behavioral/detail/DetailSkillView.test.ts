@@ -1,6 +1,6 @@
 import { vcAssert } from '@sprucelabs/heartwood-view-controllers'
 import { fake } from '@sprucelabs/spruce-test-fixtures'
-import { test } from '@sprucelabs/test-utils'
+import { test, assert, errorAssert } from '@sprucelabs/test-utils'
 import DetailFormCardViewController from '../../../detail/DetailFormCardViewController'
 import DetailSkillViewController from '../../../detail/DetailSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
@@ -11,7 +11,22 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
 
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
-        this.vc = this.views.Controller('crud.detail-skill-view', {})
+
+        this.vc = this.views.Controller('crud.detail-skill-view', {
+            entities: [],
+        })
+    }
+
+    @test()
+    protected static async throwsWithMissing() {
+        const err = assert.doesThrow(() =>
+            //@ts-ignore
+            this.views.Controller('crud.detail-skill-view', {})
+        )
+
+        errorAssert.assertError(err, 'MISSING_PARAMETERS', {
+            parameters: ['entities'],
+        })
     }
 
     @test()

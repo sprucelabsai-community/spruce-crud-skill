@@ -4,13 +4,17 @@ import {
     SkillView,
     ViewControllerOptions,
 } from '@sprucelabs/heartwood-view-controllers'
+import { assertOptions } from '@sprucelabs/schema'
 import DetailsFormCardViewController from './DetailFormCardViewController'
 
 export default class DetailSkillViewController extends AbstractSkillViewController {
     private detailsCardVc: DetailsFormCardViewController
-    public constructor(options: ViewControllerOptions) {
-        super(options)
 
+    public constructor(
+        options: ViewControllerOptions & DetailSkillViewControllerOptions
+    ) {
+        super(options)
+        assertOptions(options, ['entities'])
         this.detailsCardVc = this.Controller('crud.detail-form-card', {})
     }
 
@@ -18,5 +22,27 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
         return buildSkillViewLayout('big-left', {
             leftCards: [this.detailsCardVc.render()],
         })
+    }
+}
+
+export interface DetailSkillViewControllerOptions {
+    entities: DetailSkillViewEntity[]
+}
+
+export interface DetailSkillViewEntity {
+    id: string
+}
+
+declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.types' {
+    interface SkillViewControllerMap {
+        'crud.detail-skill-view': DetailSkillViewController
+    }
+
+    interface ViewControllerMap {
+        'crud.detail-skill-view': DetailSkillViewController
+    }
+
+    interface ViewControllerOptionsMap {
+        'crud.detail-skill-view': DetailSkillViewControllerOptions
     }
 }
