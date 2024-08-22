@@ -1,7 +1,7 @@
 {
   "name": "@sprucelabs/spruce-crud-utils",
   "description": "Abstractions and assertion utilities to make enable the rapid building of CRUD based behaviors in your skill!",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "skill": {
     "namespace": "crud"
   },
