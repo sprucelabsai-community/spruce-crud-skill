@@ -20,10 +20,12 @@ export default class RootSkillViewController extends AbstractSkillViewController
             'crud.master-skill-view',
             MasterSkillViewController
         )
+
         this.getVcFactory().setController(
             'crud.master-list-card',
             MasterListCardViewController
         )
+
         this.masterSkillView = this.MasterVc()
     }
 
@@ -44,6 +46,10 @@ export default class RootSkillViewController extends AbstractSkillViewController
             load: {
                 fqen: 'list-skills::v2020_12_25',
                 responseKey: 'skills',
+                paging: {
+                    pageSize: 5,
+                    shouldPageClientSide: true,
+                },
                 rowTransformer: (skill) => ({
                     id: skill.id,
                     cells: [
@@ -68,6 +74,10 @@ export default class RootSkillViewController extends AbstractSkillViewController
                 payload: {
                     shouldOnlyShowWhereIAmEmployed: true,
                 },
+                paging: {
+                    pageSize: 5,
+                    shouldPageClientSide: true,
+                },
                 rowTransformer: (location) => ({
                     id: location.id,
                     cells: [
@@ -89,6 +99,10 @@ export default class RootSkillViewController extends AbstractSkillViewController
             load: {
                 fqen: 'list-organizations::v2020_12_25',
                 responseKey: 'organizations',
+                paging: {
+                    pageSize: 5,
+                    shouldPageClientSide: true,
+                },
                 rowTransformer: (organization) => ({
                     id: organization.id,
                     cells: [

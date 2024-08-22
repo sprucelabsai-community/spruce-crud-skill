@@ -42,6 +42,10 @@ export default class RootSkillViewTest extends AbstractCrudTest {
             load: {
                 fqen: 'list-organizations::v2020_12_25',
                 responseKey: 'organizations',
+                paging: {
+                    pageSize: 5,
+                    shouldPageClientSide: true,
+                },
             },
         })
     }
@@ -66,6 +70,10 @@ export default class RootSkillViewTest extends AbstractCrudTest {
                 payload: {
                     shouldOnlyShowWhereIAmEmployed: true,
                 },
+                paging: {
+                    pageSize: 5,
+                    shouldPageClientSide: true,
+                },
             },
         })
     }
@@ -87,6 +95,10 @@ export default class RootSkillViewTest extends AbstractCrudTest {
             load: {
                 fqen: 'list-skills::v2020_12_25',
                 responseKey: 'skills',
+                paging: {
+                    pageSize: 5,
+                    shouldPageClientSide: true,
+                },
             },
         })
     }
