@@ -6,6 +6,8 @@ import {
     ListRow,
     ActiveRecordPagingOptions,
     splitCardsIntoLayouts,
+    SkillViewControllerId,
+    Router,
 } from '@sprucelabs/heartwood-view-controllers'
 import {
     EventContract,
@@ -24,13 +26,18 @@ import MasterListCardViewController from './MasterListCardViewController'
 export default class MasterSkillViewController extends AbstractSkillViewController {
     protected listCardsById: Record<string, MasterListCardViewController> = {}
     protected wasLoaded = false
+    protected clickRowDestination?: SkillViewControllerId
+    private router?: Router
 
     public constructor(
         options: ViewControllerOptions & MasterSkillViewControllerOptions
     ) {
         super(options)
-        const { entities } = assertOptions(options, ['entities'])
+        const { entities, clickRowDestination } = assertOptions(options, [
+            'entities',
+        ])
 
+        this.clickRowDestination = clickRowDestination
         this.validateEntities(entities)
         this.buildCards(entities)
     }
@@ -51,12 +58,24 @@ export default class MasterSkillViewController extends AbstractSkillViewControll
                 'crud.master-list-card',
                 {
                     entity,
+                    onClickRow: this.handleClickRow.bind(this),
                 }
             )
         }
     }
 
+    private async handleClickRow(record: Record<string, any>) {
+        if (this.clickRowDestination) {
+            await this.router?.redirect(this.clickRowDestination, {
+                action: 'edit',
+                entityId: record.id,
+            })
+        }
+    }
+
     public async load(options: SkillViewControllerLoadOptions) {
+        const { router } = options
+        this.router = router
         this.wasLoaded = true
         await Promise.all(this.listCardVcs.map((vc) => vc.load(options)))
     }
@@ -99,6 +118,7 @@ export default class MasterSkillViewController extends AbstractSkillViewControll
 }
 
 export interface MasterSkillViewControllerOptions {
+    clickRowDestination?: SkillViewControllerId
     entities: MasterSkillViewListEntity<any, any>[]
 }
 

@@ -2,6 +2,7 @@ import {
     AbstractSkillViewController,
     ListRow,
     SkillView,
+    SkillViewControllerId,
     SkillViewControllerLoadOptions,
 } from '@sprucelabs/heartwood-view-controllers'
 import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
@@ -10,6 +11,7 @@ import crudAssert, {
     ExpectedListEntityOptions,
 } from '../../../assertions/crudAssert'
 import MasterSkillViewController, {
+    MasterSkillViewControllerOptions,
     MasterSkillViewListEntity,
 } from '../../../master/MasterSkillViewController'
 import {
@@ -21,8 +23,11 @@ import AbstractAssertTest from './AbstractAssertTest'
 @fake.login()
 export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
     private static fakeSvc: SkillViewWithMasterView
+    private static clickRowDestination?: SkillViewControllerId
+
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
+        delete this.clickRowDestination
         this.views.setController('fake-with-master', SkillViewWithMasterView)
         this.fakeSvc = this.views.Controller('fake-with-master', {})
     }
@@ -73,9 +78,43 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
     }
 
     @test()
+    protected static async throwsIfClickDestinationDoesNotMatch() {
+        const destination = 'crud.root'
+        this.dropInMasterWithClickDestination(destination)
+        assert.doesThrow(
+            () =>
+                this.assertRendersMasterSkillView({
+                    clickRowDestination: 'crud.master-skill-view',
+                }),
+            'options'
+        )
+    }
+
+    @test(
+        'passes if click destination is crud.master-skill-view',
+        'crud.master-skill-view'
+    )
+    @test('passes if click destination is crud.root', 'crud.root')
+    protected static async passesIfClickDestinationMatches(
+        destination: SkillViewControllerId
+    ) {
+        this.dropInMasterWithClickDestination(destination)
+        this.assertRendersMasterSkillView({
+            clickRowDestination: destination,
+        })
+    }
+
+    @test()
     protected static async doesNotThrowIfActuallyRenderingMasterViewController() {
         this.dropInMasterSkillView()
         this.assertRendersMasterSkillView()
+    }
+
+    @test()
+    protected static async passesIfEmptyExpectedOptionsPassed() {
+        this.clickRowDestination = 'crud.root'
+        this.dropInMasterSkillView()
+        this.assertRendersMasterSkillView({})
     }
 
     @test()
@@ -286,6 +325,13 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
         )
     }
 
+    private static dropInMasterWithClickDestination(
+        destination: SkillViewControllerId
+    ) {
+        this.clickRowDestination = destination
+        this.dropInMasterSkillView()
+    }
+
     private static async assertMasterListRendersListThrows(
         options: ExpectedListEntityOptions
     ) {
@@ -320,7 +366,10 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
     private static dropInMasterSkillView(
         entities?: MasterSkillViewListEntity<any, any>[]
     ) {
-        this.fakeSvc.dropInMasterSkillView(entities)
+        this.fakeSvc.dropInMasterSkillView({
+            entities,
+            clickRowDestination: this.clickRowDestination,
+        })
     }
 
     private static assertMissingViewControllerThrowsAsExpected(
@@ -336,8 +385,10 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
         assert.doesThrow(() => this.assertRendersMasterSkillView(), message)
     }
 
-    private static assertRendersMasterSkillView() {
-        crudAssert.skillViewRendersMasterView(this.fakeSvc)
+    private static assertRendersMasterSkillView(
+        expectedOptions?: Partial<MasterSkillViewControllerOptions>
+    ) {
+        crudAssert.skillViewRendersMasterView(this.fakeSvc, expectedOptions)
     }
 
     private static async assertMasterSkillViewRendersListThrowsWhenListNotFound() {
@@ -357,11 +408,15 @@ class SkillViewWithMasterView extends AbstractSkillViewController {
     public entities?: MasterSkillViewListEntity[]
     public onWillLoad?: () => void
 
-    public dropInMasterSkillView(entities?: MasterSkillViewListEntity[]) {
+    public dropInMasterSkillView(
+        options: Partial<MasterSkillViewControllerOptions>
+    ) {
+        const { entities } = options ?? {}
         this.entities = (entities ?? [
             buildLocationTestEntity(),
         ]) as MasterSkillViewListEntity[]
         this.masterSkillView = this.Controller('crud.master-skill-view', {
+            ...options,
             entities: this.entities as any,
         })
     }

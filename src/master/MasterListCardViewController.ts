@@ -19,7 +19,7 @@ export default class MasterListCardViewController extends AbstractViewController
     ) {
         super(options)
 
-        const { entity } = assertOptions(options, [
+        const { entity, onClickRow } = assertOptions(options, [
             'entity.id',
             'entity.title',
             'entity.load.fqen',
@@ -30,7 +30,7 @@ export default class MasterListCardViewController extends AbstractViewController
         this.entity = entity
 
         const { load } = entity
-        const { fqen, ...activeOptions } = load
+        const { fqen, rowTransformer, ...activeOptions } = load
 
         this.activeRecordCardVc = this.Controller(
             'active-record-card',
@@ -40,6 +40,11 @@ export default class MasterListCardViewController extends AbstractViewController
                     title: entity.title,
                 },
                 eventName: fqen,
+                rowTransformer: (record) => {
+                    const row = rowTransformer(record)
+                    row.onClick = () => onClickRow?.(record)
+                    return row
+                },
                 ...activeOptions,
             })
         )
@@ -64,6 +69,7 @@ export default class MasterListCardViewController extends AbstractViewController
 
 export interface MasterListCardViewControllerOptions {
     entity: MasterSkillViewListEntity<SkillEventContract>
+    onClickRow?: (entity: Record<string, any>) => void | Promise<void>
 }
 
 declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.types' {

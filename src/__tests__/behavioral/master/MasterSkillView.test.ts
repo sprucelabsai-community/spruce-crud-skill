@@ -1,5 +1,9 @@
-import { vcAssert } from '@sprucelabs/heartwood-view-controllers'
-import { fake } from '@sprucelabs/spruce-test-fixtures'
+import {
+    interactor,
+    SkillViewControllerId,
+    vcAssert,
+} from '@sprucelabs/heartwood-view-controllers'
+import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
 import { test, assert, errorAssert, generateId } from '@sprucelabs/test-utils'
 import MasterListCardViewController from '../../../master/MasterListCardViewController'
 import {
@@ -14,6 +18,12 @@ import { buildLocationTestEntity } from '../../support/test.utils'
 @fake.login()
 export default class MasterSkillViewTest extends AbstractCrudTest {
     private static vc: SpyMasterSkillView
+    private static clickRowDestination?: SkillViewControllerId
+
+    protected static async beforeEach() {
+        await super.beforeEach()
+        delete this.clickRowDestination
+    }
 
     @test()
     protected static async throwsWithMissingEntities() {
@@ -49,7 +59,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
 
     @test()
     protected static async canCreateWithOneEntity() {
-        this.VcWithTotalEntities(1)
+        this.setupVcWithTotalEntities(1)
     }
 
     @test()
@@ -69,13 +79,13 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
 
     @test()
     protected static async rendersCardForFirstEntity() {
-        const entities = this.VcWithTotalEntities(1)
+        const entities = this.setupVcWithTotalEntities(1)
         vcAssert.assertSkillViewRendersCard(this.vc, entities[0].id)
     }
 
     @test()
     protected static async rendersCardsForAllEntities() {
-        const entities = this.VcWithTotalEntities(3)
+        const entities = this.setupVcWithTotalEntities(3)
         vcAssert.assertSkillViewRendersCards(
             this.vc,
             entities.map((e) => e.id)
@@ -84,7 +94,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
 
     @test()
     protected static async rendersMasterListCardForEntityCard() {
-        const entities = this.VcWithTotalEntities(1)
+        const entities = this.setupVcWithTotalEntities(1)
         const cardVc = vcAssert.assertSkillViewRendersCard(
             this.vc,
             entities[0].id
@@ -94,7 +104,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
 
     @test()
     protected static async callsLoadOnFirstListCard() {
-        this.VcWithTotalEntities(2)
+        this.setupVcWithTotalEntities(2)
 
         await this.load()
 
@@ -103,14 +113,14 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
 
     @test()
     protected static async doesNotCallLoadOnSecondListCard() {
-        this.VcWithTotalEntities(2)
+        this.setupVcWithTotalEntities(2)
         await this.load()
         this.listCardVcs[1].assertWasLoaded()
     }
 
     @test()
     protected static async loadOptionsPassedToCards() {
-        this.VcWithTotalEntities(1)
+        this.setupVcWithTotalEntities(1)
         await this.load()
         const options = this.views.getRouter().buildLoadOptions()
         this.listCardVcs[0].assertWasLoadedWithOptions(options)
@@ -184,6 +194,41 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
         this.assertPayloadForListAtIndexEquals(1, payload)
     }
 
+    @test('can redirect on click to crud.root', 'crud.root')
+    @test('can redirect on click to crud.detail-example', 'crud.detail-example')
+    @seed('locations', 1)
+    protected static async canSetClickRowDestinationAndClickForRedirect(
+        destination: SkillViewControllerId
+    ) {
+        this.clickRowDestination = destination
+        this.setupVcWithTotalEntities(1)
+        await this.load()
+
+        await vcAssert.assertActionRedirects({
+            action: () => this.clickFirstRowOfFirstList(),
+            destination: {
+                id: this.clickRowDestination,
+                args: {
+                    action: 'edit',
+                    entityId: this.fakedLocations[0].id,
+                },
+            },
+            router: this.views.getRouter(),
+        })
+    }
+
+    @test()
+    @seed('locations', 1)
+    protected static async clickingOnRowDoesNothingIfNoDestinationSet() {
+        this.setupWith1EntityAndGetId()
+        await this.load()
+        await this.clickFirstRowOfFirstList()
+    }
+
+    private static clickFirstRowOfFirstList(): any {
+        return interactor.clickRow(this.listCardVcs[0].getListVc(), 0)
+    }
+
     private static setPayload(id: string, payload?: Record<string, any>) {
         this.vc.setPayload(id, payload)
     }
@@ -229,7 +274,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
         await this.views.load(this.vc)
     }
 
-    private static VcWithTotalEntities(total: number) {
+    private static setupVcWithTotalEntities(total: number) {
         const entities = this.buildEntities(total)
 
         this.setupWithEntities(entities)
@@ -241,6 +286,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
         entities: MasterSkillViewListEntity<any, any>[]
     ) {
         this.vc = this.Vc({
+            clickRowDestination: this.clickRowDestination,
             entities,
         })
     }

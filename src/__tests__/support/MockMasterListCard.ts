@@ -34,7 +34,11 @@ export default class MockMasterListCard extends MasterListCardViewController {
     }
 
     public assertRendersRow(id: string) {
-        listAssert.listRendersRow(this.activeRecordCardVc.getListVc(), id)
+        listAssert.listRendersRow(this.getListVc(), id)
+    }
+
+    public getListVc() {
+        return this.activeRecordCardVc.getListVc()
     }
 
     public assertTargetEquals(target?: Record<string, any>) {

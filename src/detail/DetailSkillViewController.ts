@@ -31,6 +31,7 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
             throw new SchemaError({
                 code: 'INVALID_PARAMETERS',
                 parameters: ['entities'],
+                friendlyMessage: `You gotta supply at least one entity.`,
             })
         }
 

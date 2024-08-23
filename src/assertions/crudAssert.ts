@@ -19,6 +19,7 @@ import DetailSkillViewController, {
 } from '../detail/DetailSkillViewController'
 import MasterListCardViewController from '../master/MasterListCardViewController'
 import MasterSkillViewController, {
+    MasterSkillViewControllerOptions,
     MasterSkillViewListEntity,
 } from '../master/MasterSkillViewController'
 
@@ -36,7 +37,10 @@ const crudAssert = {
         views.setController('active-record-card', MockActiveRecordCard)
     },
 
-    skillViewRendersMasterView(skillView: SkillViewController) {
+    skillViewRendersMasterView(
+        skillView: SkillViewController,
+        expectedOptions?: Partial<MasterSkillViewControllerOptions>
+    ) {
         assertBeforeEachRan()
 
         assertViewSetToFactory(
@@ -52,12 +56,13 @@ const crudAssert = {
         assertOptions({ skillView }, ['skillView'])
 
         const rendered = renderUtil.render(skillView)
+        let vc: SpyMasterSkillView | undefined
 
         try {
-            vcAssert.assertControllerInstanceOf(
+            vc = vcAssert.assertControllerInstanceOf(
                 rendered.controller!,
                 MasterSkillViewController
-            )
+            ) as SpyMasterSkillView
         } catch {
             assert.fail(`You are not rendering a MasterSkillViewController. Follow these steps:
 1. In your constructor (after setting the Views to the ViewFactory): this.masterSkillView = this.Controller('crud.master-skill-view',{}).
@@ -66,6 +71,14 @@ const crudAssert = {
     public render(): SkillView { 
         return this.masterSkillView.render() 
     }`)
+        }
+
+        if (expectedOptions?.clickRowDestination) {
+            assert.isEqual(
+                vc?.clickRowDestination,
+                expectedOptions.clickRowDestination,
+                `The expected options do not match!`
+            )
         }
     },
 
@@ -242,6 +255,7 @@ function assertBeforeEachRan() {
 
 class SpyMasterSkillView extends MasterSkillViewController {
     public wasLoaded = false
+    public clickRowDestination?: SkillViewControllerId
 }
 
 class SpyMasterListCard extends MasterListCardViewController {
