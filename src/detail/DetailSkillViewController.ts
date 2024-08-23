@@ -54,6 +54,11 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
 
         this.router = router
         const entityId = args.entityId
+        const entity = this.findEntity(entityId)
+        await this.detailsCardVc.load(entity.form)
+    }
+
+    private findEntity(entityId: string) {
         const entity = this.entities.find((e) => e.id === entityId)
 
         if (!entity) {
@@ -62,7 +67,7 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
                 entityId,
             })
         }
-        await this.detailsCardVc.load(this.entities[0].form)
+        return entity
     }
 
     public render(): SkillView {

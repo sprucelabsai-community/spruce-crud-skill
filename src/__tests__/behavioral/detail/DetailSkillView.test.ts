@@ -9,11 +9,15 @@ import { fake, TestRouter } from '@sprucelabs/spruce-test-fixtures'
 import { test, assert, errorAssert, generateId } from '@sprucelabs/test-utils'
 import DetailFormCardViewController from '../../../detail/DetailFormCardViewController'
 import DetailSkillViewController, {
+    DetailForm,
     DetailSkillViewArgs,
     DetailSkillViewEntity,
 } from '../../../detail/DetailSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
-import { detailFormOptions1 } from '../../support/detailFormOptions'
+import {
+    detailFormOptions1,
+    detailFormOptions2,
+} from '../../support/detailFormOptions'
 import MockDetailFormCard from '../../support/MockDetailFormCard'
 
 @fake.login()
@@ -26,9 +30,11 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
 
+        TestRouter.setShouldThrowWhenRedirectingToBadSvc(false)
+
         this.entityId = generateId()
         this.entities = []
-        this.cancelDestination = 'crud.root'
+        this.cancelDestination = generateId() as SkillViewControllerId
         this.views.setController('forms.card', SpyFormCardViewController)
         this.views.setController('crud.detail-form-card', MockDetailFormCard)
         this.views.setController('crud.detail-skill-view', SpyDetailSkillView)
@@ -107,6 +113,17 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
     }
 
     @test()
+    protected static async loadsWithSecondEntity() {
+        this.setupDetailView([
+            this.buildDetailEntity(generateId()),
+            this.buildDetailEntity(this.entityId, detailFormOptions2),
+        ])
+
+        await this.loadWithEntity()
+        this.detailFormVc.assertFormOptionsEqual(this.entities[1].form)
+    }
+
+    @test()
     protected static async stillLoadsDetailsAfterLoad() {
         await this.loadWithEntity()
         this.assertRendersDetailsCard()
@@ -114,11 +131,6 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
 
     @test()
     protected static async cancelAfterLoadRedirectsToDestination() {
-        this.cancelDestination = generateId() as SkillViewControllerId
-        TestRouter.setShouldThrowWhenRedirectingToBadSvc(false)
-
-        this.setupWithSingleEntity()
-
         await this.loadWithEntity()
 
         await vcAssert.assertActionRedirects({
@@ -143,14 +155,18 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         await this.load({ entityId: this.entityId })
     }
 
-    private static buildDetailEntity(id?: string): DetailSkillViewEntity {
+    private static buildDetailEntity(
+        id?: string,
+        form?: DetailForm
+    ): DetailSkillViewEntity {
         return {
             id: id ?? this.entityId,
-            form: detailFormOptions1,
+            form: form ?? detailFormOptions1,
         }
     }
 
     private static setupDetailView(entities: DetailSkillViewEntity[]) {
+        this.entities = entities
         this.vc = this.views.Controller('crud.detail-skill-view', {
             entities,
             cancelDestination: this.cancelDestination,
@@ -168,7 +184,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
 
     private static setupWithSingleEntity() {
         const entity = this.buildDetailEntity()
-        this.entities = [entity]
+
         this.setupDetailView([entity])
     }
 
