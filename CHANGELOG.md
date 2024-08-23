@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v1.2.12...v1.3.0) (2024-08-23)
+
+
+### Features
+
+* can assert detail options ([66ea280](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/66ea280))
+
 ## [1.2.12](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v1.2.11...v1.2.12) (2024-08-23)
 
 ## [1.2.11](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v1.2.10...v1.2.11) (2024-08-23)
