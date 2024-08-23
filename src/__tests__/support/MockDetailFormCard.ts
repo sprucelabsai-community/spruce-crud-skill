@@ -1,9 +1,9 @@
 import { SpyFormCardViewController } from '@sprucelabs/spruce-form-utils'
 import { assert } from '@sprucelabs/test-utils'
-import DetailsFormCardViewController from '../../detail/DetailFormCardViewController'
+import DetailFormCardViewController from '../../detail/DetailFormCardViewController'
 import { DetailForm } from '../../detail/DetailSkillViewController'
 
-export default class MockDetailFormCard extends DetailsFormCardViewController {
+export default class MockDetailFormCard extends DetailFormCardViewController {
     public assertFormOptionsEqual(options: DetailForm) {
         const formVc = this.getFormCardVc()
         assert.isTruthy(

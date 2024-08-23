@@ -197,6 +197,18 @@ const crudAssert = {
         skillView: SkillViewController,
         options?: Partial<DetailSkillViewControllerOptions>
     ) {
+        assertBeforeEachRan()
+
+        assertViewSetToFactory(
+            'crud.detail-skill-view',
+            'DetailSkillViewController'
+        )
+
+        assertViewSetToFactory(
+            'crud.detail-form-card',
+            'DetailFormCardViewController'
+        )
+
         assertOptions(
             {
                 skillView,

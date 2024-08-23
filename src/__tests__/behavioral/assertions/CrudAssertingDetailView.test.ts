@@ -35,6 +35,22 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     }
 
     @test()
+    protected static async throwsIfDetailViewNotSetInFactory() {
+        this.assertRendersDetailThrowsWithMissingView(
+            'crud.detail-skill-view',
+            'DetailSkillViewController'
+        )
+    }
+
+    @test()
+    protected static async throwsIfDetailFormNetSetInFactory() {
+        this.assertRendersDetailThrowsWithMissingView(
+            'crud.detail-form-card',
+            'DetailFormCardViewController'
+        )
+    }
+
+    @test()
     protected static async throwsIfSkillViewIsNotRenderingDetailView() {
         assert.doesThrow(
             () => crudAssert.skillViewRendersDetailView(this.vc),
@@ -108,6 +124,14 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
             entities: [buildDetailEntity()],
             ...options,
         })
+    }
+
+    private static assertRendersDetailThrowsWithMissingView(
+        id: string,
+        className: string
+    ) {
+        this.views.setController(id as any, undefined as any)
+        assert.doesThrow(() => this.assertRendersDetailView(), className)
     }
 }
 

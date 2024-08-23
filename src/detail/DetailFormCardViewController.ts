@@ -8,7 +8,7 @@ import { assertOptions } from '@sprucelabs/schema'
 import { FormCardViewController } from '@sprucelabs/spruce-form-utils'
 import { DetailForm } from './DetailSkillViewController'
 
-export default class DetailsFormCardViewController extends AbstractViewController<Card> {
+export default class DetailFormCardViewController extends AbstractViewController<Card> {
     protected formCardVc?: FormCardViewController
     private cardVc: CardViewController
     private onCancelHandler: OnCancelHandler
@@ -73,11 +73,11 @@ export interface DetailFormCardViewControllerOptions {
 
 declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.types' {
     interface SkillViewControllerMap {
-        'crud.detail-form-card': DetailsFormCardViewController
+        'crud.detail-form-card': DetailFormCardViewController
     }
 
     interface ViewControllerMap {
-        'crud.detail-form-card': DetailsFormCardViewController
+        'crud.detail-form-card': DetailFormCardViewController
     }
 
     interface ViewControllerOptionsMap {

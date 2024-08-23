@@ -10,10 +10,10 @@ import {
 import { assertOptions, SchemaError } from '@sprucelabs/schema'
 import { FormCardViewControllerOptions } from '@sprucelabs/spruce-form-utils'
 import SpruceError from '../errors/SpruceError'
-import DetailsFormCardViewController from './DetailFormCardViewController'
+import DetailFormCardViewController from './DetailFormCardViewController'
 
 export default class DetailSkillViewController extends AbstractSkillViewController {
-    protected detailsCardVc: DetailsFormCardViewController
+    protected detailsCardVc: DetailFormCardViewController
     private router?: Router
     protected entities: DetailSkillViewEntity[]
     protected cancelDestination: SkillViewControllerId

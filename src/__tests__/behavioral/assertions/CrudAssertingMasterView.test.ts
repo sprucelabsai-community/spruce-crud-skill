@@ -376,7 +376,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
         id: string,
         className: string
     ) {
-        this.views.getFactory().setController(id, undefined as any)
+        this.views.setController(id as any, undefined as any)
         this.assertRendersMasterViewThrows(id)
         this.assertRendersMasterViewThrows(className)
     }

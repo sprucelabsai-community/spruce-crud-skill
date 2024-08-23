@@ -1,10 +1,17 @@
-import { fake } from '@sprucelabs/spruce-test-fixtures'
+import {
+    AbstractSpruceFixtureTest,
+    fake,
+} from '@sprucelabs/spruce-test-fixtures'
 import { test } from '@sprucelabs/test-utils'
 import { crudAssert } from '../../index-module'
-import AbstractCrudTest from '../support/AbstractCrudTest'
 
 @fake.login()
-export default class DetailExampleSkillViewTest extends AbstractCrudTest {
+export default class DetailExampleSkillViewTest extends AbstractSpruceFixtureTest {
+    protected static async beforeEach(): Promise<void> {
+        await super.beforeEach()
+        crudAssert.beforeEach(this.views)
+    }
+
     @test()
     protected static async rendersDetailSkillView() {
         const vc = this.views.Controller('crud.detail-example', {})

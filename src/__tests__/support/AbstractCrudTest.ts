@@ -1,5 +1,5 @@
 import { AbstractSpruceFixtureTest } from '@sprucelabs/spruce-test-fixtures'
-import DetailsFormCardViewController from '../../detail/DetailFormCardViewController'
+import DetailFormCardViewController from '../../detail/DetailFormCardViewController'
 import DetailSkillViewController from '../../detail/DetailSkillViewController'
 import MockMasterListCard from './MockMasterListCard'
 import SpyMasterSkillView from './SpyMasterSkillView'
@@ -17,7 +17,7 @@ export default abstract class AbstractCrudTest extends AbstractSpruceFixtureTest
         )
         this.views.setController(
             'crud.detail-form-card',
-            DetailsFormCardViewController
+            DetailFormCardViewController
         )
     }
 

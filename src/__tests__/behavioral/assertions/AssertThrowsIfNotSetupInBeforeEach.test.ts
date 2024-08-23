@@ -40,4 +40,13 @@ export default class AssertThrowsIfNotSetupInBeforeEachTest extends AbstractCrud
             'crudAssert.beforeEach'
         )
     }
+
+    @test()
+    protected static async assertRendersDetailViewThrowsWithoutBeforeEach() {
+        await assert.doesThrowAsync(
+            //@ts-ignore
+            () => crudAssert.skillViewRendersDetailView(),
+            'crudAssert.beforeEach'
+        )
+    }
 }
