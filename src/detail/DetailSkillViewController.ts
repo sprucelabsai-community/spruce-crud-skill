@@ -15,7 +15,7 @@ import DetailsFormCardViewController from './DetailFormCardViewController'
 export default class DetailSkillViewController extends AbstractSkillViewController {
     protected detailsCardVc: DetailsFormCardViewController
     private router?: Router
-    private entities: DetailSkillViewEntity[]
+    protected entities: DetailSkillViewEntity[]
     protected cancelDestination: SkillViewControllerId
 
     public constructor(

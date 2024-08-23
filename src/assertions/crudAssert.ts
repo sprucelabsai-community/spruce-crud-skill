@@ -15,6 +15,7 @@ import { ViewFixture } from '@sprucelabs/spruce-test-fixtures'
 import { assert, RecursivePartial } from '@sprucelabs/test-utils'
 import DetailSkillViewController, {
     DetailSkillViewControllerOptions,
+    DetailSkillViewEntity,
 } from '../detail/DetailSkillViewController'
 import MasterListCardViewController from '../master/MasterListCardViewController'
 import MasterSkillViewController, {
@@ -209,14 +210,12 @@ const crudAssert = {
         }
 
         if (options) {
-            assert.isEqual(
-                options.cancelDestination,
-                vc?.cancelDestination,
-                `The options you passed to your DetailSkillView don't match the expected options.`
-            )
-
-            assert.isFalsy(
-                options.entities,
+            assert.doesInclude(
+                {
+                    cancelDestination: vc?.cancelDestination,
+                    entities: vc?.entities,
+                },
+                options,
                 `The options you passed to your DetailSkillView don't match the expected options.`
             )
         }
@@ -252,6 +251,7 @@ class SpyMasterListCard extends MasterListCardViewController {
 
 class SpyDetailSkillView extends DetailSkillViewController {
     public cancelDestination!: SkillViewControllerId
+    public entities!: DetailSkillViewEntity[]
 }
 
 export type ExpectedListEntityOptions<

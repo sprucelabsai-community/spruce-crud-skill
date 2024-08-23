@@ -78,10 +78,20 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
         })
     }
 
+    @test()
+    protected static async passesIfEntitiesMatch() {
+        const entities = [buildDetailEntity(), buildDetailEntity()]
+        this.dropInDetailSkillView({ entities })
+        this.assertRendersDetailView({ entities })
+    }
+
     private static assertRendersDetailFewThrowsForMissmatchedOptions(
         options: Partial<DetailSkillViewControllerOptions>
     ) {
-        assert.doesThrow(() => this.assertRendersDetailView(options), 'options')
+        assert.doesThrow(
+            () => this.assertRendersDetailView(options),
+            'Expected'
+        )
     }
 
     private static assertRendersDetailView(
