@@ -42,7 +42,7 @@ export default class MasterListCardViewController extends AbstractViewController
                 eventName: fqen,
                 rowTransformer: (record) => {
                     const row = rowTransformer(record)
-                    row.onClick = () => onClickRow?.(record)
+                    row.onClick = () => onClickRow?.(entity.id, record)
                     return row
                 },
                 ...activeOptions,
@@ -69,7 +69,10 @@ export default class MasterListCardViewController extends AbstractViewController
 
 export interface MasterListCardViewControllerOptions {
     entity: MasterSkillViewListEntity<SkillEventContract>
-    onClickRow?: (entity: Record<string, any>) => void | Promise<void>
+    onClickRow?: (
+        entityId: string,
+        record: Record<string, any>
+    ) => void | Promise<void>
 }
 
 declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.types' {

@@ -64,11 +64,15 @@ export default class MasterSkillViewController extends AbstractSkillViewControll
         }
     }
 
-    private async handleClickRow(record: Record<string, any>) {
+    private async handleClickRow(
+        entityId: string,
+        record: Record<string, any>
+    ) {
         if (this.clickRowDestination) {
             await this.router?.redirect(this.clickRowDestination, {
                 action: 'edit',
-                entityId: record.id,
+                recordId: record.id,
+                entityId,
             })
         }
     }

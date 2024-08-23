@@ -31,6 +31,7 @@ export default class RootSkillViewController extends AbstractSkillViewController
 
     private MasterVc(): MasterSkillViewController {
         return this.Controller('crud.master-skill-view', {
+            clickRowDestination: 'crud.detail-example',
             entities: [
                 this.buildOrganizationsListEntity(),
                 this.buildLocationsListEntity(),

@@ -12,10 +12,10 @@ export default class DetailExampleSkillViewController extends AbstractSkillViewC
     public constructor(options: ViewControllerOptions) {
         super(options)
         this.detailSkillView = this.Controller('crud.detail-skill-view', {
-            cancelDestination: 'aoeu',
+            cancelDestination: 'crud.detail-example',
             entities: [
                 {
-                    form: {},
+                    form: {} as any,
                     id: 'aoeu',
                 },
             ],

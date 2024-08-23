@@ -201,7 +201,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
         destination: SkillViewControllerId
     ) {
         this.clickRowDestination = destination
-        this.setupVcWithTotalEntities(1)
+        const [entity] = this.setupVcWithTotalEntities(1)
         await this.load()
 
         await vcAssert.assertActionRedirects({
@@ -210,7 +210,8 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
                 id: this.clickRowDestination,
                 args: {
                     action: 'edit',
-                    entityId: this.fakedLocations[0].id,
+                    entityId: entity.id,
+                    recordId: this.fakedLocations[0].id,
                 },
             },
             router: this.views.getRouter(),
