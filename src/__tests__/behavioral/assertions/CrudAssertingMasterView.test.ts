@@ -12,20 +12,19 @@ import crudAssert, {
 import MasterSkillViewController, {
     MasterSkillViewListEntity,
 } from '../../../master/MasterSkillViewController'
-import AbstractCrudTest from '../../support/AbstractCrudTest'
 import {
     buildLocationTestEntity,
     buildLocationTestPagingEntity,
 } from '../../support/test.utils'
+import AbstractAssertTest from './AbstractAssertTest'
 
 @fake.login()
-export default class CrudAssertTest extends AbstractCrudTest {
-    private static fakeSvc: FakeSkillView
+export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
+    private static fakeSvc: SkillViewWithMasterView
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
-        this.runBeforeEach()
-        this.views.setController('fake', FakeSkillView)
-        this.fakeSvc = this.views.Controller('fake', {})
+        this.views.setController('fake-with-master', SkillViewWithMasterView)
+        this.fakeSvc = this.views.Controller('fake-with-master', {})
     }
 
     @test()
@@ -38,7 +37,7 @@ export default class CrudAssertTest extends AbstractCrudTest {
     }
 
     @test()
-    protected static async throwsWithMissing() {
+    protected static async rendersMasterViewThrowsWithMissing() {
         const err = assert.doesThrow(() =>
             //@ts-ignore
             crudAssert.skillViewRendersMasterView()
@@ -337,10 +336,6 @@ export default class CrudAssertTest extends AbstractCrudTest {
         assert.doesThrow(() => this.assertRendersMasterSkillView(), message)
     }
 
-    private static runBeforeEach() {
-        crudAssert.beforeEach(this.views)
-    }
-
     private static assertRendersMasterSkillView() {
         crudAssert.skillViewRendersMasterView(this.fakeSvc)
     }
@@ -357,7 +352,7 @@ export default class CrudAssertTest extends AbstractCrudTest {
     }
 }
 
-class FakeSkillView extends AbstractSkillViewController {
+class SkillViewWithMasterView extends AbstractSkillViewController {
     private masterSkillView?: MasterSkillViewController
     public entities?: MasterSkillViewListEntity[]
     public onWillLoad?: () => void
@@ -391,10 +386,10 @@ class FakeSkillView extends AbstractSkillViewController {
 
 declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.types' {
     interface SkillViewControllerMap {
-        fake: FakeSkillView
+        'fake-with-master': SkillViewWithMasterView
     }
 
     interface ViewControllerMap {
-        fake: FakeSkillView
+        'fake-with-master': SkillViewWithMasterView
     }
 }

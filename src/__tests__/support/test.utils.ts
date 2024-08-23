@@ -1,6 +1,11 @@
 import { ListRow } from '@sprucelabs/heartwood-view-controllers'
 import { generateId } from '@sprucelabs/test-utils'
+import {
+    DetailForm,
+    DetailSkillViewEntity,
+} from '../../detail/DetailSkillViewController'
 import { buildMasterListEntity } from '../../master/MasterSkillViewController'
+import { detailFormOptions1 } from './detailFormOptions'
 
 export function buildLocationTestEntity(id?: string) {
     return buildMasterListEntity({
@@ -70,4 +75,14 @@ export function buildOrganizationTestEntity() {
                 }) as ListRow,
         },
     })
+}
+
+export function buildDetailEntity(
+    id?: string,
+    form?: DetailForm
+): DetailSkillViewEntity {
+    return {
+        id: id ?? generateId(),
+        form: form ?? detailFormOptions1,
+    }
 }

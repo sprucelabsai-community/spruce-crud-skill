@@ -2,6 +2,7 @@ import {
     MockActiveRecordCard,
     renderUtil,
     SkillViewController,
+    SkillViewControllerId,
     vcAssert,
 } from '@sprucelabs/heartwood-view-controllers'
 import {
@@ -12,6 +13,9 @@ import {
 import { assertOptions } from '@sprucelabs/schema'
 import { ViewFixture } from '@sprucelabs/spruce-test-fixtures'
 import { assert, RecursivePartial } from '@sprucelabs/test-utils'
+import DetailSkillViewController, {
+    DetailSkillViewControllerOptions,
+} from '../detail/DetailSkillViewController'
 import MasterListCardViewController from '../master/MasterListCardViewController'
 import MasterSkillViewController, {
     MasterSkillViewListEntity,
@@ -174,6 +178,49 @@ const crudAssert = {
             `The target of list ${listCardId} is not being set to the expected value. Try 'this.masterSkillView.setListTarget(...)'`
         )
     },
+
+    skillViewRendersDetailView(
+        skillView: SkillViewController,
+        options?: Partial<DetailSkillViewControllerOptions>
+    ) {
+        assertOptions(
+            {
+                skillView,
+            },
+            ['skillView']
+        )
+
+        const rendered = renderUtil.render(skillView)
+        let vc: SpyDetailSkillView | undefined
+
+        try {
+            vc = vcAssert.assertControllerInstanceOf(
+                rendered.controller!,
+                DetailSkillViewController
+            ) as SpyDetailSkillView
+        } catch {
+            assert.fail(`You are not rendering a DetailSkillViewController. Follow these steps:
+1. In your constructor (after setting the Views to the ViewFactory): this.detailSkillView = this.Controller('crud.master-detail-view',{}).
+2. Fix the errors with stub data
+3. Update your SkillView's render method: 
+    public render(): SkillView { 
+        return this.detailSkillView.render() 
+    }`)
+        }
+
+        if (options) {
+            assert.isEqual(
+                options.cancelDestination,
+                vc?.cancelDestination,
+                `The options you passed to your DetailSkillView don't match the expected options.`
+            )
+
+            assert.isFalsy(
+                options.entities,
+                `The options you passed to your DetailSkillView don't match the expected options.`
+            )
+        }
+    },
 }
 
 export default crudAssert
@@ -201,6 +248,10 @@ class SpyMasterSkillView extends MasterSkillViewController {
 class SpyMasterListCard extends MasterListCardViewController {
     public entity!: MasterSkillViewListEntity
     public activeRecordCardVc!: MockActiveRecordCard
+}
+
+class SpyDetailSkillView extends DetailSkillViewController {
+    public cancelDestination!: SkillViewControllerId
 }
 
 export type ExpectedListEntityOptions<

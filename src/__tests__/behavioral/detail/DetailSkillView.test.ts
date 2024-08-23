@@ -14,11 +14,9 @@ import DetailSkillViewController, {
     DetailSkillViewEntity,
 } from '../../../detail/DetailSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
-import {
-    detailFormOptions1,
-    detailFormOptions2,
-} from '../../support/detailFormOptions'
+import { detailFormOptions2 } from '../../support/detailFormOptions'
 import MockDetailFormCard from '../../support/MockDetailFormCard'
+import { buildDetailEntity } from '../../support/test.utils'
 
 @fake.login()
 export default class DetailSkillViewTest extends AbstractCrudTest {
@@ -159,10 +157,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         id?: string,
         form?: DetailForm
     ): DetailSkillViewEntity {
-        return {
-            id: id ?? this.entityId,
-            form: form ?? detailFormOptions1,
-        }
+        return buildDetailEntity(id ?? this.entityId, form)
     }
 
     private static setupDetailView(entities: DetailSkillViewEntity[]) {

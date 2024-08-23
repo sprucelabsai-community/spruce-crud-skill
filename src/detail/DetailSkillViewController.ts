@@ -16,7 +16,7 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
     protected detailsCardVc: DetailsFormCardViewController
     private router?: Router
     private entities: DetailSkillViewEntity[]
-    private cancelDestination: SkillViewControllerId
+    protected cancelDestination: SkillViewControllerId
 
     public constructor(
         options: ViewControllerOptions & DetailSkillViewControllerOptions
@@ -71,9 +71,12 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
     }
 
     public render(): SkillView {
-        return buildSkillViewLayout('big-left', {
-            leftCards: [this.detailsCardVc.render()],
-        })
+        return {
+            controller: this,
+            ...buildSkillViewLayout('big-left', {
+                leftCards: [this.detailsCardVc.render()],
+            }),
+        }
     }
 }
 
