@@ -1,20 +1,38 @@
-import { vcAssert } from '@sprucelabs/heartwood-view-controllers'
-import { fake } from '@sprucelabs/spruce-test-fixtures'
-import { test, assert, errorAssert } from '@sprucelabs/test-utils'
+import {
+    buttonAssert,
+    interactor,
+    SkillViewControllerId,
+    vcAssert,
+} from '@sprucelabs/heartwood-view-controllers'
+import { SpyFormCardViewController } from '@sprucelabs/spruce-form-utils'
+import { fake, TestRouter } from '@sprucelabs/spruce-test-fixtures'
+import { test, assert, errorAssert, generateId } from '@sprucelabs/test-utils'
 import DetailFormCardViewController from '../../../detail/DetailFormCardViewController'
-import DetailSkillViewController from '../../../detail/DetailSkillViewController'
+import DetailSkillViewController, {
+    DetailSkillViewArgs,
+    DetailSkillViewEntity,
+} from '../../../detail/DetailSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
+import { detailFormOptions1 } from '../../support/detailFormOptions'
+import MockDetailFormCard from '../../support/MockDetailFormCard'
 
 @fake.login()
 export default class DetailSkillViewTest extends AbstractCrudTest {
-    private static vc: DetailSkillViewController
+    private static vc: SpyDetailSkillView
+    private static entityId: string
+    private static entities: DetailSkillViewEntity[]
+    private static cancelDestination: SkillViewControllerId
 
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
 
-        this.vc = this.views.Controller('crud.detail-skill-view', {
-            entities: [],
-        })
+        this.entityId = generateId()
+        this.entities = []
+        this.cancelDestination = 'crud.root'
+        this.views.setController('forms.card', SpyFormCardViewController)
+        this.views.setController('crud.detail-form-card', MockDetailFormCard)
+        this.views.setController('crud.detail-skill-view', SpyDetailSkillView)
+        this.setupWithSingleEntity()
     }
 
     @test()
@@ -25,20 +43,142 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         )
 
         errorAssert.assertError(err, 'MISSING_PARAMETERS', {
+            parameters: ['entities', 'cancelDestination'],
+        })
+    }
+
+    @test()
+    protected static async throwsIfNoEntities() {
+        const err = await assert.doesThrowAsync(() =>
+            this.views.Controller('crud.detail-skill-view', {
+                entities: [],
+                cancelDestination: 'crud.root',
+            })
+        )
+        errorAssert.assertError(err, 'INVALID_PARAMETERS', {
             parameters: ['entities'],
         })
     }
 
     @test()
     protected static async rendersDetailsFormCard() {
-        const detailsVc = vcAssert.assertSkillViewRendersCard(
-            this.vc,
-            'details'
-        )
+        const detailsVc = this.assertRendersDetailsCard()
 
         vcAssert.assertRendersAsInstanceOf(
             detailsVc,
             DetailFormCardViewController
         )
+    }
+
+    @test()
+    protected static async throwsIfLoadedWithMissingEntityId() {
+        await this.assertThrowsInvalidEntityId({})
+    }
+
+    @test()
+    protected static async throwsIfLoadedWithInvalidEntityId() {
+        await this.assertThrowsInvalidEntityId({ entityId: generateId() })
+    }
+
+    @test()
+    protected static async doesNotThrowIfFirstEntityIdMatches() {
+        await this.loadWithEntity()
+    }
+
+    @test()
+    protected static async canLoadWithSecondEntity() {
+        this.setupDetailView([
+            this.buildDetailEntity(generateId()),
+            this.buildDetailEntity(),
+        ])
+
+        await this.loadWithEntity()
+    }
+
+    @test()
+    protected static async rendersCancelButtonBeforeLoad() {
+        buttonAssert.cardRendersButton(this.detailFormVc, 'cancel')
+    }
+
+    @test()
+    protected static async detailCardSentFirstEntity() {
+        await this.loadWithEntity()
+        this.detailFormVc.assertFormOptionsEqual(this.entities[0].form)
+    }
+
+    @test()
+    protected static async stillLoadsDetailsAfterLoad() {
+        await this.loadWithEntity()
+        this.assertRendersDetailsCard()
+    }
+
+    @test()
+    protected static async cancelAfterLoadRedirectsToDestination() {
+        this.cancelDestination = generateId() as SkillViewControllerId
+        TestRouter.setShouldThrowWhenRedirectingToBadSvc(false)
+
+        this.setupWithSingleEntity()
+
+        await this.loadWithEntity()
+
+        await vcAssert.assertActionRedirects({
+            router: this.views.getRouter(),
+            destination: {
+                id: this.cancelDestination,
+            },
+            action: async () =>
+                interactor.cancelForm(this.detailFormVc.getFormVc()),
+        })
+    }
+
+    private static assertRendersDetailsCard() {
+        return vcAssert.assertSkillViewRendersCard(this.vc, 'details')
+    }
+
+    private static get detailFormVc() {
+        return this.vc.getDetailFormVc() as MockDetailFormCard
+    }
+
+    private static async loadWithEntity() {
+        await this.load({ entityId: this.entityId })
+    }
+
+    private static buildDetailEntity(id?: string): DetailSkillViewEntity {
+        return {
+            id: id ?? this.entityId,
+            form: detailFormOptions1,
+        }
+    }
+
+    private static setupDetailView(entities: DetailSkillViewEntity[]) {
+        this.vc = this.views.Controller('crud.detail-skill-view', {
+            entities,
+            cancelDestination: this.cancelDestination,
+        }) as SpyDetailSkillView
+    }
+
+    private static async assertThrowsInvalidEntityId(
+        args: Partial<DetailSkillViewArgs>
+    ) {
+        const err = await assert.doesThrowAsync(() => this.load(args))
+        errorAssert.assertError(err, 'INVALID_ENTITY_ID', {
+            entityId: args.entityId,
+        })
+    }
+
+    private static setupWithSingleEntity() {
+        const entity = this.buildDetailEntity()
+        this.entities = [entity]
+        this.setupDetailView([entity])
+    }
+
+    private static load(args: Partial<DetailSkillViewArgs>): any {
+        return this.views.load(this.vc, args)
+    }
+}
+
+class SpyDetailSkillView extends DetailSkillViewController {
+    public getDetailFormVc() {
+        return this.detailsCardVc
     }
 }

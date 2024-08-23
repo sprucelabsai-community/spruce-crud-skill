@@ -1,31 +1,75 @@
 import {
     AbstractViewController,
     Card,
+    CardViewController,
     ViewControllerOptions,
 } from '@sprucelabs/heartwood-view-controllers'
+import { assertOptions } from '@sprucelabs/schema'
 import { FormCardViewController } from '@sprucelabs/spruce-form-utils'
+import { DetailForm } from './DetailSkillViewController'
 
 export default class DetailsFormCardViewController extends AbstractViewController<Card> {
-    private cardVc: FormCardViewController
-    public constructor(options: ViewControllerOptions) {
+    protected formCardVc?: FormCardViewController
+    private cardVc: CardViewController
+    private onCancelHandler: OnCancelHandler
+
+    public constructor(
+        options: ViewControllerOptions & DetailFormCardViewControllerOptions
+    ) {
         super(options)
-        this.getVcFactory().setController('forms.card', FormCardViewController)
-        this.cardVc = this.Controller('forms.card', {
+
+        const { onCancel } = assertOptions(options, ['onSubmit', 'onCancel'])
+
+        this.onCancelHandler = onCancel
+
+        const views = this.getVcFactory()
+        if (!views.hasController('forms.card')) {
+            views.setController('forms.card', FormCardViewController)
+        }
+
+        this.cardVc = this.Controller('card', {
             id: 'details',
-            fields: [],
-            schema: {
-                id: 'detailsForm',
-                fields: {},
+            body: {
+                isBusy: true,
+            },
+            footer: {
+                buttons: [
+                    {
+                        id: 'cancel',
+                        label: 'Cancel',
+                    },
+                ],
             },
         })
     }
 
+    public async load(form: DetailForm) {
+        assertOptions({ form }, ['form'])
+
+        this.formCardVc = this.Controller('forms.card', {
+            ...(form as any),
+            id: 'details',
+            onCancel: this.handleCancel.bind(this),
+        })
+        this.triggerRender()
+    }
+
+    private async handleCancel() {
+        await this.onCancelHandler()
+    }
+
     public render(): Card {
-        return this.cardVc.render()
+        return this.formCardVc?.render() ?? this.cardVc.render()
     }
 }
 
-export interface DetailFormCardViewControllerOptions {}
+type OnSubmitHandler = (values: Record<string, any>) => void | Promise<void>
+type OnCancelHandler = () => void | Promise<void>
+
+export interface DetailFormCardViewControllerOptions {
+    onSubmit: OnSubmitHandler
+    onCancel: OnCancelHandler
+}
 
 declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.types' {
     interface SkillViewControllerMap {

@@ -7,6 +7,10 @@ export default class SpruceError extends AbstractSpruceError<ErrorOptions> {
         let message
 
         switch (options?.code) {
+            case 'INVALID_ENTITY_ID':
+                message = `I could not find determine what you were trying to do! Sorry about that!`
+                break
+
             default:
                 message = super.friendlyMessage()
         }
