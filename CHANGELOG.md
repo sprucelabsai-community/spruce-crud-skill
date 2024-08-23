@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v1.3.0...v1.4.0) (2024-08-23)
+
+
+### Features
+
+* click row assertions and redirects on master ([0ca9cce](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/0ca9cce))
+
 # [1.3.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v1.2.12...v1.3.0) (2024-08-23)
 
 
