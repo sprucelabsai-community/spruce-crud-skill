@@ -1,3 +1,10 @@
+# [2.0.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v1.4.1...v2.0.0) (2024-08-24)
+
+
+### Breaking Changes
+
+* skill view renaming ([b9a1e46](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/b9a1e46))
+
 ## [1.4.1](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v1.4.0...v1.4.1) (2024-08-23)
 
 # [1.4.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v1.3.0...v1.4.0) (2024-08-23)
