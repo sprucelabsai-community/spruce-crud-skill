@@ -29,6 +29,17 @@
 		"build/esm/master/CrudMasterListCardViewController.js",
 		"build/esm/master/CrudMasterListCardViewController.d.ts",
 		
+		
+		"build/detail/CrudDetailSkillViewController.js",
+		"build/detail/CrudDetailSkillViewController.d.ts",
+		"build/esm/detail/CrudDetailSkillViewController.js",
+		"build/esm/detail/CrudDetailSkillViewController.d.ts",
+		
+		"build/detail/CrudDetailFormCardViewController.js",
+		"build/detail/CrudDetailFormCardViewController.d.ts",
+		"build/esm/detail/CrudDetailFormCardViewController.js",
+		"build/esm/detail/CrudDetailFormCardViewController.d.ts",
+		
 		"build/assertions/crudAssert.js",
 		"build/assertions/crudAssert.d.ts",
 		"build/esm/assertions/crudAssert.js",
