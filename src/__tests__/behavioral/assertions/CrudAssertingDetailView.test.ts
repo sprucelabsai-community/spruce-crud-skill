@@ -2,10 +2,12 @@ import {
     AbstractSkillViewController,
     SkillView,
     SkillViewControllerId,
+    SkillViewControllerLoadOptions,
 } from '@sprucelabs/heartwood-view-controllers'
 import { fake } from '@sprucelabs/spruce-test-fixtures'
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
 import CrudDetailSkillViewController, {
+    CrudDetailSkillViewArgs,
     DetailSkillViewControllerOptions,
 } from '../../../detail/CrudDetailSkillViewController'
 import { crudAssert } from '../../../index-module'
@@ -101,6 +103,34 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
         this.assertRendersDetailView({ entities })
     }
 
+    @test()
+    protected static async detailIsLoadedThrowsWithMissing() {
+        const err = await assert.doesThrowAsync(() =>
+            //@ts-ignore
+            crudAssert.skillViewLoadsDetailView()
+        )
+
+        errorAssert.assertError(err, 'MISSING_PARAMETERS', {
+            parameters: ['skillView'],
+        })
+    }
+
+    @test()
+    protected static async detailThrowsIfNotLoaded() {
+        this.dropInDetailSkillView()
+        this.vc.shouldLoad = false
+        await assert.doesThrowAsync(
+            () => crudAssert.skillViewLoadsDetailView(this.vc),
+            'not loading'
+        )
+    }
+
+    @test()
+    protected static async passesWhenLoadedOnLoad() {
+        this.dropInDetailSkillView()
+        await crudAssert.skillViewLoadsDetailView(this.vc)
+    }
+
     private static assertRendersDetailFewThrowsForMissmatchedOptions(
         options: Partial<DetailSkillViewControllerOptions>
     ) {
@@ -137,12 +167,21 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
 
 class SkillViewWithDetailView extends AbstractSkillViewController {
     private detailSkillView?: CrudDetailSkillViewController
+    public shouldLoad = true
 
     public dropInDetailSkillView(options: DetailSkillViewControllerOptions) {
         this.detailSkillView = this.Controller(
             'crud.detail-skill-view',
             options
         )
+    }
+
+    public async load(
+        options: SkillViewControllerLoadOptions<CrudDetailSkillViewArgs>
+    ) {
+        if (this.shouldLoad) {
+            await this.detailSkillView?.load(options)
+        }
     }
 
     public render(): SkillView {

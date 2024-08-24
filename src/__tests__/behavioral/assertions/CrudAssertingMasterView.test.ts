@@ -24,10 +24,12 @@ import AbstractAssertTest from './AbstractAssertTest'
 export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
     private static fakeSvc: SkillViewWithMasterView
     private static clickRowDestination?: SkillViewControllerId
+    private static addDestination?: SkillViewControllerId
 
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
         delete this.clickRowDestination
+        delete this.addDestination
         this.views.setController('fake-with-master', SkillViewWithMasterView)
         this.fakeSvc = this.views.Controller('fake-with-master', {})
     }
@@ -81,13 +83,9 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
     protected static async throwsIfClickDestinationDoesNotMatch() {
         const destination = 'crud.root'
         this.dropInMasterWithClickDestination(destination)
-        assert.doesThrow(
-            () =>
-                this.assertRendersMasterSkillView({
-                    clickRowDestination: 'crud.master-skill-view',
-                }),
-            'options'
-        )
+        this.assertMasterOptionsDoNotMatch({
+            clickRowDestination: 'crud.master-skill-view',
+        })
     }
 
     @test(
@@ -101,6 +99,28 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
         this.dropInMasterWithClickDestination(destination)
         this.assertRendersMasterSkillView({
             clickRowDestination: destination,
+        })
+    }
+
+    @test()
+    protected static async throwsIfAddDestinationDoesNotMatch() {
+        this.dropinMasterWithAddDestination('crud.root')
+        this.assertMasterOptionsDoNotMatch({
+            addDestination: 'crud.master-skill-view',
+        })
+    }
+
+    @test('passes if add destination matches crude.root', 'crud.root')
+    @test(
+        'passes if add destination matches crud.master-skill-view',
+        'crud.master-skill-view'
+    )
+    protected static async passesIfAddDestinationMatches(
+        destination: SkillViewControllerId
+    ) {
+        this.dropinMasterWithAddDestination(destination)
+        this.assertRendersMasterSkillView({
+            addDestination: destination,
         })
     }
 
@@ -194,7 +214,8 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
         this.dropInMasterSkillView([
             {
                 id: 'test-1',
-                title: generateId(),
+                pluralTitle: generateId(),
+                singularTitle: generateId(),
                 load: {
                     fqen: 'list-installed-skills::v2020_12_25',
                     responseKey: 'skills',
@@ -214,7 +235,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
     protected static async throwsIfTitleDoesNotMatch() {
         this.dropInMasterSkillView()
         await this.assertMasterListRendersListThrows({
-            title: generateId(),
+            pluralTitle: generateId(),
             load: {
                 fqen: 'list-locations::v2020_12_25',
             },
@@ -332,6 +353,22 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
         this.dropInMasterSkillView()
     }
 
+    private static assertMasterOptionsDoNotMatch(
+        expected: Partial<CrudMasterSkillViewControllerOptions>
+    ) {
+        assert.doesThrow(
+            () => this.assertRendersMasterSkillView(expected),
+            'Expected'
+        )
+    }
+
+    private static dropinMasterWithAddDestination(
+        destination: SkillViewControllerId
+    ) {
+        this.addDestination = destination
+        this.dropInMasterSkillView()
+    }
+
     private static async assertMasterListRendersListThrows(
         options: ExpectedListEntityOptions
     ) {
@@ -368,6 +405,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
     ) {
         this.fakeSvc.dropInMasterSkillView({
             entities,
+            addDestination: this.addDestination,
             clickRowDestination: this.clickRowDestination,
         })
     }

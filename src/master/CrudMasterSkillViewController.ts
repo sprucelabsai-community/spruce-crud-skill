@@ -8,6 +8,7 @@ import {
     splitCardsIntoLayouts,
     SkillViewControllerId,
     Router,
+    removeUniversalViewOptions,
 } from '@sprucelabs/heartwood-view-controllers'
 import {
     EventContract,
@@ -26,21 +27,16 @@ import MasterListCardViewController from './CrudMasterListCardViewController'
 export default class CrudMasterSkillViewController extends AbstractSkillViewController {
     protected listCardsById: Record<string, MasterListCardViewController> = {}
     protected wasLoaded = false
-    protected clickRowDestination?: SkillViewControllerId
-    private clickAddDestination?: SkillViewControllerId
+    protected options: CrudMasterSkillViewControllerOptions
     private router?: Router
 
     public constructor(
         options: ViewControllerOptions & CrudMasterSkillViewControllerOptions
     ) {
         super(options)
-        const { entities, clickRowDestination, addDestination } = assertOptions(
-            options,
-            ['entities']
-        )
+        const { entities } = assertOptions(options, ['entities'])
 
-        this.clickRowDestination = clickRowDestination
-        this.clickAddDestination = addDestination
+        this.options = removeUniversalViewOptions(options)
         this.validateEntities(entities)
         this.buildCards(entities)
     }
@@ -63,16 +59,15 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
                     entity,
                     onClickRow: this.handleClickRow.bind(this),
                     onAddClick:
-                        this.clickAddDestination &&
-                        this.handleAddClick.bind(this),
+                        this.addDestination && this.handleAddClick.bind(this),
                 }
             )
         }
     }
 
     private async handleAddClick(entityId: string) {
-        if (this.clickAddDestination) {
-            await this.router?.redirect(this.clickAddDestination, {
+        if (this.addDestination) {
+            await this.router?.redirect(this.addDestination, {
                 action: 'create',
                 entity: entityId,
             })
@@ -90,6 +85,14 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
                 entity: entityId,
             })
         }
+    }
+
+    private get clickRowDestination() {
+        return this.options.clickRowDestination
+    }
+
+    private get addDestination() {
+        return this.options.addDestination
     }
 
     public async load(options: SkillViewControllerLoadOptions) {
@@ -159,7 +162,8 @@ export interface CrudMasterSkillViewListEntity<
     ResponseKey extends keyof Response = keyof Response,
 > {
     id: string
-    title: string
+    pluralTitle: string
+    singularTitle: string
     load: {
         fqen: Fqen
         responseKey: ResponseKey

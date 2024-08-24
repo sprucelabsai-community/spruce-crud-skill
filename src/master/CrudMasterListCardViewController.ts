@@ -23,7 +23,8 @@ export default class MasterListCardViewController extends AbstractViewController
 
         const { entity, onClickRow, onAddClick } = assertOptions(options, [
             'entity.id',
-            'entity.title',
+            'entity.pluralTitle',
+            'entity.singularTitle',
             'entity.load.fqen',
             'entity.load.responseKey',
             'entity.load.rowTransformer',
@@ -46,7 +47,7 @@ export default class MasterListCardViewController extends AbstractViewController
             buildActiveRecordCard({
                 id: entity.id,
                 header: {
-                    title: entity.title,
+                    title: entity.pluralTitle,
                 },
                 footer: this.renderFooter(),
                 eventName: fqen,
@@ -68,7 +69,7 @@ export default class MasterListCardViewController extends AbstractViewController
             buttons: [
                 {
                     id: 'add',
-                    label: 'Add',
+                    label: `Add ${this.entity.singularTitle}`,
                     type: 'primary',
                     onClick: () => this.onAddClick?.(this.entity.id),
                 },
@@ -98,7 +99,7 @@ type ClickRowHandler = (
     record: Record<string, any>
 ) => void | Promise<void>
 
-type ClickAddHandler = (entityId: string) => void | Promise<void>
+export type ClickAddHandler = (entityId: string) => void | Promise<void>
 
 export interface MasterListCardViewControllerOptions {
     entity: CrudMasterSkillViewListEntity<SkillEventContract>

@@ -13,7 +13,8 @@ import { detailFormOptions1 } from './detailFormOptions'
 export function buildLocationTestEntity(id?: string) {
     return buildCrudMasterListEntity({
         id: id ?? generateId(),
-        title: generateId(),
+        pluralTitle: generateId(),
+        singularTitle: generateId(),
         load: {
             fqen: 'list-locations::v2020_12_25',
             responseKey: 'locations',
@@ -35,7 +36,8 @@ export function buildLocationTestEntity(id?: string) {
 export function buildLocationTestPagingEntity(id?: string) {
     return buildCrudMasterListEntity({
         id: id ?? generateId(),
-        title: generateId(),
+        pluralTitle: generateId(),
+        singularTitle: generateId(),
         load: {
             fqen: 'list-locations::v2020_12_25',
             responseKey: 'locations',
@@ -61,7 +63,8 @@ export function buildLocationTestPagingEntity(id?: string) {
 export function buildOrganizationTestEntity() {
     return buildCrudMasterListEntity({
         id: generateId(),
-        title: generateId(),
+        pluralTitle: generateId(),
+        singularTitle: generateId(),
         load: {
             fqen: 'list-organizations::v2020_12_25',
             responseKey: 'organizations',
@@ -95,7 +98,8 @@ export function buildOrganizationsListTestEntity(
 ) {
     return buildCrudMasterListEntity({
         id: generateId(),
-        title: generateId(),
+        pluralTitle: generateId(),
+        singularTitle: generateId(),
         ...options,
         load: {
             fqen: 'list-organizations::v2020_12_25',

@@ -32,6 +32,7 @@ export default class RootSkillViewController extends AbstractSkillViewController
     private MasterVc(): CrudMasterSkillViewController {
         return this.Controller('crud.master-skill-view', {
             clickRowDestination: 'crud.detail',
+            addDestination: 'crud.detail',
             entities: [
                 this.buildOrganizationsListEntity(),
                 this.buildLocationsListEntity(),
@@ -43,7 +44,8 @@ export default class RootSkillViewController extends AbstractSkillViewController
     private buildSkillsListEntity() {
         return buildCrudMasterListEntity({
             id: 'skills',
-            title: 'Skills',
+            pluralTitle: 'Skills',
+            singularTitle: 'Skill',
             load: {
                 fqen: 'list-skills::v2020_12_25',
                 responseKey: 'skills',
@@ -68,7 +70,8 @@ export default class RootSkillViewController extends AbstractSkillViewController
     private buildLocationsListEntity() {
         return buildCrudMasterListEntity({
             id: 'locations',
-            title: 'Locations',
+            pluralTitle: 'Locations',
+            singularTitle: 'Location',
             load: {
                 fqen: 'list-locations::v2020_12_25',
                 responseKey: 'locations',
@@ -96,7 +99,8 @@ export default class RootSkillViewController extends AbstractSkillViewController
     private buildOrganizationsListEntity() {
         return buildCrudMasterListEntity({
             id: 'organizations',
-            title: 'Organizations',
+            pluralTitle: 'Organizations',
+            singularTitle: 'Organization',
             load: {
                 fqen: 'list-organizations::v2020_12_25',
                 responseKey: 'organizations',

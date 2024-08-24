@@ -1,6 +1,7 @@
 import {
     AbstractSkillViewController,
     buildSkillViewLayout,
+    removeUniversalViewOptions,
     Router,
     SkillView,
     SkillViewControllerId,
@@ -15,14 +16,14 @@ import CrudDetailFormCardViewController from './CrudDetailFormCardViewController
 export default class CrudDetailSkillViewController extends AbstractSkillViewController {
     protected detailsCardVc: CrudDetailFormCardViewController
     private router?: Router
-    protected entities: CrudDetailSkillViewEntity[]
-    protected cancelDestination: SkillViewControllerId
+    protected options: DetailSkillViewControllerOptions
+    protected wasLoaded = false
 
     public constructor(
         options: ViewControllerOptions & DetailSkillViewControllerOptions
     ) {
         super(options)
-        const { entities, cancelDestination } = assertOptions(options, [
+        const { entities } = assertOptions(options, [
             'entities',
             'cancelDestination',
         ])
@@ -35,8 +36,7 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
             })
         }
 
-        this.cancelDestination = cancelDestination
-        this.entities = entities
+        this.options = removeUniversalViewOptions(options)
 
         this.detailsCardVc = this.Controller('crud.detail-form-card', {
             onCancel: this.handleClickCancel.bind(this),
@@ -46,6 +46,10 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
 
     private async handleClickCancel() {
         await this.router?.redirect(this.cancelDestination, {})
+    }
+
+    private get cancelDestination() {
+        return this.options.cancelDestination
     }
 
     public async load(
@@ -59,6 +63,8 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
         this.router = router
         const entity = this.findEntity(entityId)
         await this.detailsCardVc.load(entity.form)
+
+        this.wasLoaded = true
     }
 
     private assertValidAction(action: string) {
@@ -69,6 +75,10 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
                 friendlyMessage: `Invalid action!`,
             })
         }
+    }
+
+    private get entities() {
+        return this.options.entities
     }
 
     private findEntity(entityId: string) {

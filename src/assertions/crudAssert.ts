@@ -2,7 +2,6 @@ import {
     MockActiveRecordCard,
     renderUtil,
     SkillViewController,
-    SkillViewControllerId,
     vcAssert,
 } from '@sprucelabs/heartwood-view-controllers'
 import {
@@ -15,7 +14,6 @@ import { ViewFixture } from '@sprucelabs/spruce-test-fixtures'
 import { assert, RecursivePartial } from '@sprucelabs/test-utils'
 import CrudDetailSkillViewController, {
     DetailSkillViewControllerOptions,
-    CrudDetailSkillViewEntity,
 } from '../detail/CrudDetailSkillViewController'
 import MasterListCardViewController from '../master/CrudMasterListCardViewController'
 import CrudMasterSkillViewController, {
@@ -73,10 +71,10 @@ const crudAssert = {
     }`)
         }
 
-        if (expectedOptions?.clickRowDestination) {
-            assert.isEqual(
-                vc?.clickRowDestination,
-                expectedOptions.clickRowDestination,
+        if (Object.keys(expectedOptions ?? {}).length > 0) {
+            assert.doesInclude(
+                vc?.options,
+                expectedOptions,
                 `The expected options do not match!`
             )
         }
@@ -236,14 +234,32 @@ const crudAssert = {
 
         if (options) {
             assert.doesInclude(
-                {
-                    cancelDestination: vc?.cancelDestination,
-                    entities: vc?.entities,
-                },
+                vc?.options,
                 options,
                 `The options you passed to your DetailSkillView don't match the expected options.`
             )
         }
+
+        return vc
+    },
+
+    async skillViewLoadsDetailView(skillView: SkillViewController) {
+        assertOptions({ skillView }, ['skillView'])
+
+        const vc = this.skillViewRendersDetailView(skillView)
+
+        await views?.load(skillView, {
+            action: 'create',
+            entityId: vc?.options.entities[0].id,
+        })
+
+        assert.isTrue(
+            vc?.wasLoaded,
+            `You are not loading your CrudDetailSkillViewController on the the load of your SkillView. Follow these steps:
+			
+1. Make sure your load(...) method signature of your SkillView is 'public async load(options: SkillViewControllerLoadOptions<CrudDetailSkillViewArgs>) {...}'
+2. In your SkillView's load(...) method, add: await this.detailSkillView.load(options)`
+        )
     },
 }
 
@@ -267,7 +283,7 @@ function assertBeforeEachRan() {
 
 class SpyMasterSkillView extends CrudMasterSkillViewController {
     public wasLoaded = false
-    public clickRowDestination?: SkillViewControllerId
+    public options!: CrudMasterSkillViewControllerOptions
 }
 
 class SpyMasterListCard extends MasterListCardViewController {
@@ -276,8 +292,8 @@ class SpyMasterListCard extends MasterListCardViewController {
 }
 
 class SpyDetailSkillView extends CrudDetailSkillViewController {
-    public cancelDestination!: SkillViewControllerId
-    public entities!: CrudDetailSkillViewEntity[]
+    public options!: DetailSkillViewControllerOptions
+    public wasLoaded = false
 }
 
 export type ExpectedListEntityOptions<

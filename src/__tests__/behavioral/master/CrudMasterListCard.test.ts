@@ -1,6 +1,7 @@
 import { activeRecordCardAssert } from '@sprucelabs/heartwood-view-controllers'
 import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
-import { test, assert } from '@sprucelabs/test-utils'
+import { test, assert, generateId } from '@sprucelabs/test-utils'
+import { ClickAddHandler } from '../../../master/CrudMasterListCardViewController'
 import { CrudMasterSkillViewListEntity } from '../../../master/CrudMasterSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import MockMasterListCard from '../../support/MockMasterListCard'
@@ -13,6 +14,7 @@ import {
 export default class MasterListCardTest extends AbstractCrudTest {
     private static entity: CrudMasterSkillViewListEntity
     private static vc: MockMasterListCard
+    private static onAddClickHandler?: ClickAddHandler
 
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
@@ -22,7 +24,7 @@ export default class MasterListCardTest extends AbstractCrudTest {
     @test()
     protected static async setsTheTitleBasedOnEntityTitle() {
         const model = this.views.render(this.vc)
-        assert.isEqual(model.header?.title, this.entity.title)
+        assert.isEqual(model.header?.title, this.entity.pluralTitle)
     }
 
     @test()
@@ -69,6 +71,20 @@ export default class MasterListCardTest extends AbstractCrudTest {
         })
     }
 
+    @test()
+    protected static async passesThroughTitleSingularToAddButton() {
+        const titleSingular = generateId()
+        this.onAddClickHandler = () => {}
+        this.setupWithEntity(
+            buildOrganizationsListTestEntity({
+                singularTitle: titleSingular,
+            })
+        )
+
+        const model = this.views.render(this.vc)
+        assert.doesInclude(model.footer?.buttons?.[0].label, titleSingular)
+    }
+
     private static setupWithOneEntity() {
         this.setupWithEntity(buildOrganizationTestEntity())
     }
@@ -79,6 +95,7 @@ export default class MasterListCardTest extends AbstractCrudTest {
         this.entity = entity
         this.vc = this.views.Controller('crud.master-list-card', {
             entity: this.entity,
+            onAddClick: this.onAddClickHandler,
         }) as MockMasterListCard
     }
 
