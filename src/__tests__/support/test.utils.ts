@@ -4,11 +4,11 @@ import {
     DetailForm,
     DetailSkillViewEntity,
 } from '../../detail/CrudDetailSkillViewController'
-import { buildMasterListEntity } from '../../master/CrudMasterSkillViewController'
+import { buildCrudMasterListEntity } from '../../master/CrudMasterSkillViewController'
 import { detailFormOptions1 } from './detailFormOptions'
 
 export function buildLocationTestEntity(id?: string) {
-    return buildMasterListEntity({
+    return buildCrudMasterListEntity({
         id: id ?? generateId(),
         title: generateId(),
         load: {
@@ -30,7 +30,7 @@ export function buildLocationTestEntity(id?: string) {
 }
 
 export function buildLocationTestPagingEntity(id?: string) {
-    return buildMasterListEntity({
+    return buildCrudMasterListEntity({
         id: id ?? generateId(),
         title: generateId(),
         load: {
@@ -56,7 +56,7 @@ export function buildLocationTestPagingEntity(id?: string) {
 }
 
 export function buildOrganizationTestEntity() {
-    return buildMasterListEntity({
+    return buildCrudMasterListEntity({
         id: generateId(),
         title: generateId(),
         load: {

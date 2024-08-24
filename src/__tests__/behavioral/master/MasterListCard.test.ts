@@ -2,8 +2,8 @@ import { vcAssert } from '@sprucelabs/heartwood-view-controllers'
 import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
 import { test, assert, generateId } from '@sprucelabs/test-utils'
 import {
-    buildMasterListEntity,
-    MasterSkillViewListEntity,
+    buildCrudMasterListEntity,
+    CrudMasterSkillViewListEntity,
 } from '../../../master/CrudMasterSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import MockMasterListCard from '../../support/MockMasterListCard'
@@ -11,7 +11,7 @@ import { buildOrganizationTestEntity } from '../../support/test.utils'
 
 @fake.login()
 export default class MasterListCardTest extends AbstractCrudTest {
-    private static entity: MasterSkillViewListEntity
+    private static entity: CrudMasterSkillViewListEntity
     private static vc: MockMasterListCard
 
     protected static async beforeEach(): Promise<void> {
@@ -52,7 +52,7 @@ export default class MasterListCardTest extends AbstractCrudTest {
         shouldPageClientSide: boolean
     ) {
         this.setupWithEntity(
-            buildMasterListEntity({
+            buildCrudMasterListEntity({
                 id: generateId(),
                 title: generateId(),
                 load: {
@@ -74,7 +74,7 @@ export default class MasterListCardTest extends AbstractCrudTest {
     }
 
     private static setupWithEntity(
-        entity: MasterSkillViewListEntity<any, any>
+        entity: CrudMasterSkillViewListEntity<any, any>
     ) {
         this.entity = entity
         this.vc = this.views.Controller('crud.master-list-card', {

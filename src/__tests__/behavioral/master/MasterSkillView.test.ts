@@ -7,8 +7,8 @@ import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
 import { test, assert, errorAssert, generateId } from '@sprucelabs/test-utils'
 import MasterListCardViewController from '../../../master/CrudMasterListCardViewController'
 import {
-    MasterSkillViewControllerOptions,
-    MasterSkillViewListEntity,
+    CrudMasterSkillViewControllerOptions,
+    CrudMasterSkillViewListEntity,
 } from '../../../master/CrudMasterSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import MockMasterListCard from '../../support/MockMasterListCard'
@@ -195,7 +195,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
     }
 
     @test('can redirect on click to crud.root', 'crud.root')
-    @test('can redirect on click to crud.detail-example', 'crud.detail-example')
+    @test('can redirect on click to crud.detail', 'crud.detail')
     @seed('locations', 1)
     protected static async canSetClickRowDestinationAndClickForRedirect(
         destination: SkillViewControllerId
@@ -284,7 +284,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
     }
 
     private static setupWithEntities(
-        entities: MasterSkillViewListEntity<any, any>[]
+        entities: CrudMasterSkillViewListEntity<any, any>[]
     ) {
         this.vc = this.Vc({
             clickRowDestination: this.clickRowDestination,
@@ -309,7 +309,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
         })
     }
 
-    private static Vc(options: MasterSkillViewControllerOptions) {
+    private static Vc(options: CrudMasterSkillViewControllerOptions) {
         return this.views.Controller(
             'crud.master-skill-view',
             options

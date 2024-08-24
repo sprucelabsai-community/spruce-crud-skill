@@ -8,11 +8,11 @@ import {
 } from '@sprucelabs/heartwood-view-controllers'
 import { SkillEventContract } from '@sprucelabs/mercury-types'
 import { assertOptions } from '@sprucelabs/schema'
-import { MasterSkillViewListEntity } from './CrudMasterSkillViewController'
+import { CrudMasterSkillViewListEntity } from './CrudMasterSkillViewController'
 
 export default class MasterListCardViewController extends AbstractViewController<Card> {
     protected activeRecordCardVc: ActiveRecordCardViewController
-    protected entity: MasterSkillViewListEntity
+    protected entity: CrudMasterSkillViewListEntity
 
     public constructor(
         options: ViewControllerOptions & MasterListCardViewControllerOptions
@@ -68,7 +68,7 @@ export default class MasterListCardViewController extends AbstractViewController
 }
 
 export interface MasterListCardViewControllerOptions {
-    entity: MasterSkillViewListEntity<SkillEventContract>
+    entity: CrudMasterSkillViewListEntity<SkillEventContract>
     onClickRow?: (
         entityId: string,
         record: Record<string, any>

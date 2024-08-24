@@ -30,7 +30,7 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
     private router?: Router
 
     public constructor(
-        options: ViewControllerOptions & MasterSkillViewControllerOptions
+        options: ViewControllerOptions & CrudMasterSkillViewControllerOptions
     ) {
         super(options)
         const { entities, clickRowDestination } = assertOptions(options, [
@@ -42,7 +42,7 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
         this.buildCards(entities)
     }
 
-    private validateEntities(entities: MasterSkillViewListEntity[]) {
+    private validateEntities(entities: CrudMasterSkillViewListEntity[]) {
         if (entities.length === 0) {
             throw new SchemaError({
                 code: 'INVALID_PARAMETERS',
@@ -52,7 +52,7 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
         }
     }
 
-    private buildCards(entities: MasterSkillViewListEntity[]) {
+    private buildCards(entities: CrudMasterSkillViewListEntity[]) {
         for (const entity of entities) {
             this.listCardsById[entity.id] = this.Controller(
                 'crud.master-list-card',
@@ -121,12 +121,12 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
     }
 }
 
-export interface MasterSkillViewControllerOptions {
+export interface CrudMasterSkillViewControllerOptions {
     clickRowDestination?: SkillViewControllerId
-    entities: MasterSkillViewListEntity<any, any>[]
+    entities: CrudMasterSkillViewListEntity<any, any>[]
 }
 
-export interface MasterSkillViewListEntity<
+export interface CrudMasterSkillViewListEntity<
     Contract extends EventContract = SkillEventContract,
     Fqen extends EventName<Contract> = EventName<Contract>,
     IEventSignature extends EventSignature = Contract['eventSignatures'][Fqen],
@@ -156,7 +156,7 @@ export interface MasterSkillViewListEntity<
     }
 }
 
-type MasterListCardViewControllerBuilder = <
+type CrudMasterListCardViewControllerBuilder = <
     Contract extends EventContract = SkillEventContract,
     Fqen extends EventName<Contract> = EventName<Contract>,
     IEventSignature extends EventSignature = Contract['eventSignatures'][Fqen],
@@ -172,7 +172,7 @@ type MasterListCardViewControllerBuilder = <
         SchemaValues<ResponseSchema> = SchemaValues<ResponseSchema>,
     ResponseKey extends keyof Response = keyof Response,
 >(
-    options: MasterSkillViewListEntity<
+    options: CrudMasterSkillViewListEntity<
         Contract,
         Fqen,
         IEventSignature,
@@ -181,7 +181,7 @@ type MasterListCardViewControllerBuilder = <
         Response,
         ResponseKey
     >
-) => MasterSkillViewListEntity<
+) => CrudMasterSkillViewListEntity<
     Contract,
     Fqen,
     IEventSignature,
@@ -191,14 +191,13 @@ type MasterListCardViewControllerBuilder = <
     ResponseKey
 >
 
-export const buildMasterListEntity: MasterListCardViewControllerBuilder = (
-    options
-) => {
-    return options
-}
+export const buildCrudMasterListEntity: CrudMasterListCardViewControllerBuilder =
+    (options) => {
+        return options
+    }
 
-export const buildMasterSkillViewOptions = (
-    options: MasterSkillViewControllerOptions
+export const buildCrudMasterSkillViewOptions = (
+    options: CrudMasterSkillViewControllerOptions
 ) => {
     return options
 }
@@ -213,6 +212,6 @@ declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.typ
     }
 
     interface ViewControllerOptionsMap {
-        'crud.master-skill-view': MasterSkillViewControllerOptions
+        'crud.master-skill-view': CrudMasterSkillViewControllerOptions
     }
 }

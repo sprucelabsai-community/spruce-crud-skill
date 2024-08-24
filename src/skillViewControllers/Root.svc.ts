@@ -6,7 +6,7 @@ import {
 } from '@sprucelabs/heartwood-view-controllers'
 import MasterListCardViewController from '../master/CrudMasterListCardViewController'
 import CrudMasterSkillViewController, {
-    buildMasterListEntity,
+    buildCrudMasterListEntity,
 } from '../master/CrudMasterSkillViewController'
 
 export default class RootSkillViewController extends AbstractSkillViewController {
@@ -41,7 +41,7 @@ export default class RootSkillViewController extends AbstractSkillViewController
     }
 
     private buildSkillsListEntity() {
-        return buildMasterListEntity({
+        return buildCrudMasterListEntity({
             id: 'skills',
             title: 'Skills',
             load: {
@@ -66,7 +66,7 @@ export default class RootSkillViewController extends AbstractSkillViewController
     }
 
     private buildLocationsListEntity() {
-        return buildMasterListEntity({
+        return buildCrudMasterListEntity({
             id: 'locations',
             title: 'Locations',
             load: {
@@ -94,7 +94,7 @@ export default class RootSkillViewController extends AbstractSkillViewController
     }
 
     private buildOrganizationsListEntity() {
-        return buildMasterListEntity({
+        return buildCrudMasterListEntity({
             id: 'organizations',
             title: 'Organizations',
             load: {

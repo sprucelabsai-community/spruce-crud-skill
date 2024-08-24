@@ -19,8 +19,8 @@ import CrudDetailSkillViewController, {
 } from '../detail/CrudDetailSkillViewController'
 import MasterListCardViewController from '../master/CrudMasterListCardViewController'
 import CrudMasterSkillViewController, {
-    MasterSkillViewControllerOptions,
-    MasterSkillViewListEntity,
+    CrudMasterSkillViewControllerOptions,
+    CrudMasterSkillViewListEntity,
 } from '../master/CrudMasterSkillViewController'
 
 let views: ViewFixture | undefined
@@ -39,18 +39,18 @@ const crudAssert = {
 
     skillViewRendersMasterView(
         skillView: SkillViewController,
-        expectedOptions?: Partial<MasterSkillViewControllerOptions>
+        expectedOptions?: Partial<CrudMasterSkillViewControllerOptions>
     ) {
         assertBeforeEachRan()
 
         assertViewSetToFactory(
             'crud.master-skill-view',
-            'MasterSkillViewController'
+            'CrudMasterSkillViewController'
         )
 
         assertViewSetToFactory(
             'crud.master-list-card',
-            'MasterListCardViewController'
+            'CrudMasterListCardViewController'
         )
 
         assertOptions({ skillView }, ['skillView'])
@@ -64,7 +64,7 @@ const crudAssert = {
                 CrudMasterSkillViewController
             ) as SpyMasterSkillView
         } catch {
-            assert.fail(`You are not rendering a MasterSkillViewController. Follow these steps:
+            assert.fail(`You are not rendering a CrudMasterSkillViewController. Follow these steps:
 1. In your constructor (after setting the Views to the ViewFactory): this.masterSkillView = this.Controller('crud.master-skill-view',{}).
 2. Fix the errors with stub data
 3. Update your SkillView's render method: 
@@ -94,7 +94,7 @@ const crudAssert = {
 
         assert.isTrue(
             controller.wasLoaded,
-            `You are not loading your MasterSkillViewController on the the load of your SkillView. Follow these steps:
+            `You are not loading your CrudMasterSkillViewController on the the load of your SkillView. Follow these steps:
 			
 1. Make sure your load(...) method signature of your SkillView is 'public async load(options: SkillViewControllerLoadOptions) {...}'
 2. In your SkillView's load(...) method, add: await this.masterSkillView.load(options)`
@@ -201,12 +201,12 @@ const crudAssert = {
 
         assertViewSetToFactory(
             'crud.detail-skill-view',
-            'DetailSkillViewController'
+            'CrudDetailSkillViewController'
         )
 
         assertViewSetToFactory(
             'crud.detail-form-card',
-            'DetailFormCardViewController'
+            'CrudDetailFormCardViewController'
         )
 
         assertOptions(
@@ -271,7 +271,7 @@ class SpyMasterSkillView extends CrudMasterSkillViewController {
 }
 
 class SpyMasterListCard extends MasterListCardViewController {
-    public entity!: MasterSkillViewListEntity
+    public entity!: CrudMasterSkillViewListEntity
     public activeRecordCardVc!: MockActiveRecordCard
 }
 
@@ -283,4 +283,4 @@ class SpyDetailSkillView extends CrudDetailSkillViewController {
 export type ExpectedListEntityOptions<
     Contract extends EventContract = SkillEventContract,
     Fqen extends EventName<Contract> = EventName<Contract>,
-> = Omit<RecursivePartial<MasterSkillViewListEntity<Contract, Fqen>>, 'id'>
+> = Omit<RecursivePartial<CrudMasterSkillViewListEntity<Contract, Fqen>>, 'id'>

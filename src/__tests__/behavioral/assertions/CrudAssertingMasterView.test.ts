@@ -11,8 +11,8 @@ import crudAssert, {
     ExpectedListEntityOptions,
 } from '../../../assertions/crudAssert'
 import CrudMasterSkillViewController, {
-    MasterSkillViewControllerOptions,
-    MasterSkillViewListEntity,
+    CrudMasterSkillViewControllerOptions,
+    CrudMasterSkillViewListEntity,
 } from '../../../master/CrudMasterSkillViewController'
 import {
     buildLocationTestEntity,
@@ -65,7 +65,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
     protected static async throwsIfMasterListCardHasNotBeenSet() {
         this.assertMissingViewControllerThrowsAsExpected(
             'crud.master-list-card',
-            'MasterListCardViewController'
+            'CrudMasterListCardViewController'
         )
     }
 
@@ -73,7 +73,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
     protected static async throwsIfNotRenderingAsMaster() {
         assert.doesThrow(
             () => this.assertRendersMasterSkillView(),
-            'not rendering a MasterSkillViewController'
+            'not rendering a CrudMasterSkillViewController'
         )
     }
 
@@ -364,7 +364,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
     }
 
     private static dropInMasterSkillView(
-        entities?: MasterSkillViewListEntity<any, any>[]
+        entities?: CrudMasterSkillViewListEntity<any, any>[]
     ) {
         this.fakeSvc.dropInMasterSkillView({
             entities,
@@ -386,7 +386,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
     }
 
     private static assertRendersMasterSkillView(
-        expectedOptions?: Partial<MasterSkillViewControllerOptions>
+        expectedOptions?: Partial<CrudMasterSkillViewControllerOptions>
     ) {
         crudAssert.skillViewRendersMasterView(this.fakeSvc, expectedOptions)
     }
@@ -405,16 +405,16 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
 
 class SkillViewWithMasterView extends AbstractSkillViewController {
     private masterSkillView?: CrudMasterSkillViewController
-    public entities?: MasterSkillViewListEntity[]
+    public entities?: CrudMasterSkillViewListEntity[]
     public onWillLoad?: () => void
 
     public dropInMasterSkillView(
-        options: Partial<MasterSkillViewControllerOptions>
+        options: Partial<CrudMasterSkillViewControllerOptions>
     ) {
         const { entities } = options ?? {}
         this.entities = (entities ?? [
             buildLocationTestEntity(),
-        ]) as MasterSkillViewListEntity[]
+        ]) as CrudMasterSkillViewListEntity[]
         this.masterSkillView = this.Controller('crud.master-skill-view', {
             ...options,
             entities: this.entities as any,

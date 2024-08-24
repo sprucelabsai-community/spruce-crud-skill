@@ -6,7 +6,7 @@ import { test } from '@sprucelabs/test-utils'
 import { crudAssert } from '../../index-module'
 
 @fake.login()
-export default class DetailExampleSkillViewTest extends AbstractSpruceFixtureTest {
+export default class DetailSkillViewTest extends AbstractSpruceFixtureTest {
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
         crudAssert.beforeEach(this.views)
