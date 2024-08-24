@@ -58,6 +58,7 @@ export default class CrudDetailFormCardViewController extends AbstractViewContro
             id: 'details',
             onCancel: this.handleCancel.bind(this),
         })
+
         this.triggerRender()
     }
 
@@ -66,7 +67,10 @@ export default class CrudDetailFormCardViewController extends AbstractViewContro
     }
 
     public render(): Card {
-        return this.formCardVc?.render() ?? this.loadingCardVc.render()
+        return {
+            ...(this.formCardVc?.render() ?? this.loadingCardVc.render()),
+            controller: this as any,
+        }
     }
 }
 
