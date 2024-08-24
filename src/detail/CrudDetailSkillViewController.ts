@@ -65,6 +65,8 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
         await this.detailsFormCardVc.load(entity.form)
 
         this.wasLoaded = true
+
+        this.triggerRender()
     }
 
     private assertValidAction(action: string) {

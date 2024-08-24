@@ -67,10 +67,7 @@ export default class CrudDetailFormCardViewController extends AbstractViewContro
     }
 
     public render(): Card {
-        return {
-            ...(this.formCardVc?.render() ?? this.loadingCardVc.render()),
-            controller: this as any,
-        }
+        return this.formCardVc?.render() ?? this.loadingCardVc.render()
     }
 }
 

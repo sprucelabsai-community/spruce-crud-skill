@@ -153,6 +153,12 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         })
     }
 
+    @test()
+    protected static async triggersRenderOnLoad() {
+        await this.loadWithEntity()
+        vcAssert.assertTriggerRenderCount(this.vc, 1)
+    }
+
     private static assertRendersDetailsCard() {
         return vcAssert.assertSkillViewRendersCard(this.vc, 'details')
     }
