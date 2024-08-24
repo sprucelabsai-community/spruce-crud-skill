@@ -9,7 +9,7 @@ import CrudDetailSkillViewController, {
     DetailSkillViewControllerOptions,
 } from '../../../detail/CrudDetailSkillViewController'
 import { crudAssert } from '../../../index-module'
-import { buildDetailEntity } from '../../support/test.utils'
+import { buildTestDetailEntity } from '../../support/test.utils'
 import AbstractAssertTest from './AbstractAssertTest'
 
 @fake.login()
@@ -90,13 +90,13 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     protected static async throwsIfEntitiesDontMatch() {
         this.dropInDetailSkillView()
         this.assertRendersDetailFewThrowsForMissmatchedOptions({
-            entities: [buildDetailEntity()],
+            entities: [buildTestDetailEntity()],
         })
     }
 
     @test()
     protected static async passesIfEntitiesMatch() {
-        const entities = [buildDetailEntity(), buildDetailEntity()]
+        const entities = [buildTestDetailEntity(), buildTestDetailEntity()]
         this.dropInDetailSkillView({ entities })
         this.assertRendersDetailView({ entities })
     }
@@ -121,7 +121,7 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     ) {
         this.vc.dropInDetailSkillView({
             cancelDestination: 'crud.root',
-            entities: [buildDetailEntity()],
+            entities: [buildTestDetailEntity()],
             ...options,
         })
     }

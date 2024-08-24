@@ -15,7 +15,7 @@ import CrudDetailFormCardViewController from './CrudDetailFormCardViewController
 export default class CrudDetailSkillViewController extends AbstractSkillViewController {
     protected detailsCardVc: CrudDetailFormCardViewController
     private router?: Router
-    protected entities: DetailSkillViewEntity[]
+    protected entities: CrudDetailSkillViewEntity[]
     protected cancelDestination: SkillViewControllerId
 
     public constructor(
@@ -49,14 +49,26 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
     }
 
     public async load(
-        options: SkillViewControllerLoadOptions<DetailSkillViewArgs>
+        options: SkillViewControllerLoadOptions<CrudDetailSkillViewArgs>
     ) {
         const { args, router } = options
+        const { entityId, action } = args
+
+        this.assertValidAction(action)
 
         this.router = router
-        const entityId = args.entityId
         const entity = this.findEntity(entityId)
         await this.detailsCardVc.load(entity.form)
+    }
+
+    private assertValidAction(action: string) {
+        if (['create', 'edit'].indexOf(action) === -1) {
+            throw new SchemaError({
+                code: 'INVALID_PARAMETERS',
+                parameters: ['action'],
+                friendlyMessage: `Invalid action!`,
+            })
+        }
     }
 
     private findEntity(entityId: string) {
@@ -82,19 +94,22 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
 }
 
 export interface DetailSkillViewControllerOptions {
-    entities: DetailSkillViewEntity[]
+    entities: CrudDetailSkillViewEntity[]
     cancelDestination: SkillViewControllerId
 }
 
 export type DetailForm = Omit<FormCardViewControllerOptions<any>, 'id'>
 
-export interface DetailSkillViewEntity {
+export interface CrudDetailSkillViewEntity {
     id: string
     form: DetailForm
 }
 
-export interface DetailSkillViewArgs {
+export type CrudDetailLoadAction = 'edit' | 'create'
+
+export interface CrudDetailSkillViewArgs {
     entityId: string
+    action: CrudDetailLoadAction
 }
 
 declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.types' {

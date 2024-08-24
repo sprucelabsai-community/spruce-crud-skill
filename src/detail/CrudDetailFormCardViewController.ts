@@ -10,7 +10,7 @@ import { DetailForm } from './CrudDetailSkillViewController'
 
 export default class CrudDetailFormCardViewController extends AbstractViewController<Card> {
     protected formCardVc?: FormCardViewController
-    private cardVc: CardViewController
+    private loadingCardVc: CardViewController
     private onCancelHandler: OnCancelHandler
 
     public constructor(
@@ -22,12 +22,12 @@ export default class CrudDetailFormCardViewController extends AbstractViewContro
 
         this.onCancelHandler = onCancel
 
-        const views = this.getVcFactory()
-        if (!views.hasController('forms.card')) {
-            views.setController('forms.card', FormCardViewController)
-        }
+        this.setupVcFactory()
+        this.loadingCardVc = this.LoadingCardVc()
+    }
 
-        this.cardVc = this.Controller('card', {
+    private LoadingCardVc(): CardViewController {
+        return this.Controller('card', {
             id: 'details',
             body: {
                 isBusy: true,
@@ -41,6 +41,13 @@ export default class CrudDetailFormCardViewController extends AbstractViewContro
                 ],
             },
         })
+    }
+
+    private setupVcFactory() {
+        const views = this.getVcFactory()
+        if (!views.hasController('forms.card')) {
+            views.setController('forms.card', FormCardViewController)
+        }
     }
 
     public async load(form: DetailForm) {
@@ -59,7 +66,7 @@ export default class CrudDetailFormCardViewController extends AbstractViewContro
     }
 
     public render(): Card {
-        return this.formCardVc?.render() ?? this.cardVc.render()
+        return this.formCardVc?.render() ?? this.loadingCardVc.render()
     }
 }
 

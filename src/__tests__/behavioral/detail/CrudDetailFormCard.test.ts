@@ -74,7 +74,6 @@ export default class DetailFormCardTest extends AbstractCrudTest {
     @test()
     protected static async passeThroughDifferentForm() {
         this.formOptions = detailFormOptions2
-
         await this.loadAndAssertOptionsPassed()
     }
 
@@ -82,6 +81,12 @@ export default class DetailFormCardTest extends AbstractCrudTest {
     protected static async loadTriggersRender() {
         await this.load()
         vcAssert.assertTriggerRenderCount(this.vc, 1)
+    }
+
+    @test()
+    protected static async noLongerBusyAfterLoad() {
+        await this.load()
+        vcAssert.assertCardIsNotBusy(this.vc)
     }
 
     private static async loadAndAssertOptionsPassed() {

@@ -21,15 +21,15 @@
 		
 		
 		
-		"build/master/MasterSkillViewController.js",
-		"build/master/MasterSkillViewController.d.ts",
-		"build/esm/master/MasterSkillViewController.js",
-		"build/esm/master/MasterSkillViewController.d.ts",
+		"build/master/CrudMasterSkillViewController.js",
+		"build/master/CrudMasterSkillViewController.d.ts",
+		"build/esm/master/CrudMasterSkillViewController.js",
+		"build/esm/master/CrudMasterSkillViewController.d.ts",
 
-		"build/master/MasterListCardViewController.js",
-		"build/master/MasterListCardViewController.d.ts",
-		"build/esm/master/MasterListCardViewController.js",
-		"build/esm/master/MasterListCardViewController.d.ts",
+		"build/master/CrudMasterListCardViewController.js",
+		"build/master/CrudMasterListCardViewController.d.ts",
+		"build/esm/master/CrudMasterListCardViewController.js",
+		"build/esm/master/CrudMasterListCardViewController.d.ts",
 		
 		"build/assertions/crudAssert.js",
 		"build/assertions/crudAssert.d.ts",

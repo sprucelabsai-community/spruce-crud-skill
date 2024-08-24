@@ -1,13 +1,13 @@
-import { vcAssert } from '@sprucelabs/heartwood-view-controllers'
+import { activeRecordCardAssert } from '@sprucelabs/heartwood-view-controllers'
 import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
-import { test, assert, generateId } from '@sprucelabs/test-utils'
-import {
-    buildCrudMasterListEntity,
-    CrudMasterSkillViewListEntity,
-} from '../../../master/CrudMasterSkillViewController'
+import { test, assert } from '@sprucelabs/test-utils'
+import { CrudMasterSkillViewListEntity } from '../../../master/CrudMasterSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import MockMasterListCard from '../../support/MockMasterListCard'
-import { buildOrganizationTestEntity } from '../../support/test.utils'
+import {
+    buildOrganizationsListTestEntity,
+    buildOrganizationTestEntity,
+} from '../../support/test.utils'
 
 @fake.login()
 export default class MasterListCardTest extends AbstractCrudTest {
@@ -27,22 +27,23 @@ export default class MasterListCardTest extends AbstractCrudTest {
 
     @test()
     protected static async rendersAnActiveRecordCard() {
-        vcAssert.assertIsActiveRecordCard(this.vc)
+        activeRecordCardAssert.isActiveRecordCard(this.vc)
     }
 
     @test()
     @seed('locations', 1)
     protected static async rendersRowForLocationOnLoad() {
         await this.load()
-        this.vc.assertRendersRow(this.fakedLocations[0].id)
+        const id = this.fakedLocations[0].id
+        this.assertRendersRow(id)
     }
 
     @test()
     @seed('organizations', 1)
     protected static async rendersRowForOrganizationOnLoad() {
-        this.setupWithEntity(buildOrganizationTestEntity())
+        this.setupWithOneEntity()
         await this.load()
-        this.vc.assertRendersRow(this.fakedOrganizations[0].id)
+        this.assertRendersRow(this.fakedOrganizations[0].id)
     }
 
     @test('can pass through paging options 1', 10, true)
@@ -52,13 +53,8 @@ export default class MasterListCardTest extends AbstractCrudTest {
         shouldPageClientSide: boolean
     ) {
         this.setupWithEntity(
-            buildCrudMasterListEntity({
-                id: generateId(),
-                title: generateId(),
+            buildOrganizationsListTestEntity({
                 load: {
-                    fqen: 'list-organizations::v2020_12_25',
-                    responseKey: 'organizations',
-                    rowTransformer: () => ({ id: generateId(), cells: [] }),
                     paging: {
                         shouldPageClientSide,
                         pageSize,
@@ -73,6 +69,10 @@ export default class MasterListCardTest extends AbstractCrudTest {
         })
     }
 
+    private static setupWithOneEntity() {
+        this.setupWithEntity(buildOrganizationTestEntity())
+    }
+
     private static setupWithEntity(
         entity: CrudMasterSkillViewListEntity<any, any>
     ) {
@@ -84,5 +84,9 @@ export default class MasterListCardTest extends AbstractCrudTest {
 
     private static async load() {
         await this.views.load(this.vc)
+    }
+
+    private static assertRendersRow(id: string) {
+        this.vc.assertRendersRow(id)
     }
 }

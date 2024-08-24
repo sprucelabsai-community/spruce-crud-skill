@@ -1,10 +1,13 @@
 import { ListRow } from '@sprucelabs/heartwood-view-controllers'
-import { generateId } from '@sprucelabs/test-utils'
+import { generateId, RecursivePartial } from '@sprucelabs/test-utils'
 import {
     DetailForm,
-    DetailSkillViewEntity,
+    CrudDetailSkillViewEntity,
 } from '../../detail/CrudDetailSkillViewController'
-import { buildCrudMasterListEntity } from '../../master/CrudMasterSkillViewController'
+import {
+    buildCrudMasterListEntity,
+    CrudMasterSkillViewListEntity,
+} from '../../master/CrudMasterSkillViewController'
 import { detailFormOptions1 } from './detailFormOptions'
 
 export function buildLocationTestEntity(id?: string) {
@@ -77,12 +80,29 @@ export function buildOrganizationTestEntity() {
     })
 }
 
-export function buildDetailEntity(
+export function buildTestDetailEntity(
     id?: string,
     form?: DetailForm
-): DetailSkillViewEntity {
+): CrudDetailSkillViewEntity {
     return {
         id: id ?? generateId(),
         form: form ?? detailFormOptions1,
     }
+}
+
+export function buildOrganizationsListTestEntity(
+    options?: RecursivePartial<CrudMasterSkillViewListEntity>
+) {
+    return buildCrudMasterListEntity({
+        id: generateId(),
+        title: generateId(),
+        ...options,
+        load: {
+            fqen: 'list-organizations::v2020_12_25',
+            responseKey: 'organizations',
+            //@ts-ignore
+            rowTransformer: () => ({ id: generateId(), cells: [] }),
+            ...options?.load,
+        },
+    }) as CrudMasterSkillViewListEntity<any>
 }

@@ -15,7 +15,7 @@ import { ViewFixture } from '@sprucelabs/spruce-test-fixtures'
 import { assert, RecursivePartial } from '@sprucelabs/test-utils'
 import CrudDetailSkillViewController, {
     DetailSkillViewControllerOptions,
-    DetailSkillViewEntity,
+    CrudDetailSkillViewEntity,
 } from '../detail/CrudDetailSkillViewController'
 import MasterListCardViewController from '../master/CrudMasterListCardViewController'
 import CrudMasterSkillViewController, {
@@ -277,7 +277,7 @@ class SpyMasterListCard extends MasterListCardViewController {
 
 class SpyDetailSkillView extends CrudDetailSkillViewController {
     public cancelDestination!: SkillViewControllerId
-    public entities!: DetailSkillViewEntity[]
+    public entities!: CrudDetailSkillViewEntity[]
 }
 
 export type ExpectedListEntityOptions<

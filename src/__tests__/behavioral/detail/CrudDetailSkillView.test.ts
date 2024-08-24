@@ -10,20 +10,22 @@ import { test, assert, errorAssert, generateId } from '@sprucelabs/test-utils'
 import CrudDetailFormCardViewController from '../../../detail/CrudDetailFormCardViewController'
 import CrudDetailSkillViewController, {
     DetailForm,
-    DetailSkillViewArgs,
-    DetailSkillViewEntity,
+    CrudDetailSkillViewArgs,
+    CrudDetailSkillViewEntity,
+    CrudDetailLoadAction,
 } from '../../../detail/CrudDetailSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import { detailFormOptions2 } from '../../support/detailFormOptions'
 import MockDetailFormCard from '../../support/MockDetailFormCard'
-import { buildDetailEntity } from '../../support/test.utils'
+import { buildTestDetailEntity } from '../../support/test.utils'
 
 @fake.login()
 export default class DetailSkillViewTest extends AbstractCrudTest {
     private static vc: SpyDetailSkillView
     private static entityId: string
-    private static entities: DetailSkillViewEntity[]
+    private static entities: CrudDetailSkillViewEntity[]
     private static cancelDestination: SkillViewControllerId
+    private static loadAction: CrudDetailLoadAction
 
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
@@ -32,6 +34,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
 
         this.entityId = generateId()
         this.entities = []
+        this.loadAction = 'edit'
         this.cancelDestination = generateId() as SkillViewControllerId
         this.views.setController('forms.card', SpyFormCardViewController)
         this.views.setController('crud.detail-form-card', MockDetailFormCard)
@@ -141,6 +144,15 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         })
     }
 
+    @test()
+    protected static async throwsIfBadAction() {
+        this.loadAction = generateId() as CrudDetailLoadAction
+        const err = await assert.doesThrowAsync(() => this.loadWithEntity())
+        errorAssert.assertError(err, 'INVALID_PARAMETERS', {
+            parameters: ['action'],
+        })
+    }
+
     private static assertRendersDetailsCard() {
         return vcAssert.assertSkillViewRendersCard(this.vc, 'details')
     }
@@ -150,17 +162,17 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
     }
 
     private static async loadWithEntity() {
-        await this.load({ entityId: this.entityId })
+        await this.load({ entityId: this.entityId, action: this.loadAction })
     }
 
     private static buildDetailEntity(
         id?: string,
         form?: DetailForm
-    ): DetailSkillViewEntity {
-        return buildDetailEntity(id ?? this.entityId, form)
+    ): CrudDetailSkillViewEntity {
+        return buildTestDetailEntity(id ?? this.entityId, form)
     }
 
-    private static setupDetailView(entities: DetailSkillViewEntity[]) {
+    private static setupDetailView(entities: CrudDetailSkillViewEntity[]) {
         this.entities = entities
         this.vc = this.views.Controller('crud.detail-skill-view', {
             entities,
@@ -169,9 +181,12 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
     }
 
     private static async assertThrowsInvalidEntityId(
-        args: Partial<DetailSkillViewArgs>
+        args: Partial<CrudDetailSkillViewArgs>
     ) {
-        const err = await assert.doesThrowAsync(() => this.load(args))
+        const err = await assert.doesThrowAsync(() =>
+            //@ts-ignore
+            this.load({ action: 'create', ...args })
+        )
         errorAssert.assertError(err, 'INVALID_ENTITY_ID', {
             entityId: args.entityId,
         })
@@ -183,7 +198,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         this.setupDetailView([entity])
     }
 
-    private static load(args: Partial<DetailSkillViewArgs>): any {
+    private static load(args: CrudDetailSkillViewArgs) {
         return this.views.load(this.vc, args)
     }
 }

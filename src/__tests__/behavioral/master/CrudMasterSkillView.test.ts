@@ -1,4 +1,5 @@
 import {
+    buttonAssert,
     interactor,
     SkillViewControllerId,
     vcAssert,
@@ -19,10 +20,12 @@ import { buildLocationTestEntity } from '../../support/test.utils'
 export default class MasterSkillViewTest extends AbstractCrudTest {
     private static vc: SpyMasterSkillView
     private static clickRowDestination?: SkillViewControllerId
+    private static addDestination?: SkillViewControllerId
 
     protected static async beforeEach() {
         await super.beforeEach()
         delete this.clickRowDestination
+        delete this.addDestination
     }
 
     @test()
@@ -210,7 +213,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
                 id: this.clickRowDestination,
                 args: {
                     action: 'edit',
-                    entityId: entity.id,
+                    entity: entity.id,
                     recordId: this.fakedLocations[0].id,
                 },
             },
@@ -224,6 +227,35 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
         this.setupWith1EntityAndGetId()
         await this.load()
         await this.clickFirstRowOfFirstList()
+    }
+
+    @test()
+    protected static async addDestinationRendersAddButtonAndClickingRedirects() {
+        const entity = this.buildLocationTestEntity()
+        this.addDestination = 'crud.detail'
+        this.setupWithEntities([entity])
+        await this.load()
+
+        buttonAssert.cardRendersButton(this.listCardVcs[0], 'add')
+
+        await vcAssert.assertActionRedirects({
+            action: () => interactor.clickButton(this.listCardVcs[0], 'add'),
+            destination: {
+                id: this.addDestination,
+                args: {
+                    action: 'create',
+                    entity: entity.id,
+                },
+            },
+            router: this.views.getRouter(),
+        })
+    }
+
+    @test()
+    protected static async doesNotRenderAddButtonIfNoAddDestination() {
+        this.setupVcWithTotalEntities(1)
+        await this.load()
+        buttonAssert.cardDoesNotRenderButton(this.listCardVcs[0], 'add')
     }
 
     private static clickFirstRowOfFirstList(): any {
@@ -287,6 +319,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
         entities: CrudMasterSkillViewListEntity<any, any>[]
     ) {
         this.vc = this.Vc({
+            addDestination: this.addDestination,
             clickRowDestination: this.clickRowDestination,
             entities,
         })

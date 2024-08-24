@@ -27,17 +27,20 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
     protected listCardsById: Record<string, MasterListCardViewController> = {}
     protected wasLoaded = false
     protected clickRowDestination?: SkillViewControllerId
+    private clickAddDestination?: SkillViewControllerId
     private router?: Router
 
     public constructor(
         options: ViewControllerOptions & CrudMasterSkillViewControllerOptions
     ) {
         super(options)
-        const { entities, clickRowDestination } = assertOptions(options, [
-            'entities',
-        ])
+        const { entities, clickRowDestination, addDestination } = assertOptions(
+            options,
+            ['entities']
+        )
 
         this.clickRowDestination = clickRowDestination
+        this.clickAddDestination = addDestination
         this.validateEntities(entities)
         this.buildCards(entities)
     }
@@ -59,8 +62,20 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
                 {
                     entity,
                     onClickRow: this.handleClickRow.bind(this),
+                    onAddClick:
+                        this.clickAddDestination &&
+                        this.handleAddClick.bind(this),
                 }
             )
+        }
+    }
+
+    private async handleAddClick(entityId: string) {
+        if (this.clickAddDestination) {
+            await this.router?.redirect(this.clickAddDestination, {
+                action: 'create',
+                entity: entityId,
+            })
         }
     }
 
@@ -72,7 +87,7 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
             await this.router?.redirect(this.clickRowDestination, {
                 action: 'edit',
                 recordId: record.id,
-                entityId,
+                entity: entityId,
             })
         }
     }
@@ -122,6 +137,7 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
 }
 
 export interface CrudMasterSkillViewControllerOptions {
+    addDestination?: SkillViewControllerId
     clickRowDestination?: SkillViewControllerId
     entities: CrudMasterSkillViewListEntity<any, any>[]
 }
