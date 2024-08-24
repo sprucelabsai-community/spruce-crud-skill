@@ -193,7 +193,7 @@ const crudAssert = {
 
     skillViewRendersDetailView(
         skillView: SkillViewController,
-        options?: Partial<DetailSkillViewControllerOptions>
+        options?: RecursivePartial<DetailSkillViewControllerOptions>
     ) {
         assertBeforeEachRan()
 
@@ -250,7 +250,7 @@ const crudAssert = {
 
         await views?.load(skillView, {
             action: 'create',
-            entityId: vc?.options.entities[0].id,
+            entity: vc?.options.entities[0].id,
         })
 
         assert.isTrue(

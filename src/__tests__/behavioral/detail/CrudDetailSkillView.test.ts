@@ -84,7 +84,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
 
     @test()
     protected static async throwsIfLoadedWithInvalidEntityId() {
-        await this.assertThrowsInvalidEntityId({ entityId: generateId() })
+        await this.assertThrowsInvalidEntityId({ entity: generateId() })
     }
 
     @test()
@@ -162,7 +162,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
     }
 
     private static async loadWithEntity() {
-        await this.load({ entityId: this.entityId, action: this.loadAction })
+        await this.load({ entity: this.entityId, action: this.loadAction })
     }
 
     private static buildDetailEntity(
@@ -188,7 +188,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
             this.load({ action: 'create', ...args })
         )
         errorAssert.assertError(err, 'INVALID_ENTITY_ID', {
-            entityId: args.entityId,
+            entityId: args.entity,
         })
     }
 
@@ -205,6 +205,6 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
 
 class SpyDetailSkillView extends CrudDetailSkillViewController {
     public getDetailFormVc() {
-        return this.detailsCardVc
+        return this.detailsFormCardVc
     }
 }

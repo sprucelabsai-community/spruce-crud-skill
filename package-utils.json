@@ -43,7 +43,24 @@
 		"build/assertions/crudAssert.js",
 		"build/assertions/crudAssert.d.ts",
 		"build/esm/assertions/crudAssert.js",
-		"build/esm/assertions/crudAssert.d.ts"
+		"build/esm/assertions/crudAssert.d.ts",
+		
+		
+		"build/errors/SpruceError.js",
+		"build/errors/SpruceError.d.ts",
+		"build/esm/errors/SpruceError.js",
+		"build/esm/errors/SpruceError.d.ts",
+		
+		
+		"build/.spruce/errors/options.types.js",
+		"build/.spruce/errors/options.types.d.ts",
+		"build/esm/.spruce/errors/options.types.js",
+		"build/esm/.spruce/errors/options.types.d.ts",
+		
+		"build/.spruce/errors/errors.types.js",
+		"build/.spruce/errors/errors.types.d.ts",
+		"build/esm/.spruce/errors/errors.types.js",
+		"build/esm/.spruce/errors/errors.types.d.ts"
 	],
 	"keywords": [],
 	"scripts": {

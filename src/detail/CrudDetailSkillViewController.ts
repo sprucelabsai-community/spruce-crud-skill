@@ -14,7 +14,7 @@ import SpruceError from '../errors/SpruceError'
 import CrudDetailFormCardViewController from './CrudDetailFormCardViewController'
 
 export default class CrudDetailSkillViewController extends AbstractSkillViewController {
-    protected detailsCardVc: CrudDetailFormCardViewController
+    protected detailsFormCardVc: CrudDetailFormCardViewController
     private router?: Router
     protected options: DetailSkillViewControllerOptions
     protected wasLoaded = false
@@ -38,7 +38,7 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
 
         this.options = removeUniversalViewOptions(options)
 
-        this.detailsCardVc = this.Controller('crud.detail-form-card', {
+        this.detailsFormCardVc = this.Controller('crud.detail-form-card', {
             onCancel: this.handleClickCancel.bind(this),
             onSubmit: () => {},
         })
@@ -56,13 +56,13 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
         options: SkillViewControllerLoadOptions<CrudDetailSkillViewArgs>
     ) {
         const { args, router } = options
-        const { entityId, action } = args
+        const { entity: entityId, action } = args
 
         this.assertValidAction(action)
 
         this.router = router
         const entity = this.findEntity(entityId)
-        await this.detailsCardVc.load(entity.form)
+        await this.detailsFormCardVc.load(entity.form)
 
         this.wasLoaded = true
     }
@@ -97,7 +97,7 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
         return {
             controller: this,
             ...buildSkillViewLayout('big-left', {
-                leftCards: [this.detailsCardVc.render()],
+                leftCards: [this.detailsFormCardVc.render()],
             }),
         }
     }
@@ -118,7 +118,7 @@ export interface CrudDetailSkillViewEntity {
 export type CrudDetailLoadAction = 'edit' | 'create'
 
 export interface CrudDetailSkillViewArgs {
-    entityId: string
+    entity: string
     action: CrudDetailLoadAction
 }
 

@@ -2,11 +2,17 @@ import {
     AbstractSkillViewController,
     ViewControllerOptions,
     SkillView,
+    SkillViewControllerLoadOptions,
+    buildForm,
 } from '@sprucelabs/heartwood-view-controllers'
+import { locationSchema } from '@sprucelabs/spruce-core-schemas'
 import CrudDetailFormCardViewController from '../detail/CrudDetailFormCardViewController'
-import CrudDetailSkillViewController from '../detail/CrudDetailSkillViewController'
+import CrudDetailSkillViewController, {
+    CrudDetailSkillViewArgs,
+    CrudDetailSkillViewEntity,
+} from '../detail/CrudDetailSkillViewController'
 
-export default class DetailExampleSkillViewController extends AbstractSkillViewController {
+export default class DetailSkillViewController extends AbstractSkillViewController {
     public static id = 'detail'
     private detailSkillView: CrudDetailSkillViewController
 
@@ -25,13 +31,29 @@ export default class DetailExampleSkillViewController extends AbstractSkillViewC
 
         this.detailSkillView = this.Controller('crud.detail-skill-view', {
             cancelDestination: 'crud.root',
-            entities: [
-                {
-                    form: {} as any,
-                    id: 'aoeu',
-                },
-            ],
+            entities: [this.buildLocationDetailEntity()],
         })
+    }
+
+    private buildLocationDetailEntity(): CrudDetailSkillViewEntity {
+        return {
+            id: 'locations',
+            form: buildForm({
+                id: 'locationsForm',
+                schema: locationSchema,
+                sections: [
+                    {
+                        fields: ['name', 'timezone', 'address'],
+                    },
+                ],
+            }),
+        }
+    }
+
+    public async load(
+        options: SkillViewControllerLoadOptions<CrudDetailSkillViewArgs>
+    ) {
+        await this.detailSkillView.load(options)
     }
 
     public render(): SkillView {
