@@ -19,8 +19,6 @@
 		"build/esm/index-module.js",
 		"build/esm/index-module.d.ts",
 		
-		
-		
 		"build/master/CrudMasterSkillViewController.js",
 		"build/master/CrudMasterSkillViewController.d.ts",
 		"build/esm/master/CrudMasterSkillViewController.js",
