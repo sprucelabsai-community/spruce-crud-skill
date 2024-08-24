@@ -10,10 +10,10 @@ import { test, assert, errorAssert, generateId } from '@sprucelabs/test-utils'
 import crudAssert, {
     ExpectedListEntityOptions,
 } from '../../../assertions/crudAssert'
-import MasterSkillViewController, {
+import CrudMasterSkillViewController, {
     MasterSkillViewControllerOptions,
     MasterSkillViewListEntity,
-} from '../../../master/MasterSkillViewController'
+} from '../../../master/CrudMasterSkillViewController'
 import {
     buildLocationTestEntity,
     buildLocationTestPagingEntity,
@@ -404,7 +404,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
 }
 
 class SkillViewWithMasterView extends AbstractSkillViewController {
-    private masterSkillView?: MasterSkillViewController
+    private masterSkillView?: CrudMasterSkillViewController
     public entities?: MasterSkillViewListEntity[]
     public onWillLoad?: () => void
 

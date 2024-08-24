@@ -13,15 +13,15 @@ import {
 import { assertOptions } from '@sprucelabs/schema'
 import { ViewFixture } from '@sprucelabs/spruce-test-fixtures'
 import { assert, RecursivePartial } from '@sprucelabs/test-utils'
-import DetailSkillViewController, {
+import CrudDetailSkillViewController, {
     DetailSkillViewControllerOptions,
     DetailSkillViewEntity,
-} from '../detail/DetailSkillViewController'
-import MasterListCardViewController from '../master/MasterListCardViewController'
-import MasterSkillViewController, {
+} from '../detail/CrudDetailSkillViewController'
+import MasterListCardViewController from '../master/CrudMasterListCardViewController'
+import CrudMasterSkillViewController, {
     MasterSkillViewControllerOptions,
     MasterSkillViewListEntity,
-} from '../master/MasterSkillViewController'
+} from '../master/CrudMasterSkillViewController'
 
 let views: ViewFixture | undefined
 
@@ -61,7 +61,7 @@ const crudAssert = {
         try {
             vc = vcAssert.assertControllerInstanceOf(
                 rendered.controller!,
-                MasterSkillViewController
+                CrudMasterSkillViewController
             ) as SpyMasterSkillView
         } catch {
             assert.fail(`You are not rendering a MasterSkillViewController. Follow these steps:
@@ -222,7 +222,7 @@ const crudAssert = {
         try {
             vc = vcAssert.assertControllerInstanceOf(
                 rendered.controller!,
-                DetailSkillViewController
+                CrudDetailSkillViewController
             ) as SpyDetailSkillView
         } catch {
             assert.fail(`You are not rendering a DetailSkillViewController. Follow these steps:
@@ -265,7 +265,7 @@ function assertBeforeEachRan() {
     )
 }
 
-class SpyMasterSkillView extends MasterSkillViewController {
+class SpyMasterSkillView extends CrudMasterSkillViewController {
     public wasLoaded = false
     public clickRowDestination?: SkillViewControllerId
 }
@@ -275,7 +275,7 @@ class SpyMasterListCard extends MasterListCardViewController {
     public activeRecordCardVc!: MockActiveRecordCard
 }
 
-class SpyDetailSkillView extends DetailSkillViewController {
+class SpyDetailSkillView extends CrudDetailSkillViewController {
     public cancelDestination!: SkillViewControllerId
     public entities!: DetailSkillViewEntity[]
 }

@@ -10,10 +10,10 @@ import {
 import { assertOptions, SchemaError } from '@sprucelabs/schema'
 import { FormCardViewControllerOptions } from '@sprucelabs/spruce-form-utils'
 import SpruceError from '../errors/SpruceError'
-import DetailFormCardViewController from './DetailFormCardViewController'
+import CrudDetailFormCardViewController from './CrudDetailFormCardViewController'
 
-export default class DetailSkillViewController extends AbstractSkillViewController {
-    protected detailsCardVc: DetailFormCardViewController
+export default class CrudDetailSkillViewController extends AbstractSkillViewController {
+    protected detailsCardVc: CrudDetailFormCardViewController
     private router?: Router
     protected entities: DetailSkillViewEntity[]
     protected cancelDestination: SkillViewControllerId
@@ -99,11 +99,11 @@ export interface DetailSkillViewArgs {
 
 declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.types' {
     interface SkillViewControllerMap {
-        'crud.detail-skill-view': DetailSkillViewController
+        'crud.detail-skill-view': CrudDetailSkillViewController
     }
 
     interface ViewControllerMap {
-        'crud.detail-skill-view': DetailSkillViewController
+        'crud.detail-skill-view': CrudDetailSkillViewController
     }
 
     interface ViewControllerOptionsMap {

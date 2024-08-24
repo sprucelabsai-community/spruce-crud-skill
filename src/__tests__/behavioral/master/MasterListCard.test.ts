@@ -4,7 +4,7 @@ import { test, assert, generateId } from '@sprucelabs/test-utils'
 import {
     buildMasterListEntity,
     MasterSkillViewListEntity,
-} from '../../../master/MasterSkillViewController'
+} from '../../../master/CrudMasterSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import MockMasterListCard from '../../support/MockMasterListCard'
 import { buildOrganizationTestEntity } from '../../support/test.utils'

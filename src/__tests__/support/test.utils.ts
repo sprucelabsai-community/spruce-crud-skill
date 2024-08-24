@@ -3,8 +3,8 @@ import { generateId } from '@sprucelabs/test-utils'
 import {
     DetailForm,
     DetailSkillViewEntity,
-} from '../../detail/DetailSkillViewController'
-import { buildMasterListEntity } from '../../master/MasterSkillViewController'
+} from '../../detail/CrudDetailSkillViewController'
+import { buildMasterListEntity } from '../../master/CrudMasterSkillViewController'
 import { detailFormOptions1 } from './detailFormOptions'
 
 export function buildLocationTestEntity(id?: string) {

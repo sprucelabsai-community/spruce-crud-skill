@@ -14,7 +14,9 @@ export default class DetailExampleSkillViewTest extends AbstractSpruceFixtureTes
 
     @test()
     protected static async rendersDetailSkillView() {
-        const vc = this.views.Controller('crud.detail-example', {})
-        crudAssert.skillViewRendersDetailView(vc)
+        const vc = this.views.Controller('crud.detail', {})
+        crudAssert.skillViewRendersDetailView(vc, {
+            cancelDestination: 'crud.root',
+        })
     }
 }

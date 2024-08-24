@@ -3,28 +3,28 @@ import {
     ViewControllerOptions,
     SkillView,
 } from '@sprucelabs/heartwood-view-controllers'
-import DetailFormCardViewController from '../detail/DetailFormCardViewController'
-import DetailSkillViewController from '../detail/DetailSkillViewController'
+import CrudDetailFormCardViewController from '../detail/CrudDetailFormCardViewController'
+import CrudDetailSkillViewController from '../detail/CrudDetailSkillViewController'
 
 export default class DetailExampleSkillViewController extends AbstractSkillViewController {
-    public static id = 'detail-example'
-    private detailSkillView: DetailSkillViewController
+    public static id = 'detail'
+    private detailSkillView: CrudDetailSkillViewController
 
     public constructor(options: ViewControllerOptions) {
         super(options)
 
         this.getVcFactory().setController(
             'crud.detail-skill-view',
-            DetailSkillViewController
+            CrudDetailSkillViewController
         )
 
         this.getVcFactory().setController(
             'crud.detail-form-card',
-            DetailFormCardViewController
+            CrudDetailFormCardViewController
         )
 
         this.detailSkillView = this.Controller('crud.detail-skill-view', {
-            cancelDestination: 'crud.detail-example',
+            cancelDestination: 'crud.root',
             entities: [
                 {
                     form: {} as any,

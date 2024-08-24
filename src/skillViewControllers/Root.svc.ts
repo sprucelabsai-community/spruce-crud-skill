@@ -4,21 +4,21 @@ import {
     SkillView,
     SkillViewControllerLoadOptions,
 } from '@sprucelabs/heartwood-view-controllers'
-import MasterListCardViewController from '../master/MasterListCardViewController'
-import MasterSkillViewController, {
+import MasterListCardViewController from '../master/CrudMasterListCardViewController'
+import CrudMasterSkillViewController, {
     buildMasterListEntity,
-} from '../master/MasterSkillViewController'
+} from '../master/CrudMasterSkillViewController'
 
 export default class RootSkillViewController extends AbstractSkillViewController {
     public static id = 'root'
-    private masterSkillView: MasterSkillViewController
+    private masterSkillView: CrudMasterSkillViewController
 
     public constructor(options: ViewControllerOptions) {
         super(options)
 
         this.getVcFactory().setController(
             'crud.master-skill-view',
-            MasterSkillViewController
+            CrudMasterSkillViewController
         )
 
         this.getVcFactory().setController(
@@ -29,9 +29,9 @@ export default class RootSkillViewController extends AbstractSkillViewController
         this.masterSkillView = this.MasterVc()
     }
 
-    private MasterVc(): MasterSkillViewController {
+    private MasterVc(): CrudMasterSkillViewController {
         return this.Controller('crud.master-skill-view', {
-            clickRowDestination: 'crud.detail-example',
+            clickRowDestination: 'crud.detail',
             entities: [
                 this.buildOrganizationsListEntity(),
                 this.buildLocationsListEntity(),

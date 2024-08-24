@@ -7,12 +7,12 @@ import {
 import { SpyFormCardViewController } from '@sprucelabs/spruce-form-utils'
 import { fake, TestRouter } from '@sprucelabs/spruce-test-fixtures'
 import { test, assert, errorAssert, generateId } from '@sprucelabs/test-utils'
-import DetailFormCardViewController from '../../../detail/DetailFormCardViewController'
-import DetailSkillViewController, {
+import CrudDetailFormCardViewController from '../../../detail/CrudDetailFormCardViewController'
+import CrudDetailSkillViewController, {
     DetailForm,
     DetailSkillViewArgs,
     DetailSkillViewEntity,
-} from '../../../detail/DetailSkillViewController'
+} from '../../../detail/CrudDetailSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import { detailFormOptions2 } from '../../support/detailFormOptions'
 import MockDetailFormCard from '../../support/MockDetailFormCard'
@@ -70,7 +70,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
 
         vcAssert.assertRendersAsInstanceOf(
             detailsVc,
-            DetailFormCardViewController
+            CrudDetailFormCardViewController
         )
     }
 
@@ -188,7 +188,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
     }
 }
 
-class SpyDetailSkillView extends DetailSkillViewController {
+class SpyDetailSkillView extends CrudDetailSkillViewController {
     public getDetailFormVc() {
         return this.detailsCardVc
     }

@@ -21,9 +21,9 @@ import {
     SchemaError,
     SchemaValues,
 } from '@sprucelabs/schema'
-import MasterListCardViewController from './MasterListCardViewController'
+import MasterListCardViewController from './CrudMasterListCardViewController'
 
-export default class MasterSkillViewController extends AbstractSkillViewController {
+export default class CrudMasterSkillViewController extends AbstractSkillViewController {
     protected listCardsById: Record<string, MasterListCardViewController> = {}
     protected wasLoaded = false
     protected clickRowDestination?: SkillViewControllerId
@@ -205,11 +205,11 @@ export const buildMasterSkillViewOptions = (
 
 declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.types' {
     interface SkillViewControllerMap {
-        'crud.master-skill-view': MasterSkillViewController
+        'crud.master-skill-view': CrudMasterSkillViewController
     }
 
     interface ViewControllerMap {
-        'crud.master-skill-view': MasterSkillViewController
+        'crud.master-skill-view': CrudMasterSkillViewController
     }
 
     interface ViewControllerOptionsMap {

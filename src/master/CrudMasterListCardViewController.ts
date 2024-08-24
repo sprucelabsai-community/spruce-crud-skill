@@ -8,7 +8,7 @@ import {
 } from '@sprucelabs/heartwood-view-controllers'
 import { SkillEventContract } from '@sprucelabs/mercury-types'
 import { assertOptions } from '@sprucelabs/schema'
-import { MasterSkillViewListEntity } from './MasterSkillViewController'
+import { MasterSkillViewListEntity } from './CrudMasterSkillViewController'
 
 export default class MasterListCardViewController extends AbstractViewController<Card> {
     protected activeRecordCardVc: ActiveRecordCardViewController

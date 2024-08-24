@@ -28,7 +28,7 @@ export default class RootSkillViewTest extends AbstractCrudTest {
     @test()
     protected static async rendersMaster() {
         crudAssert.skillViewRendersMasterView(this.vc, {
-            clickRowDestination: 'crud.detail-example',
+            clickRowDestination: 'crud.detail',
         })
     }
 

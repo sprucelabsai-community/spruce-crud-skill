@@ -5,11 +5,11 @@ import {
 } from '@sprucelabs/heartwood-view-controllers'
 import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
 import { test, assert, errorAssert, generateId } from '@sprucelabs/test-utils'
-import MasterListCardViewController from '../../../master/MasterListCardViewController'
+import MasterListCardViewController from '../../../master/CrudMasterListCardViewController'
 import {
     MasterSkillViewControllerOptions,
     MasterSkillViewListEntity,
-} from '../../../master/MasterSkillViewController'
+} from '../../../master/CrudMasterSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import MockMasterListCard from '../../support/MockMasterListCard'
 import SpyMasterSkillView from '../../support/SpyMasterSkillView'

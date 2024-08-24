@@ -5,9 +5,9 @@ import {
 } from '@sprucelabs/heartwood-view-controllers'
 import { fake } from '@sprucelabs/spruce-test-fixtures'
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import DetailSkillViewController, {
+import CrudDetailSkillViewController, {
     DetailSkillViewControllerOptions,
-} from '../../../detail/DetailSkillViewController'
+} from '../../../detail/CrudDetailSkillViewController'
 import { crudAssert } from '../../../index-module'
 import { buildDetailEntity } from '../../support/test.utils'
 import AbstractAssertTest from './AbstractAssertTest'
@@ -136,7 +136,7 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
 }
 
 class SkillViewWithDetailView extends AbstractSkillViewController {
-    private detailSkillView?: DetailSkillViewController
+    private detailSkillView?: CrudDetailSkillViewController
 
     public dropInDetailSkillView(options: DetailSkillViewControllerOptions) {
         this.detailSkillView = this.Controller(
