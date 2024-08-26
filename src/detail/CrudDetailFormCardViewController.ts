@@ -12,15 +12,20 @@ export default class CrudDetailFormCardViewController extends AbstractViewContro
     protected formCardVc?: FormCardViewController
     private loadingCardVc: CardViewController
     private onCancelHandler: OnCancelHandler
+    private onSubmitHandler: OnSubmitHandler
 
     public constructor(
         options: ViewControllerOptions & DetailFormCardViewControllerOptions
     ) {
         super(options)
 
-        const { onCancel } = assertOptions(options, ['onSubmit', 'onCancel'])
+        const { onCancel, onSubmit } = assertOptions(options, [
+            'onSubmit',
+            'onCancel',
+        ])
 
         this.onCancelHandler = onCancel
+        this.onSubmitHandler = onSubmit
 
         this.setupVcFactory()
         this.loadingCardVc = this.LoadingCardVc()
@@ -50,21 +55,28 @@ export default class CrudDetailFormCardViewController extends AbstractViewContro
         }
     }
 
-    public async load(entity: CrudDetailSkillViewEntity) {
-        const { form, generateTitle } = entity ?? {}
-
-        assertOptions({ form }, ['form'])
+    public async load(
+        entity: Omit<CrudDetailSkillViewEntity, 'load'>,
+        values?: Record<string, any>
+    ) {
+        const { form, generateTitle } = assertOptions(entity, ['form'])
 
         this.formCardVc = this.Controller('forms.card', {
             ...(form as any),
             id: 'details',
+            values,
             header: {
                 title: generateTitle?.(),
             },
             onCancel: this.handleCancel.bind(this),
+            onSubmit: this.handleSubmit.bind(this),
         })
 
         this.triggerRender()
+    }
+
+    private async handleSubmit() {
+        await this.onSubmitHandler({})
     }
 
     private async handleCancel() {

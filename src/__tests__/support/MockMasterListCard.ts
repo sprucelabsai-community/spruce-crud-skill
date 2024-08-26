@@ -56,4 +56,8 @@ export default class MockMasterListCard extends MasterListCardViewController {
             'Your payload does not match!'
         )
     }
+
+    public getEntityId() {
+        return this.entity.id
+    }
 }

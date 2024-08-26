@@ -193,7 +193,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
     protected static async throwsIfFirstConfigDoesNotMatch() {
         this.dropInMasterSkillView()
         await this.assertMasterListRendersListThrows({
-            load: {
+            list: {
                 fqen: 'list-roles::v2020_12_25',
             },
         })
@@ -203,7 +203,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
     protected static async passesIfFirstFqenMatches() {
         this.dropInMasterSkillView()
         await this.masterSkillViewRendersList({
-            load: {
+            list: {
                 fqen: 'list-locations::v2020_12_25',
             },
         })
@@ -216,7 +216,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
                 id: 'test-1',
                 pluralTitle: generateId(),
                 singularTitle: generateId(),
-                load: {
+                list: {
                     fqen: 'list-installed-skills::v2020_12_25',
                     responseKey: 'skills',
                     rowTransformer: () => ({}) as ListRow,
@@ -225,7 +225,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
         ])
 
         await this.assertMasterListRendersListThrows({
-            load: {
+            list: {
                 fqen: 'list-locations::v2020_12_25',
             },
         })
@@ -236,7 +236,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
         this.dropInMasterSkillView()
         await this.assertMasterListRendersListThrows({
             pluralTitle: generateId(),
-            load: {
+            list: {
                 fqen: 'list-locations::v2020_12_25',
             },
         })
@@ -346,6 +346,93 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
         )
     }
 
+    @test()
+    protected static async assertAddArgsThrowsIfMissingRequired() {
+        const err = await assert.doesThrowAsync(() =>
+            //@ts-ignore
+            crudAssert.addDestinationArgsEqual()
+        )
+
+        errorAssert.assertError(err, 'MISSING_PARAMETERS', {
+            parameters: ['skillView', 'listCardId', 'expectedArgs'],
+        })
+    }
+
+    @test()
+    protected static async assertAddArgsThrowsIfListNotFound() {
+        this.dropInMasterSkillView()
+        await assert.doesThrowAsync(
+            () =>
+                //@ts-ignore
+                crudAssert.addDestinationArgsEqual(
+                    this.fakeSvc,
+                    generateId(),
+                    {}
+                ),
+            'not rendering a list'
+        )
+    }
+
+    @test('throws if add args do not match 1', { action: 'create' })
+    @test('throws if add args do not match 2', { foo: 'bar' })
+    protected static async throwsIfAddArgsDoNotMatch(
+        args: Record<string, any>
+    ) {
+        this.dropInMasterSkillView()
+        await this.assertAddDestinationArgsEqualThrows(args)
+    }
+
+    @test('passes if add destination args match 1', { foo: 'bar' })
+    @test('passes if add destination args match 2', { bar: 'baz' })
+    protected static async passesIfAddDestinationArgsMatch(
+        args: Record<string, any>
+    ) {
+        this.dropInMasterSkillViewAndSetAddArgs(args)
+
+        await crudAssert.addDestinationArgsEqual(
+            this.fakeSvc,
+            this.firstEntityId,
+            args
+        )
+    }
+
+    @test()
+    protected static async assertAddDestinationArgsThrowIfHasMoreSetThanExpected() {
+        this.dropInMasterSkillViewAndSetAddArgs({
+            foo: 'bar',
+            bar: 'baz',
+        })
+
+        await this.assertAddDestinationArgsEqualThrows({
+            foo: 'bar',
+        })
+    }
+
+    private static async assertAddDestinationArgsEqualThrows(
+        args: Record<string, any>
+    ) {
+        await assert.doesThrowAsync(
+            () =>
+                crudAssert.addDestinationArgsEqual(
+                    this.fakeSvc,
+                    this.firstEntityId,
+                    args
+                ),
+            'args'
+        )
+    }
+
+    private static dropInMasterSkillViewAndSetAddArgs(
+        args: Record<string, any>
+    ) {
+        this.dropInMasterSkillView()
+        this.setAddDestinationArgs(args)
+    }
+
+    private static setAddDestinationArgs(args: Record<string, any>) {
+        this.fakeSvc.setAddDestinationArgsOnLoad(this.firstEntityId, args)
+    }
+
     private static dropInMasterWithClickDestination(
         destination: SkillViewControllerId
     ) {
@@ -445,6 +532,8 @@ class SkillViewWithMasterView extends AbstractSkillViewController {
     private masterSkillView?: CrudMasterSkillViewController
     public entities?: CrudMasterSkillViewListEntity[]
     public onWillLoad?: () => void
+    private argsToSetOnLoad: { listId: string; args: Record<string, any> }[] =
+        []
 
     public dropInMasterSkillView(
         options: Partial<CrudMasterSkillViewControllerOptions>
@@ -459,13 +548,28 @@ class SkillViewWithMasterView extends AbstractSkillViewController {
         })
     }
 
+    public setAddDestinationArgsOnLoad(
+        listId: string,
+        args: Record<string, any>
+    ) {
+        this.argsToSetOnLoad.push({
+            listId,
+            args,
+        })
+    }
+
     public async load(options: SkillViewControllerLoadOptions) {
         this.onWillLoad?.()
+
+        for (const { listId, args } of this.argsToSetOnLoad) {
+            this.masterSkillView?.setAddDestinationArgs(listId, args)
+        }
+
         await this.masterSkillView?.load(options)
     }
 
     public setTarget(id: string, target?: Record<string, any>) {
-        this.masterSkillView?.setTarget(id, target)
+        this.masterSkillView?.setListTarget(id, target)
     }
 
     public render(): SkillView {

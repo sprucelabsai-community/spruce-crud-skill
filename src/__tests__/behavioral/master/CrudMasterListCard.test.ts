@@ -56,7 +56,7 @@ export default class MasterListCardTest extends AbstractCrudTest {
     ) {
         this.setupWithEntity(
             buildOrganizationsListTestEntity({
-                load: {
+                list: {
                     paging: {
                         shouldPageClientSide,
                         pageSize,

@@ -50,7 +50,7 @@ export default class RootSkillViewController extends AbstractSkillViewController
             id: 'skills',
             pluralTitle: 'Skills',
             singularTitle: 'Skill',
-            load: {
+            list: {
                 fqen: 'list-skills::v2020_12_25',
                 responseKey: 'skills',
                 paging: {
@@ -76,7 +76,7 @@ export default class RootSkillViewController extends AbstractSkillViewController
             id: 'locations',
             pluralTitle: 'Locations',
             singularTitle: 'Location',
-            load: {
+            list: {
                 fqen: 'list-locations::v2020_12_25',
                 responseKey: 'locations',
                 payload: {
@@ -105,7 +105,7 @@ export default class RootSkillViewController extends AbstractSkillViewController
             id: 'organizations',
             pluralTitle: 'Organizations',
             singularTitle: 'Organization',
-            load: {
+            list: {
                 fqen: 'list-organizations::v2020_12_25',
                 responseKey: 'organizations',
                 paging: {

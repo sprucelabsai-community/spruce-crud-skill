@@ -78,6 +78,8 @@ const crudAssert = {
                 `The expected options do not match!`
             )
         }
+
+        return vc!
     },
 
     async skillViewLoadsMasterView(skillView: SkillViewController) {
@@ -99,7 +101,7 @@ const crudAssert = {
         )
     },
 
-    async masterSkillViewRendersList<
+    masterSkillViewRendersList<
         Contract extends EventContract = SkillEventContract,
         Fqen extends EventName<Contract> = EventName<Contract>,
     >(
@@ -193,7 +195,7 @@ const crudAssert = {
 
     skillViewRendersDetailView(
         skillView: SkillViewController,
-        options?: RecursivePartial<DetailSkillViewControllerOptions>
+        options?: ExpectedDetailSkilViewOptions
     ) {
         assertBeforeEachRan()
 
@@ -269,6 +271,32 @@ const crudAssert = {
             )
         }
     },
+
+    async addDestinationArgsEqual(
+        skillView: SkillViewController,
+        listCardId: string,
+        expectedArgs: Record<string, any>
+    ) {
+        assertOptions(
+            {
+                skillView,
+                listCardId,
+                expectedArgs,
+            },
+            ['skillView', 'listCardId', 'expectedArgs']
+        )
+
+        this.masterSkillViewRendersList(skillView, listCardId)
+        const vc = this.skillViewRendersMasterView(skillView)
+
+        await views?.load(skillView)
+
+        assert.isEqualDeep(
+            vc.addDestinationArgs[listCardId],
+            expectedArgs,
+            `The args you found do not match. Try calling 'this.masterSkillView.setAddDestinationArgs('${listCardId}', ...)' in your Skill View's load(...) method.`
+        )
+    },
 }
 
 export default crudAssert
@@ -292,6 +320,7 @@ function assertBeforeEachRan() {
 class SpyMasterSkillView extends CrudMasterSkillViewController {
     public wasLoaded = false
     public options!: CrudMasterSkillViewControllerOptions
+    public addDestinationArgs: Record<string, Record<string, any>> = {}
 }
 
 class SpyMasterListCard extends MasterListCardViewController {
@@ -308,3 +337,6 @@ export type ExpectedListEntityOptions<
     Contract extends EventContract = SkillEventContract,
     Fqen extends EventName<Contract> = EventName<Contract>,
 > = Omit<RecursivePartial<CrudMasterSkillViewListEntity<Contract, Fqen>>, 'id'>
+
+export type ExpectedDetailSkilViewOptions =
+    RecursivePartial<DetailSkillViewControllerOptions>

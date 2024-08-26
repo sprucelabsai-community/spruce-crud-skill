@@ -100,10 +100,6 @@ export default class DetailFormCardTest extends AbstractCrudTest {
         await this.vc.load({
             id: this.entityId,
             form: this.formOptions,
-            load: {
-                fqen: 'list-locations::v2020_12_25',
-                responseKey: 'locations',
-            },
         })
     }
 }

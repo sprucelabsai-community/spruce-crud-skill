@@ -15,7 +15,7 @@ export function buildLocationTestEntity(id?: string) {
         id: id ?? generateId(),
         pluralTitle: generateId(),
         singularTitle: generateId(),
-        load: {
+        list: {
             fqen: 'list-locations::v2020_12_25',
             responseKey: 'locations',
             rowTransformer: (location) =>
@@ -38,7 +38,7 @@ export function buildLocationTestPagingEntity(id?: string) {
         id: id ?? generateId(),
         pluralTitle: generateId(),
         singularTitle: generateId(),
-        load: {
+        list: {
             fqen: 'list-locations::v2020_12_25',
             responseKey: 'locations',
             paging: {
@@ -65,7 +65,7 @@ export function buildOrganizationTestEntity() {
         id: generateId(),
         pluralTitle: generateId(),
         singularTitle: generateId(),
-        load: {
+        list: {
             fqen: 'list-organizations::v2020_12_25',
             responseKey: 'organizations',
             rowTransformer: (organization) =>
@@ -91,8 +91,13 @@ export function buildTestDetailEntity(
         id: id ?? generateId(),
         form: form ?? detailFormOptions1,
         load: {
-            fqen: 'list-locations::v2020_12_25',
-            responseKey: 'locations',
+            fqen: 'get-location::v2020_12_25',
+            responseKey: 'location',
+            buildTarget(recordId) {
+                return {
+                    locationId: recordId,
+                }
+            },
         },
     }
 }
@@ -105,12 +110,12 @@ export function buildOrganizationsListTestEntity(
         pluralTitle: generateId(),
         singularTitle: generateId(),
         ...options,
-        load: {
+        list: {
             fqen: 'list-organizations::v2020_12_25',
             responseKey: 'organizations',
             //@ts-ignore
             rowTransformer: () => ({ id: generateId(), cells: [] }),
-            ...options?.load,
+            ...options?.list,
         },
     }) as CrudMasterSkillViewListEntity<any>
 }

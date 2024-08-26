@@ -21,9 +21,11 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
     private static vc: SpyMasterSkillView
     private static clickRowDestination?: SkillViewControllerId
     private static addDestination?: SkillViewControllerId
+    private static lastEntities?: CrudMasterSkillViewListEntity[]
 
     protected static async beforeEach() {
         await super.beforeEach()
+        delete this.lastEntities
         delete this.clickRowDestination
         delete this.addDestination
     }
@@ -229,26 +231,19 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
         await this.clickFirstRowOfFirstList()
     }
 
-    @test()
-    protected static async addDestinationRendersAddButtonAndClickingRedirects() {
+    @test('add can redirect to crud.detail', 'crud.detail')
+    @test('add can redirect to crud.root', 'crud.root')
+    protected static async addDestinationRendersAddButtonAndClickingRedirects(
+        destination: SkillViewControllerId
+    ) {
         const entity = this.buildLocationTestEntity()
-        this.addDestination = 'crud.detail'
+        this.setAddDestination(destination)
         this.setupWithEntities([entity])
         await this.load()
 
         buttonAssert.cardRendersButton(this.listCardVcs[0], 'add')
 
-        await vcAssert.assertActionRedirects({
-            action: () => interactor.clickButton(this.listCardVcs[0], 'add'),
-            destination: {
-                id: this.addDestination,
-                args: {
-                    action: 'create',
-                    entity: entity.id,
-                },
-            },
-            router: this.views.getRouter(),
-        })
+        await this.assertClickingAddRedirects(entity.id)
     }
 
     @test()
@@ -258,12 +253,78 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
         buttonAssert.cardDoesNotRenderButton(this.listCardVcs[0], 'add')
     }
 
+    @test('can pass through add args on first list', { foo: 'bar' })
+    @test('can pass through add args on first list', { bar: 'baz' })
+    protected static async canPassThroughAdditionalArgsThroughToAddDestinationOnFirstList(
+        args: Record<string, any>
+    ) {
+        this.setAddDestination('crud.detail')
+        const entityId = this.setupWith1EntityAndGetId()
+        await this.load()
+
+        this.setAddArgs(entityId, args)
+        await this.assertClickingAddRedirects(entityId, args)
+    }
+
+    @test()
+    protected static async canPassThroughAddArgsToSecondList() {
+        this.setAddDestination('crud.detail')
+        const entityId = this.setupWith2EntitiesAndGetSecondId()
+        await this.load()
+
+        this.setAddArgs(entityId, { foo: 'bar' })
+
+        await this.assertClickingAddRedirects(entityId, { foo: 'bar' })
+        await this.assertClickingAddRedirects(this.lastEntities![0].id)
+    }
+
+    private static setAddArgs(entityId: string, args: Record<string, any>) {
+        this.vc.setAddDestinationArgs(entityId, args)
+    }
+
+    private static setAddDestination(destination: SkillViewControllerId) {
+        this.addDestination = destination
+    }
+
+    private static async assertClickingAddRedirects(
+        entityId: string,
+        additionalArgs?: Record<string, any>
+    ) {
+        await vcAssert.assertActionRedirects({
+            action: () =>
+                interactor.clickButton(
+                    this.getListCardVcByEntity(entityId),
+                    'add'
+                ),
+            destination: {
+                id: this.addDestination,
+                args: {
+                    action: 'create',
+                    entity: entityId,
+                    ...additionalArgs,
+                },
+            },
+            router: this.views.getRouter(),
+        })
+    }
+
+    private static getListCardVcByEntity(entityId: string) {
+        const listCardVc = this.listCardVcs.find(
+            (l) => l.getEntityId() === entityId
+        )!
+        assert.isTruthy(
+            listCardVc,
+            `Could not find a list card vc with id ${entityId}`
+        )
+        return listCardVc
+    }
+
     private static clickFirstRowOfFirstList(): any {
         return interactor.clickRow(this.listCardVcs[0].getListVc(), 0)
     }
 
     private static setPayload(id: string, payload?: Record<string, any>) {
-        this.vc.setPayload(id, payload)
+        this.vc.setListPayload(id, payload)
     }
 
     private static setupWith2EntitiesAndGetSecondId() {
@@ -296,7 +357,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
     }
 
     private static setTarget(id: string, target?: Record<string, any>) {
-        this.vc.setTarget(id, target)
+        this.vc.setListTarget(id, target)
     }
 
     private static get listCardVcs() {
@@ -318,6 +379,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
     private static setupWithEntities(
         entities: CrudMasterSkillViewListEntity<any, any>[]
     ) {
+        this.lastEntities = entities
         this.vc = this.Vc({
             addDestination: this.addDestination,
             clickRowDestination: this.clickRowDestination,
@@ -336,9 +398,9 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
                 'entity.id',
                 'entity.pluralTitle',
                 'entity.singularTitle',
-                'entity.load.fqen',
-                'entity.load.responseKey',
-                'entity.load.rowTransformer',
+                'entity.list.fqen',
+                'entity.list.responseKey',
+                'entity.list.rowTransformer',
             ],
         })
     }

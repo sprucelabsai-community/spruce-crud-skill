@@ -25,9 +25,9 @@ export default class MasterListCardViewController extends AbstractViewController
             'entity.id',
             'entity.pluralTitle',
             'entity.singularTitle',
-            'entity.load.fqen',
-            'entity.load.responseKey',
-            'entity.load.rowTransformer',
+            'entity.list.fqen',
+            'entity.list.responseKey',
+            'entity.list.rowTransformer',
         ])
 
         this.entity = entity
@@ -39,7 +39,7 @@ export default class MasterListCardViewController extends AbstractViewController
         entity: CrudMasterSkillViewListEntity,
         onClickRow?: ClickRowHandler
     ) {
-        const { load } = entity
+        const { list: load } = entity
         const { fqen, rowTransformer, ...activeOptions } = load
 
         return this.Controller(

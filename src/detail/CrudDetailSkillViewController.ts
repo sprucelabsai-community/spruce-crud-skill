@@ -32,10 +32,32 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
         this.validateEntities(entities)
 
         this.options = removeUniversalViewOptions(options)
+        this.detailsFormCardVc = this.DetailFormCardVc()
+    }
 
-        this.detailsFormCardVc = this.Controller('crud.detail-form-card', {
+    private DetailFormCardVc(): CrudDetailFormCardViewController {
+        return this.Controller('crud.detail-form-card', {
             onCancel: this.handleClickCancel.bind(this),
-            onSubmit: () => {},
+            onSubmit: this.handleSubmitDetailForm.bind(this),
+        })
+    }
+
+    private async handleSubmitDetailForm() {
+        const client = await this.connectToApi()
+        await client.emitAndFlattenResponses('create-location::v2020_12_25', {
+            target: {
+                organizationId: 'aoeu',
+            },
+            payload: {
+                name: 'aoeu',
+                address: {
+                    street1: 'aoeu',
+                    city: 'aoeu',
+                    province: 'aoeu',
+                    zip: 'aoeu',
+                    country: 'aoeu',
+                },
+            },
         })
     }
 
@@ -48,12 +70,17 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
             })
         }
 
-        assertOptions({ entity: entities[0] }, [
+        entities.forEach((entity) => this.validateEntity(entity))
+    }
+
+    private validateEntity(entity: CrudDetailSkillViewEntity) {
+        assertOptions({ entity }, [
             'entity.id',
             'entity.form',
             'entity.load',
             'entity.load.fqen',
             'entity.load.responseKey',
+            'entity.load.buildTarget',
         ])
     }
 
@@ -75,7 +102,24 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
 
         this.router = router
         const entity = this.findEntity(entityId)
-        await this.detailsFormCardVc.load(entity)
+        let values: Record<string, any> | undefined
+
+        if (action === 'edit') {
+            const { recordId } = assertOptions(args, ['recordId'])
+            const { load } = entity
+            const { buildTarget, fqen, responseKey } = load
+
+            const target = await buildTarget(recordId)
+            const client = await this.connectToApi()
+            const [results] = await client.emitAndFlattenResponses(fqen, {
+                //@ts-ignore
+                target,
+            })
+
+            values = results[responseKey]
+        }
+
+        await this.detailsFormCardVc.load(entity, values)
 
         this.wasLoaded = true
 
@@ -131,6 +175,9 @@ export interface CrudDetailSkillViewEntity {
     load: {
         fqen: EventName
         responseKey: string
+        buildTarget: (
+            recordId: string
+        ) => Record<string, any> | Promise<Record<string, any>>
     }
     generateTitle?: () => string
 }
@@ -140,6 +187,7 @@ export type CrudDetailLoadAction = 'edit' | 'create'
 export interface CrudDetailSkillViewArgs {
     entity: string
     action: CrudDetailLoadAction
+    recordId?: string
 }
 
 declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.types' {

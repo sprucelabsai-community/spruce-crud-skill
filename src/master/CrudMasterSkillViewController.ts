@@ -29,6 +29,7 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
     protected wasLoaded = false
     protected options: CrudMasterSkillViewControllerOptions
     private router?: Router
+    protected addDestinationArgs: Record<string, Record<string, any>> = {}
 
     public constructor(
         options: ViewControllerOptions & CrudMasterSkillViewControllerOptions
@@ -70,6 +71,7 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
             await this.router?.redirect(this.addDestination, {
                 action: 'create',
                 entity: entityId,
+                ...this.addDestinationArgs[entityId],
             })
         }
     }
@@ -106,7 +108,7 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
         return Object.values(this.listCardsById)
     }
 
-    public setTarget(listId: string, target?: Record<string, any>) {
+    public setListTarget(listId: string, target?: Record<string, any>) {
         const listVc = this.getListById(listId)
         listVc.setTarget(target)
     }
@@ -123,9 +125,13 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
         return listVc
     }
 
-    public setPayload(listId: string, payload?: Record<string, any>) {
+    public setListPayload(listId: string, payload?: Record<string, any>) {
         const listVc = this.getListById(listId)
         listVc.setPayload(payload)
+    }
+
+    public setAddDestinationArgs(listId: string, args: Record<string, any>) {
+        this.addDestinationArgs[listId] = args
     }
 
     public render(): SkillView {
@@ -164,7 +170,7 @@ export interface CrudMasterSkillViewListEntity<
     id: string
     pluralTitle: string
     singularTitle: string
-    load: {
+    list: {
         fqen: Fqen
         responseKey: ResponseKey
         rowTransformer: (entity: Response[ResponseKey][number]) => ListRow

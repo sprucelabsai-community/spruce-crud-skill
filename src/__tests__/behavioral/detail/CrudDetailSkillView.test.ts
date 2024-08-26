@@ -1,11 +1,17 @@
 import {
+    buildForm,
     buttonAssert,
+    FormViewControllerOptions,
     interactor,
     SkillViewControllerId,
     vcAssert,
 } from '@sprucelabs/heartwood-view-controllers'
+import {
+    locationSchema,
+    organizationSchema,
+} from '@sprucelabs/spruce-core-schemas'
 import { SpyFormCardViewController } from '@sprucelabs/spruce-form-utils'
-import { fake, TestRouter } from '@sprucelabs/spruce-test-fixtures'
+import { fake, seed, TestRouter } from '@sprucelabs/spruce-test-fixtures'
 import { test, assert, errorAssert, generateId } from '@sprucelabs/test-utils'
 import CrudDetailFormCardViewController from '../../../detail/CrudDetailFormCardViewController'
 import CrudDetailSkillViewController, {
@@ -16,6 +22,7 @@ import CrudDetailSkillViewController, {
 } from '../../../detail/CrudDetailSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import { detailFormOptions2 } from '../../support/detailFormOptions'
+import { GetLocationTargetAndPayload } from '../../support/EventFaker'
 import MockDetailFormCard from '../../support/MockDetailFormCard'
 import { buildTestDetailEntity } from '../../support/test.utils'
 
@@ -26,13 +33,17 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
     private static entities: CrudDetailSkillViewEntity[]
     private static cancelDestination: SkillViewControllerId
     private static loadAction: CrudDetailLoadAction
+    private static recordId?: string
 
+    @seed('locations', 1)
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
 
         TestRouter.setShouldThrowWhenRedirectingToBadSvc(false)
 
+        this.recordId = this.locationId
         this.entityId = generateId()
+
         this.entities = []
         this.loadAction = 'edit'
         this.cancelDestination = generateId() as SkillViewControllerId
@@ -64,20 +75,14 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
 
     @test()
     protected static async throwsIfMissingInFirstEntity() {
-        const err = await assert.doesThrowAsync(() =>
-            //@ts-ignore
-            this.setupDetailView([{}])
-        )
+        const entities = [{}]
+        await this.assertThrowsMissingOnEntity(entities)
+    }
 
-        errorAssert.assertError(err, 'MISSING_PARAMETERS', {
-            parameters: [
-                'entity.id',
-                'entity.form',
-                'entity.load',
-                'entity.load.fqen',
-                'entity.load.responseKey',
-            ],
-        })
+    @test()
+    protected static async throwsIfMissingInSecondEntity() {
+        const entities = [this.buildDetailEntity(), {}]
+        await this.assertThrowsMissingOnEntity(entities)
     }
 
     @test()
@@ -117,13 +122,13 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
 
     @test()
     protected static async rendersCancelButtonBeforeLoad() {
-        buttonAssert.cardRendersButton(this.detailFormVc, 'cancel')
+        buttonAssert.cardRendersButton(this.detailFormCardVc, 'cancel')
     }
 
     @test()
     protected static async detailCardSentFirstEntity() {
         await this.loadWithEntity()
-        this.detailFormVc.assertFormOptionsEqual(this.entities[0].form)
+        this.detailFormCardVc.assertFormOptionsEqual(this.entities[0].form)
     }
 
     @test()
@@ -134,7 +139,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         ])
 
         await this.loadWithEntity()
-        this.detailFormVc.assertFormOptionsEqual(this.entities[1].form)
+        this.detailFormCardVc.assertFormOptionsEqual(this.entities[1].form)
     }
 
     @test()
@@ -146,14 +151,12 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
     @test()
     protected static async cancelAfterLoadRedirectsToDestination() {
         await this.loadWithEntity()
-
         await vcAssert.assertActionRedirects({
             router: this.views.getRouter(),
             destination: {
                 id: this.cancelDestination,
             },
-            action: async () =>
-                interactor.cancelForm(this.detailFormVc.getFormVc()),
+            action: async () => interactor.cancelForm(this.detailFormVc),
         })
     }
 
@@ -183,23 +186,191 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         assert.isEqual(card.header?.title, title)
     }
 
+    @test()
+    protected static async emitsLoadLocationEventOnLoadIfIdSent() {
+        let passedTarget: GetLocationTargetAndPayload['target'] | undefined
+
+        await this.eventFaker.fakeGetLocation(({ target }) => {
+            passedTarget = target
+        })
+
+        await this.loadWithRecordId(this.locationId)
+
+        assert.isEqualDeep(passedTarget, {
+            locationId: this.locationId,
+        })
+    }
+
+    @test()
+    protected static async emitsLoadOrganizationEventOnLoadIfIdSent() {
+        this.setupDetailViewWithOrganizationEntity()
+        await this.loadWithRecordId(this.organizationId)
+    }
+
+    @test()
+    protected static async populatesFormWithResponseFromGetLocation() {
+        this.firstLocation.num = generateId()
+
+        await this.loadWithFormAndRecordId(
+            buildForm({
+                id: 'location',
+                schema: locationSchema,
+                sections: [{ fields: ['name', 'address', 'num'] }],
+            }),
+            this.locationId
+        )
+
+        this.assertFormValuesEqual({
+            name: this.firstLocation.name,
+            address: this.firstLocation.address,
+            num: this.firstLocation.num,
+        })
+    }
+
+    @test()
+    protected static async populatesFormWithResponseFromGetOrganization() {
+        this.setupDetailViewWithOrganizationEntity()
+        await this.loadWithRecordId(this.organizationId)
+
+        this.assertFormValuesEqual({
+            name: this.firstOrganization.name,
+            address: this.firstOrganization.address,
+        })
+    }
+
+    @test()
+    protected static async throwsIfLoadActionIsEditAndNoRecordId() {
+        delete this.recordId
+
+        const err = await assert.doesThrowAsync(() => this.loadWithEntity())
+        errorAssert.assertError(err, 'MISSING_PARAMETERS', {
+            parameters: ['recordId'],
+        })
+    }
+
+    @test()
+    protected static async emitsCreateEventOnSubmitWithoutRecordId() {
+        this.setLoadAction('create')
+        await this.loadWithEntity()
+
+        let wasHit = false
+
+        await this.eventFaker.fakeCreateLocation(() => {
+            wasHit = true
+        })
+
+        await this.detailFormVc.setValues({
+            ...this.firstLocation,
+        })
+
+        await interactor.submitForm(this.detailFormVc)
+
+        assert.isTrue(wasHit, `Submitting form did not emit create event`)
+    }
+
+    private static setupDetailViewWithOrganizationEntity() {
+        const entity = this.buildDetailEntity(
+            this.entityId,
+            buildForm({
+                id: 'organization',
+                schema: organizationSchema,
+                sections: [{ fields: ['name', 'address'] }],
+            })
+        )
+        entity.load = {
+            fqen: 'get-organization::v2020_12_25',
+            responseKey: 'organization',
+            buildTarget: (recordId: string) => ({
+                organizationId: recordId,
+            }),
+        }
+        this.setupDetailView([entity])
+    }
+
+    private static get firstOrganization() {
+        return this.fakedOrganizations[0]
+    }
+
+    private static async loadWithFormAndRecordId(
+        form: FormViewControllerOptions<any>,
+        id: string
+    ) {
+        const entity = this.buildDetailEntity(this.entityId, form)
+        this.setupDetailView([entity])
+        await this.loadWithRecordId(id)
+    }
+
+    private static assertFormValuesEqual(expected: Record<string, any>) {
+        const values = this.detailFormVc.getValues() as any
+        assert.isEqualDeep(values, expected)
+    }
+
+    private static async loadWithRecordId(id: string) {
+        this.setLoadId(id)
+        await this.loadWithEntity()
+    }
+
+    private static get firstLocation() {
+        return this.fakedLocations[0]
+    }
+
+    private static get locationId(): string {
+        return this.firstLocation.id
+    }
+
+    private static setLoadId(id: string) {
+        this.recordId = id
+    }
+
     private static assertRendersDetailsCard() {
         return vcAssert.assertSkillViewRendersCard(this.vc, 'details')
     }
 
-    private static get detailFormVc() {
-        return this.vc.getDetailFormVc() as MockDetailFormCard
+    private static setLoadAction(action: CrudDetailLoadAction) {
+        this.loadAction = action
+    }
+
+    private static async assertThrowsMissingOnEntity(
+        entities: Partial<CrudDetailSkillViewEntity>[]
+    ) {
+        const err = await assert.doesThrowAsync(() =>
+            //@ts-ignore
+            this.setupDetailView(entities)
+        )
+
+        errorAssert.assertError(err, 'MISSING_PARAMETERS', {
+            parameters: [
+                'entity.id',
+                'entity.form',
+                'entity.load',
+                'entity.load.fqen',
+                'entity.load.responseKey',
+                'entity.load.buildTarget',
+            ],
+        })
     }
 
     private static async loadWithEntity() {
-        await this.load({ entity: this.entityId, action: this.loadAction })
+        await this.load({
+            entity: this.entityId,
+            action: this.loadAction,
+            recordId: this.recordId,
+        })
     }
 
     private static buildDetailEntity(
         id?: string,
         form?: DetailForm
     ): CrudDetailSkillViewEntity {
-        return buildTestDetailEntity(id ?? this.entityId, form)
+        return buildTestDetailEntity(
+            id ?? this.entityId,
+            form ??
+                buildForm({
+                    id: 'location',
+                    schema: locationSchema,
+                    sections: [{ fields: ['name'] }],
+                })
+        )
     }
 
     private static setupDetailView(entities: CrudDetailSkillViewEntity[]) {
@@ -229,6 +400,18 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
 
     private static load(args: CrudDetailSkillViewArgs) {
         return this.views.load(this.vc, args)
+    }
+
+    private static get detailFormCardVc() {
+        return this.vc.getDetailFormVc() as MockDetailFormCard
+    }
+
+    private static get organizationId() {
+        return this.firstOrganization.id
+    }
+
+    private static get detailFormVc() {
+        return this.detailFormCardVc.getFormVc()
     }
 }
 

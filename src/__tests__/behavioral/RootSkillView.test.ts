@@ -1,15 +1,15 @@
 import { vcAssert } from '@sprucelabs/heartwood-view-controllers'
-import { SpruceSchemas } from '@sprucelabs/spruce-core-schemas'
-import { eventFaker, fake, seed } from '@sprucelabs/spruce-test-fixtures'
+import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
 import { generateId, test } from '@sprucelabs/test-utils'
 import crudAssert from '../../assertions/crudAssert'
 import RootSkillViewController from '../../skillViewControllers/Root.svc'
 import AbstractCrudTest from '../support/AbstractCrudTest'
+import { ListSkill } from '../support/EventFaker'
 
 @fake.login()
 export default class RootSkillViewTest extends AbstractCrudTest {
     private static vc: RootSkillViewController
-    private static fakedListSkills: SpruceSchemas.Mercury.v2020_12_25.ListSkillsSkill[]
+    private static fakedListSkills: ListSkill[]
 
     protected static async beforeEach() {
         await super.beforeEach()
@@ -19,11 +19,7 @@ export default class RootSkillViewTest extends AbstractCrudTest {
 
         this.fakedListSkills = []
 
-        await eventFaker.on('list-skills::v2020_12_25', () => {
-            return {
-                skills: this.fakedListSkills,
-            }
-        })
+        await this.eventFaker.fakeListSkills(() => this.fakedListSkills)
     }
 
     @test()
@@ -48,7 +44,7 @@ export default class RootSkillViewTest extends AbstractCrudTest {
     protected static async rendersOrganizationsListCard() {
         await crudAssert.masterSkillViewRendersList(this.vc, 'organizations', {
             pluralTitle: 'Organizations',
-            load: {
+            list: {
                 fqen: 'list-organizations::v2020_12_25',
                 responseKey: 'organizations',
                 paging: {
@@ -73,7 +69,7 @@ export default class RootSkillViewTest extends AbstractCrudTest {
     protected static async rendersLocationsListCard() {
         await crudAssert.masterSkillViewRendersList(this.vc, 'locations', {
             pluralTitle: 'Locations',
-            load: {
+            list: {
                 fqen: 'list-locations::v2020_12_25',
                 responseKey: 'locations',
                 payload: {
@@ -101,7 +97,7 @@ export default class RootSkillViewTest extends AbstractCrudTest {
     protected static async rendersSkillsListCard() {
         await crudAssert.masterSkillViewRendersList(this.vc, 'skills', {
             pluralTitle: 'Skills',
-            load: {
+            list: {
                 fqen: 'list-skills::v2020_12_25',
                 responseKey: 'skills',
                 paging: {

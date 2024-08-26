@@ -4,7 +4,8 @@ import {
     AbstractSpruceFixtureTest,
     fake,
 } from '@sprucelabs/spruce-test-fixtures'
-import { test } from '@sprucelabs/test-utils'
+import { RecursivePartial, test } from '@sprucelabs/test-utils'
+import { CrudDetailSkillViewEntity } from '../../detail/CrudDetailSkillViewController'
 import { crudAssert } from '../../index-module'
 import DetailSkillViewController from '../../skillViewControllers/Detail.svc'
 
@@ -30,7 +31,7 @@ export default class DetailSkillViewTest extends AbstractSpruceFixtureTest {
         await crudAssert.skillViewLoadsDetailView(this.vc)
     }
 
-    private static buildExpectedLocationSentity() {
+    private static buildExpectedLocationSentity(): RecursivePartial<CrudDetailSkillViewEntity> {
         return {
             id: 'locations',
             form: buildForm({
@@ -42,6 +43,10 @@ export default class DetailSkillViewTest extends AbstractSpruceFixtureTest {
                     },
                 ],
             }),
+            load: {
+                fqen: 'get-location::v2020_12_25',
+                responseKey: 'location',
+            },
         }
     }
 }
