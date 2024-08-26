@@ -8,6 +8,7 @@ import {
     SkillViewControllerLoadOptions,
     ViewControllerOptions,
 } from '@sprucelabs/heartwood-view-controllers'
+import { EventName } from '@sprucelabs/mercury-types'
 import { assertOptions, SchemaError } from '@sprucelabs/schema'
 import { FormCardViewControllerOptions } from '@sprucelabs/spruce-form-utils'
 import SpruceError from '../errors/SpruceError'
@@ -28,6 +29,17 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
             'cancelDestination',
         ])
 
+        this.validateEntities(entities)
+
+        this.options = removeUniversalViewOptions(options)
+
+        this.detailsFormCardVc = this.Controller('crud.detail-form-card', {
+            onCancel: this.handleClickCancel.bind(this),
+            onSubmit: () => {},
+        })
+    }
+
+    private validateEntities(entities: CrudDetailSkillViewEntity[]) {
         if (entities.length === 0) {
             throw new SchemaError({
                 code: 'INVALID_PARAMETERS',
@@ -36,12 +48,13 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
             })
         }
 
-        this.options = removeUniversalViewOptions(options)
-
-        this.detailsFormCardVc = this.Controller('crud.detail-form-card', {
-            onCancel: this.handleClickCancel.bind(this),
-            onSubmit: () => {},
-        })
+        assertOptions({ entity: entities[0] }, [
+            'entity.id',
+            'entity.form',
+            'entity.load',
+            'entity.load.fqen',
+            'entity.load.responseKey',
+        ])
     }
 
     private async handleClickCancel() {
@@ -62,7 +75,7 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
 
         this.router = router
         const entity = this.findEntity(entityId)
-        await this.detailsFormCardVc.load(entity.form)
+        await this.detailsFormCardVc.load(entity)
 
         this.wasLoaded = true
 
@@ -115,6 +128,11 @@ export type DetailForm = Omit<FormCardViewControllerOptions<any>, 'id'>
 export interface CrudDetailSkillViewEntity {
     id: string
     form: DetailForm
+    load: {
+        fqen: EventName
+        responseKey: string
+    }
+    generateTitle?: () => string
 }
 
 export type CrudDetailLoadAction = 'edit' | 'create'

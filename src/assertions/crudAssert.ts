@@ -260,6 +260,14 @@ const crudAssert = {
 1. Make sure your load(...) method signature of your SkillView is 'public async load(options: SkillViewControllerLoadOptions<CrudDetailSkillViewArgs>) {...}'
 2. In your SkillView's load(...) method, add: await this.detailSkillView.load(options)`
         )
+
+        try {
+            vcAssert.assertTriggerRenderCount(skillView, 1)
+        } catch {
+            assert.fail(
+                `You are not triggering a render after loading your DetailSkillView. Make sure you call 'this.triggerRender()' after loading your DetailSkillView.`
+            )
+        }
     },
 }
 

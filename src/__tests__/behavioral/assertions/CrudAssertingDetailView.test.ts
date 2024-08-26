@@ -126,6 +126,16 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     }
 
     @test()
+    protected static async throwsIfLoadDoesNotTriggerRender() {
+        this.dropInDetailSkillView()
+        this.vc.shouldTriggerRenderOnLoad = false
+        await assert.doesThrowAsync(
+            () => crudAssert.skillViewLoadsDetailView(this.vc),
+            'triggerRender'
+        )
+    }
+
+    @test()
     protected static async passesWhenLoadedOnLoad() {
         this.dropInDetailSkillView()
         await crudAssert.skillViewLoadsDetailView(this.vc)
@@ -168,6 +178,7 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
 class SkillViewWithDetailView extends AbstractSkillViewController {
     private detailSkillView?: CrudDetailSkillViewController
     public shouldLoad = true
+    public shouldTriggerRenderOnLoad = true
 
     public dropInDetailSkillView(options: DetailSkillViewControllerOptions) {
         this.detailSkillView = this.Controller(
@@ -181,6 +192,9 @@ class SkillViewWithDetailView extends AbstractSkillViewController {
     ) {
         if (this.shouldLoad) {
             await this.detailSkillView?.load(options)
+            if (this.shouldTriggerRenderOnLoad) {
+                this.triggerRender()
+            }
         }
     }
 

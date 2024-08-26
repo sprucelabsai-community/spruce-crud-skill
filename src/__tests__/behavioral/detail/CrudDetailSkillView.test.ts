@@ -56,14 +56,27 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
 
     @test()
     protected static async throwsIfNoEntities() {
-        const err = await assert.doesThrowAsync(() =>
-            this.views.Controller('crud.detail-skill-view', {
-                entities: [],
-                cancelDestination: 'crud.root',
-            })
-        )
+        const err = await assert.doesThrowAsync(() => this.setupDetailView([]))
         errorAssert.assertError(err, 'INVALID_PARAMETERS', {
             parameters: ['entities'],
+        })
+    }
+
+    @test()
+    protected static async throwsIfMissingInFirstEntity() {
+        const err = await assert.doesThrowAsync(() =>
+            //@ts-ignore
+            this.setupDetailView([{}])
+        )
+
+        errorAssert.assertError(err, 'MISSING_PARAMETERS', {
+            parameters: [
+                'entity.id',
+                'entity.form',
+                'entity.load',
+                'entity.load.fqen',
+                'entity.load.responseKey',
+            ],
         })
     }
 
@@ -159,6 +172,17 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         vcAssert.assertTriggerRenderCount(this.vc, 1)
     }
 
+    @test()
+    protected static async usesGenerateTitleOnEntityToSetTitleOnDetailFormCard() {
+        const entity = this.buildDetailEntity(this.entityId)
+        const title = generateId()
+        entity.generateTitle = () => title
+        this.setupDetailView([entity])
+        await this.loadWithEntity()
+        const card = this.views.render(this.vc.getDetailFormVc())
+        assert.isEqual(card.header?.title, title)
+    }
+
     private static assertRendersDetailsCard() {
         return vcAssert.assertSkillViewRendersCard(this.vc, 'details')
     }
@@ -200,7 +224,6 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
 
     private static setupWithSingleEntity() {
         const entity = this.buildDetailEntity()
-
         this.setupDetailView([entity])
     }
 

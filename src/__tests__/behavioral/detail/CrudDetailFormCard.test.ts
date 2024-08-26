@@ -7,7 +7,7 @@ import {
     SpyFormCardViewController,
 } from '@sprucelabs/spruce-form-utils'
 import { fake } from '@sprucelabs/spruce-test-fixtures'
-import { assert, errorAssert, test } from '@sprucelabs/test-utils'
+import { assert, errorAssert, generateId, test } from '@sprucelabs/test-utils'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import {
     detailFormOptions1,
@@ -19,11 +19,13 @@ import MockDetailFormCard from '../../support/MockDetailFormCard'
 export default class DetailFormCardTest extends AbstractCrudTest {
     private static vc: MockDetailFormCard
     private static formOptions: FormViewControllerOptions<any>
+    private static entityId: string
 
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
 
         this.formOptions = detailFormOptions1
+        this.entityId = generateId()
 
         this.views.setController('forms.card', SpyFormCardViewController)
         this.views.setController('crud.detail-form-card', MockDetailFormCard)
@@ -95,6 +97,13 @@ export default class DetailFormCardTest extends AbstractCrudTest {
     }
 
     private static async load() {
-        await this.vc.load(this.formOptions)
+        await this.vc.load({
+            id: this.entityId,
+            form: this.formOptions,
+            load: {
+                fqen: 'list-locations::v2020_12_25',
+                responseKey: 'locations',
+            },
+        })
     }
 }

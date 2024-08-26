@@ -90,6 +90,10 @@ export function buildTestDetailEntity(
     return {
         id: id ?? generateId(),
         form: form ?? detailFormOptions1,
+        load: {
+            fqen: 'list-locations::v2020_12_25',
+            responseKey: 'locations',
+        },
     }
 }
 

@@ -38,6 +38,7 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
     private buildLocationDetailEntity(): CrudDetailSkillViewEntity {
         return {
             id: 'locations',
+            generateTitle: () => 'Add Location',
             form: buildForm({
                 id: 'locationsForm',
                 schema: locationSchema,
@@ -47,6 +48,10 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
                     },
                 ],
             }),
+            load: {
+                fqen: 'list-locations::v2020_12_25',
+                responseKey: 'locations',
+            },
         }
     }
 
@@ -54,6 +59,7 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
         options: SkillViewControllerLoadOptions<CrudDetailSkillViewArgs>
     ) {
         await this.detailSkillView.load(options)
+        this.triggerRender()
     }
 
     public render(): SkillView {

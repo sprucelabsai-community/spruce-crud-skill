@@ -25,6 +25,11 @@ export default class DetailSkillViewTest extends AbstractSpruceFixtureTest {
         })
     }
 
+    @test()
+    protected static async loadsDetailSkillView() {
+        await crudAssert.skillViewLoadsDetailView(this.vc)
+    }
+
     private static buildExpectedLocationSentity() {
         return {
             id: 'locations',
@@ -38,10 +43,5 @@ export default class DetailSkillViewTest extends AbstractSpruceFixtureTest {
                 ],
             }),
         }
-    }
-
-    @test()
-    protected static async loadsDetailSkillView() {
-        await crudAssert.skillViewLoadsDetailView(this.vc)
     }
 }
