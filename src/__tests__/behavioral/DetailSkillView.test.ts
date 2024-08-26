@@ -1,8 +1,12 @@
 import { buildForm } from '@sprucelabs/heartwood-view-controllers'
-import { locationSchema } from '@sprucelabs/spruce-core-schemas'
+import {
+    locationSchema,
+    organizationSchema,
+} from '@sprucelabs/spruce-core-schemas'
 import {
     AbstractSpruceFixtureTest,
     fake,
+    seed,
 } from '@sprucelabs/spruce-test-fixtures'
 import { RecursivePartial, test } from '@sprucelabs/test-utils'
 import { CrudDetailSkillViewEntity } from '../../detail/CrudDetailSkillViewController'
@@ -22,7 +26,10 @@ export default class DetailSkillViewTest extends AbstractSpruceFixtureTest {
     protected static async rendersDetailSkillView() {
         crudAssert.skillViewRendersDetailView(this.vc, {
             cancelDestination: 'crud.root',
-            entities: [this.buildExpectedLocationSentity()],
+            entities: [
+                this.buildExpectedLocationsEntity(),
+                this.buildExpectedOrganizationsEntity(),
+            ],
         })
     }
 
@@ -31,7 +38,16 @@ export default class DetailSkillViewTest extends AbstractSpruceFixtureTest {
         await crudAssert.skillViewLoadsDetailView(this.vc)
     }
 
-    private static buildExpectedLocationSentity(): RecursivePartial<CrudDetailSkillViewEntity> {
+    @test()
+    @seed('locations', 1)
+    protected static async buildsLocationTarget() {
+        const locationId = this.fakedLocations[0].id
+        await crudAssert.detailLoadTargetEquals(this.vc, locationId, {
+            locationId,
+        })
+    }
+
+    private static buildExpectedLocationsEntity(): RecursivePartial<CrudDetailSkillViewEntity> {
         return {
             id: 'locations',
             form: buildForm({
@@ -46,6 +62,25 @@ export default class DetailSkillViewTest extends AbstractSpruceFixtureTest {
             load: {
                 fqen: 'get-location::v2020_12_25',
                 responseKey: 'location',
+            },
+        }
+    }
+
+    private static buildExpectedOrganizationsEntity(): RecursivePartial<CrudDetailSkillViewEntity> {
+        return {
+            id: 'organizations',
+            form: buildForm({
+                id: 'organizationsForm',
+                schema: organizationSchema,
+                sections: [
+                    {
+                        fields: ['name', 'address'],
+                    },
+                ],
+            }),
+            load: {
+                fqen: 'get-organization::v2020_12_25',
+                responseKey: 'organization',
             },
         }
     }

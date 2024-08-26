@@ -4,14 +4,14 @@ import {
     SkillViewControllerId,
     SkillViewControllerLoadOptions,
 } from '@sprucelabs/heartwood-view-controllers'
-import { fake } from '@sprucelabs/spruce-test-fixtures'
-import { test, assert, errorAssert } from '@sprucelabs/test-utils'
+import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
+import { test, assert, errorAssert, generateId } from '@sprucelabs/test-utils'
 import CrudDetailSkillViewController, {
     CrudDetailSkillViewArgs,
     DetailSkillViewControllerOptions,
 } from '../../../detail/CrudDetailSkillViewController'
 import { crudAssert } from '../../../index-module'
-import { buildTestDetailEntity } from '../../support/test.utils'
+import { buildLocationTestDetailEntity as buildLocationDetailTestEntity } from '../../support/test.utils'
 import AbstractAssertTest from './AbstractAssertTest'
 
 @fake.login()
@@ -92,13 +92,16 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     protected static async throwsIfEntitiesDontMatch() {
         this.dropInDetailSkillView()
         this.assertRendersDetailFewThrowsForMissmatchedOptions({
-            entities: [buildTestDetailEntity()],
+            entities: [buildLocationDetailTestEntity()],
         })
     }
 
     @test()
     protected static async passesIfEntitiesMatch() {
-        const entities = [buildTestDetailEntity(), buildTestDetailEntity()]
+        const entities = [
+            buildLocationDetailTestEntity(),
+            buildLocationDetailTestEntity(),
+        ]
         this.dropInDetailSkillView({ entities })
         this.assertRendersDetailView({ entities })
     }
@@ -141,12 +144,118 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
         await crudAssert.skillViewLoadsDetailView(this.vc)
     }
 
+    @test()
+    protected static async assertLoadTargetThrowsWithMissing() {
+        this.dropInDetailSkillView()
+        const err = await assert.doesThrowAsync(() =>
+            //@ts-ignore
+            crudAssert.detailLoadTargetEquals()
+        )
+
+        errorAssert.assertError(err, 'MISSING_PARAMETERS', {
+            parameters: ['skillView', 'recordId', 'expectedTarget'],
+        })
+    }
+
+    @test()
+    @seed('locations', 1)
+    protected static async throwsIfTargetDoesNotMatchLocationId() {
+        await this.eventFaker.fakeGetLocation()
+        this.dropInDetailSkillView()
+        await this.assertLoadTargetDoesNotMatch({
+            locationId: generateId(),
+        })
+    }
+
+    @test()
+    @seed('organizations', 1)
+    protected static async throwsIfTargetDoesNotMatchOrganizationId() {
+        await this.eventFaker.fakeGetOrganization()
+        const entity = buildLocationDetailTestEntity()
+        entity.load = {
+            buildTarget: async () => {
+                return { organizationId: generateId() }
+            },
+            fqen: 'get-organization::v2020_12_25',
+            responseKey: 'organization',
+        }
+
+        this.dropInDetailSkillView({
+            entities: [entity],
+        })
+
+        await this.assertLoadTargetDoesNotMatch({
+            organizationId: generateId(),
+        })
+    }
+
+    @test()
+    @seed('locations', 1)
+    protected static async loadTargetMatchesExpectedForLocationId() {
+        const entity = buildLocationDetailTestEntity()
+
+        entity.load.buildTarget = async (recordId) => {
+            return { locationId: recordId }
+        }
+
+        this.dropInDetailSkillView({
+            entities: [{ ...entity }],
+        })
+
+        await crudAssert.detailLoadTargetEquals(
+            this.vc,
+            this.fakedLocations[0].id,
+            {
+                locationId: this.fakedLocations[0].id,
+            }
+        )
+    }
+
+    @test()
+    @seed('organizations', 1)
+    protected static async loadtargetMatchesExpectedForOrganizationId() {
+        const entity = buildLocationDetailTestEntity()
+        entity.load = {
+            buildTarget: async (recordId) => {
+                return { organizationId: recordId }
+            },
+            fqen: 'get-organization::v2020_12_25',
+            responseKey: 'organization',
+        }
+
+        this.dropInDetailSkillView({
+            entities: [{ ...entity }],
+        })
+
+        await crudAssert.detailLoadTargetEquals(
+            this.vc,
+            this.fakedOrganizations[0].id,
+            {
+                organizationId: this.fakedOrganizations[0].id,
+            }
+        )
+    }
+
     private static assertRendersDetailFewThrowsForMissmatchedOptions(
         options: Partial<DetailSkillViewControllerOptions>
     ) {
         assert.doesThrow(
             () => this.assertRendersDetailView(options),
             'Expected'
+        )
+    }
+
+    private static async assertLoadTargetDoesNotMatch(
+        expectedTarget: Record<string, any>
+    ) {
+        await assert.doesThrowAsync(
+            () =>
+                crudAssert.detailLoadTargetEquals(
+                    this.vc,
+                    generateId(),
+                    expectedTarget
+                ),
+            'target does not match'
         )
     }
 
@@ -161,7 +270,7 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     ) {
         this.vc.dropInDetailSkillView({
             cancelDestination: 'crud.root',
-            entities: [buildTestDetailEntity()],
+            entities: [buildLocationDetailTestEntity()],
             ...options,
         })
     }

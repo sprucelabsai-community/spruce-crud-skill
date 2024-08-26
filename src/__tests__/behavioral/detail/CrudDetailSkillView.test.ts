@@ -24,7 +24,7 @@ import AbstractCrudTest from '../../support/AbstractCrudTest'
 import { detailFormOptions2 } from '../../support/detailFormOptions'
 import { GetLocationTargetAndPayload } from '../../support/EventFaker'
 import MockDetailFormCard from '../../support/MockDetailFormCard'
-import { buildTestDetailEntity } from '../../support/test.utils'
+import { buildLocationTestDetailEntity } from '../../support/test.utils'
 
 @fake.login()
 export default class DetailSkillViewTest extends AbstractCrudTest {
@@ -362,7 +362,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         id?: string,
         form?: DetailForm
     ): CrudDetailSkillViewEntity {
-        return buildTestDetailEntity(
+        return buildLocationTestDetailEntity(
             id ?? this.entityId,
             form ??
                 buildForm({

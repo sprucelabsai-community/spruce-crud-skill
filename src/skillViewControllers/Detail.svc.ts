@@ -51,7 +51,9 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
             load: {
                 fqen: 'get-location::v2020_12_25',
                 responseKey: 'location',
-                buildTarget: () => ({}),
+                buildTarget: (locationId) => ({
+                    locationId,
+                }),
             },
         }
     }

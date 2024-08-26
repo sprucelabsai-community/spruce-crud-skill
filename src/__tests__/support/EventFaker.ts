@@ -3,6 +3,19 @@ import { eventFaker } from '@sprucelabs/spruce-test-fixtures'
 import { generateId } from '@sprucelabs/test-utils'
 
 export default class EventFaker {
+    public async fakeGetOrganization() {
+        await eventFaker.on('get-organization::v2020_12_25', () => {
+            return {
+                organization: {
+                    id: generateId(),
+                    name: generateId(),
+                    slug: generateId(),
+                    dateCreated: Date.now(),
+                },
+            }
+        })
+    }
+
     public async fakeCreateLocation(
         cb?: (targetAndPayload: CreateLocationTargetAndPayload) => void
     ) {

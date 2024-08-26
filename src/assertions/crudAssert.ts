@@ -1,4 +1,5 @@
 import {
+    Client,
     MockActiveRecordCard,
     renderUtil,
     SkillViewController,
@@ -242,7 +243,7 @@ const crudAssert = {
             )
         }
 
-        return vc
+        return vc!
     },
 
     async skillViewLoadsDetailView(skillView: SkillViewController) {
@@ -297,6 +298,49 @@ const crudAssert = {
             `The args you found do not match. Try calling 'this.masterSkillView.setAddDestinationArgs('${listCardId}', ...)' in your Skill View's load(...) method.`
         )
     },
+
+    async detailLoadTargetEquals(
+        skillView: SkillViewController,
+        recordId: string,
+        expectedTarget: Record<string, any>
+    ) {
+        assertOptions(
+            {
+                skillView,
+                recordId,
+                expectedTarget,
+            },
+            ['skillView', 'recordId', 'expectedTarget']
+        )
+
+        const detailSvc = this.skillViewRendersDetailView(skillView)
+        const client = await detailSvc.connectToApi()
+        let passedTarget: Record<string, any> | undefined
+
+        const originalEmitAndFlattenResponses =
+            client.emitAndFlattenResponses.bind(client)
+
+        //@ts-ignore
+        client.emitAndFlattenResponses = async (
+            _: any,
+            targetAndPayload: Record<string, any>
+        ) => {
+            passedTarget = targetAndPayload?.target
+            return originalEmitAndFlattenResponses(_, targetAndPayload)
+        }
+
+        await views?.load(skillView, {
+            action: 'edit',
+            recordId,
+            entity: detailSvc.options.entities[0].id,
+        })
+
+        assert.isEqualDeep(
+            passedTarget,
+            expectedTarget,
+            `The load target does not match the expected.`
+        )
+    },
 }
 
 export default crudAssert
@@ -331,6 +375,7 @@ class SpyMasterListCard extends MasterListCardViewController {
 class SpyDetailSkillView extends CrudDetailSkillViewController {
     public options!: DetailSkillViewControllerOptions
     public wasLoaded = false
+    public connectToApi!: () => Promise<Client>
 }
 
 export type ExpectedListEntityOptions<

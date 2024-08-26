@@ -83,7 +83,7 @@ export function buildOrganizationTestEntity() {
     })
 }
 
-export function buildTestDetailEntity(
+export function buildLocationTestDetailEntity(
     id?: string,
     form?: DetailForm
 ): CrudDetailSkillViewEntity {
