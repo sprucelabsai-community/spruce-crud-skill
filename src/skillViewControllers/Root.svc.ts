@@ -29,6 +29,10 @@ export default class RootSkillViewController extends AbstractSkillViewController
         this.masterSkillView = this.MasterVc()
     }
 
+    public async getIsLoginRequired() {
+        return true
+    }
+
     private MasterVc(): CrudMasterSkillViewController {
         return this.Controller('crud.master-skill-view', {
             clickRowDestination: 'crud.detail',

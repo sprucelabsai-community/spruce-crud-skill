@@ -1,3 +1,4 @@
+import { vcAssert } from '@sprucelabs/heartwood-view-controllers'
 import { SpruceSchemas } from '@sprucelabs/spruce-core-schemas'
 import { eventFaker, fake, seed } from '@sprucelabs/spruce-test-fixtures'
 import { generateId, test } from '@sprucelabs/test-utils'
@@ -23,6 +24,11 @@ export default class RootSkillViewTest extends AbstractCrudTest {
                 skills: this.fakedListSkills,
             }
         })
+    }
+
+    @test()
+    protected static async requiresLogin() {
+        await vcAssert.assertLoginIsRequired(this.vc)
     }
 
     @test()
