@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v2.0.6...v2.1.0) (2024-08-26)
+
+
+### Features
+
+* add arg support for passing additional data when clicking the "add" button ([326d0c5](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/326d0c5))
+
 ## [2.0.6](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v2.0.5...v2.0.6) (2024-08-26)
 
 ## [2.0.5](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v2.0.4...v2.0.5) (2024-08-24)
