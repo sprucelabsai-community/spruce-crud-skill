@@ -243,10 +243,6 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
         await this.assertDetailLoadTargetEquals({ recordId, expectedTarget })
     }
 
-    @test()
-    @seed('locations', 1)
-    protected static async loadsTargetForOrgIfSecondEntity() {}
-
     private static assertRendersDetailFewThrowsForMissmatchedOptions(
         options: Partial<DetailSkillViewControllerOptions>
     ) {

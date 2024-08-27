@@ -305,12 +305,13 @@ const crudAssert = {
         recordId: string
         expectedTarget: Record<string, any>
     }) {
-        const { skillView, recordId, expectedTarget } = assertOptions(options, [
-            'skillView',
-            'recordId',
-            'listCardId',
-            'expectedTarget',
-        ])
+        const { skillView, recordId, expectedTarget, listCardId } =
+            assertOptions(options, [
+                'skillView',
+                'recordId',
+                'listCardId',
+                'expectedTarget',
+            ])
 
         const detailSvc = this.skillViewRendersDetailView(skillView)
         const client = await detailSvc.connectToApi()
@@ -331,7 +332,7 @@ const crudAssert = {
         await views?.load(skillView, {
             action: 'edit',
             recordId,
-            entity: detailSvc.options.entities[0].id,
+            entity: listCardId,
         })
 
         assert.isEqualDeep(

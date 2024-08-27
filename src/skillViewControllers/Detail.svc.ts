@@ -36,12 +36,12 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
             cancelDestination: 'crud.root',
             entities: [
                 this.buildLocationDetailEntity(),
-                this.buildOrganizationdetailEntity(),
+                this.buildOrganizationDetailEntity(),
             ],
         })
     }
 
-    private buildOrganizationdetailEntity(): CrudDetailSkillViewEntity {
+    private buildOrganizationDetailEntity(): CrudDetailSkillViewEntity {
         return {
             form: buildForm({
                 id: 'organizationsForm',
@@ -56,7 +56,9 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
             load: {
                 fqen: 'get-organization::v2020_12_25',
                 responseKey: 'organization',
-                buildTarget: (_organizationId) => ({}),
+                buildTarget: (organizationId) => ({
+                    organizationId,
+                }),
             },
         }
     }
