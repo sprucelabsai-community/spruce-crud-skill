@@ -179,7 +179,7 @@ export interface CrudDetailSkillViewEntity {
             recordId: string
         ) => Record<string, any> | Promise<Record<string, any>>
     }
-    generateTitle?: () => string
+    renderTitle?: (record?: any) => string
 }
 
 export type CrudDetailLoadAction = 'edit' | 'create'

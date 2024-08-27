@@ -59,14 +59,16 @@ export default class CrudDetailFormCardViewController extends AbstractViewContro
         entity: Omit<CrudDetailSkillViewEntity, 'load'>,
         values?: Record<string, any>
     ) {
-        const { form, generateTitle } = assertOptions(entity, ['form'])
+        const { form, renderTitle: generateTitle } = assertOptions(entity, [
+            'form',
+        ])
 
         this.formCardVc = this.Controller('forms.card', {
             ...(form as any),
             id: 'details',
             values,
             header: {
-                title: generateTitle?.(),
+                title: generateTitle?.(values),
             },
             onCancel: this.handleCancel.bind(this),
             onSubmit: this.handleSubmit.bind(this),

@@ -6,7 +6,9 @@ import {
     buildForm,
 } from '@sprucelabs/heartwood-view-controllers'
 import {
+    Location,
     locationSchema,
+    Organization,
     organizationSchema,
 } from '@sprucelabs/spruce-core-schemas'
 import CrudDetailFormCardViewController from '../detail/CrudDetailFormCardViewController'
@@ -52,6 +54,8 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
                     },
                 ],
             }),
+            renderTitle: (values?: Organization) =>
+                `${values ? `Update ${values.name}` : `Add Organization`}`,
             id: 'organizations',
             load: {
                 fqen: 'get-organization::v2020_12_25',
@@ -66,7 +70,8 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
     private buildLocationDetailEntity(): CrudDetailSkillViewEntity {
         return {
             id: 'locations',
-            generateTitle: () => 'Add Location',
+            renderTitle: (values?: Location) =>
+                `${values ? `Update ${values.name}` : `Add Location`}`,
             form: buildForm({
                 id: 'locationsForm',
                 schema: locationSchema,

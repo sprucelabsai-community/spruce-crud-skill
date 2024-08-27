@@ -179,11 +179,10 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
     protected static async usesGenerateTitleOnEntityToSetTitleOnDetailFormCard() {
         const entity = this.buildDetailEntity(this.entityId)
         const title = generateId()
-        entity.generateTitle = () => title
+        entity.renderTitle = () => title
         this.setupDetailView([entity])
         await this.loadWithEntity()
-        const card = this.views.render(this.vc.getDetailFormVc())
-        assert.isEqual(card.header?.title, title)
+        this.assertFormCardHeaderTitleEquals(title)
     }
 
     @test()
@@ -211,14 +210,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
     protected static async populatesFormWithResponseFromGetLocation() {
         this.firstLocation.num = generateId()
 
-        await this.loadWithFormAndRecordId(
-            buildForm({
-                id: 'location',
-                schema: locationSchema,
-                sections: [{ fields: ['name', 'address', 'num'] }],
-            }),
-            this.locationId
-        )
+        await this.loadWithFirstLocation()
 
         this.assertFormValuesEqual({
             name: this.firstLocation.name,
@@ -266,6 +258,26 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         await interactor.submitForm(this.detailFormVc)
 
         assert.isTrue(wasHit, `Submitting form did not emit create event`)
+    }
+
+    @test()
+    protected static async renderTitleTakesInValues() {
+        const entity = this.buildDetailEntity(this.entityId)
+        let passedValues: Record<string, any> | undefined
+
+        entity.renderTitle = (values) => {
+            passedValues = values
+            return generateId()
+        }
+
+        this.setupDetailView([entity])
+        await this.loadWithRecordId(this.locationId)
+        assert.isEqualDeep(passedValues, this.firstLocation)
+    }
+
+    private static assertFormCardHeaderTitleEquals(title: string) {
+        const card = this.views.render(this.vc.getDetailFormVc())
+        assert.isEqual(card.header?.title, title)
     }
 
     private static setupDetailViewWithOrganizationEntity() {
@@ -400,6 +412,17 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
 
     private static load(args: CrudDetailSkillViewArgs) {
         return this.views.load(this.vc, args)
+    }
+
+    private static async loadWithFirstLocation() {
+        await this.loadWithFormAndRecordId(
+            buildForm({
+                id: 'location',
+                schema: locationSchema,
+                sections: [{ fields: ['name', 'address', 'num'] }],
+            }),
+            this.locationId
+        )
     }
 
     private static get detailFormCardVc() {
