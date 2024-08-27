@@ -299,19 +299,18 @@ const crudAssert = {
         )
     },
 
-    async detailLoadTargetEquals(
-        skillView: SkillViewController,
-        recordId: string,
+    async detailLoadTargetEquals(options: {
+        skillView: SkillViewController
+        listCardId: string
+        recordId: string
         expectedTarget: Record<string, any>
-    ) {
-        assertOptions(
-            {
-                skillView,
-                recordId,
-                expectedTarget,
-            },
-            ['skillView', 'recordId', 'expectedTarget']
-        )
+    }) {
+        const { skillView, recordId, expectedTarget } = assertOptions(options, [
+            'skillView',
+            'recordId',
+            'listCardId',
+            'expectedTarget',
+        ])
 
         const detailSvc = this.skillViewRendersDetailView(skillView)
         const client = await detailSvc.connectToApi()

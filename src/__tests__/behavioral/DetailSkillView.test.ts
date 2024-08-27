@@ -42,8 +42,27 @@ export default class DetailSkillViewTest extends AbstractSpruceFixtureTest {
     @seed('locations', 1)
     protected static async buildsLocationTarget() {
         const locationId = this.fakedLocations[0].id
-        await crudAssert.detailLoadTargetEquals(this.vc, locationId, {
-            locationId,
+        await crudAssert.detailLoadTargetEquals({
+            skillView: this.vc,
+            recordId: locationId,
+            listCardId: 'locations',
+            expectedTarget: {
+                locationId,
+            },
+        })
+    }
+
+    @test()
+    @seed('organizations', 1)
+    protected static async buildsOrganizationTarget() {
+        const organizationId = this.fakedOrganizations[0].id
+        await crudAssert.detailLoadTargetEquals({
+            skillView: this.vc,
+            recordId: organizationId,
+            listCardId: 'organizations',
+            expectedTarget: {
+                organizationId,
+            },
         })
     }
 
