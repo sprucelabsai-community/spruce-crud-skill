@@ -5,7 +5,10 @@ import {
     SkillViewControllerLoadOptions,
     buildForm,
 } from '@sprucelabs/heartwood-view-controllers'
-import { locationSchema } from '@sprucelabs/spruce-core-schemas'
+import {
+    locationSchema,
+    organizationSchema,
+} from '@sprucelabs/spruce-core-schemas'
 import CrudDetailFormCardViewController from '../detail/CrudDetailFormCardViewController'
 import CrudDetailSkillViewController, {
     CrudDetailSkillViewArgs,
@@ -31,8 +34,31 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
 
         this.detailSkillView = this.Controller('crud.detail-skill-view', {
             cancelDestination: 'crud.root',
-            entities: [this.buildLocationDetailEntity()],
+            entities: [
+                this.buildLocationDetailEntity(),
+                this.buildOrganizationdetailEntity(),
+            ],
         })
+    }
+
+    private buildOrganizationdetailEntity(): CrudDetailSkillViewEntity {
+        return {
+            form: buildForm({
+                id: 'organizationsForm',
+                schema: organizationSchema,
+                sections: [
+                    {
+                        fields: ['name', 'address'],
+                    },
+                ],
+            }),
+            id: 'organizations',
+            load: {
+                fqen: 'get-organization::v2020_12_25',
+                responseKey: 'organization',
+                buildTarget: (_organizationId) => ({}),
+            },
+        }
     }
 
     private buildLocationDetailEntity(): CrudDetailSkillViewEntity {
