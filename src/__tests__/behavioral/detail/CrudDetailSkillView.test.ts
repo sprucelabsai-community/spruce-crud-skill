@@ -271,6 +271,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         }
 
         this.setupDetailView([entity])
+
         await this.loadWithRecordId(this.locationId)
         assert.isEqualDeep(passedValues, this.firstLocation)
     }

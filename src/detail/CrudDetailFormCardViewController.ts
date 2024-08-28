@@ -50,6 +50,7 @@ export default class CrudDetailFormCardViewController extends AbstractViewContro
 
     private setupVcFactory() {
         const views = this.getVcFactory()
+
         if (!views.hasController('forms.card')) {
             views.setController('forms.card', FormCardViewController)
         }
@@ -59,11 +60,21 @@ export default class CrudDetailFormCardViewController extends AbstractViewContro
         entity: Omit<CrudDetailSkillViewEntity, 'load'>,
         values?: Record<string, any>
     ) {
+        const cardVc = this.FormCardVc(entity, values)
+        this.formCardVc = cardVc
+
+        this.triggerRender()
+    }
+
+    private FormCardVc(
+        entity: Omit<CrudDetailSkillViewEntity, 'load'>,
+        values: Record<string, any> | undefined
+    ) {
         const { form, renderTitle: generateTitle } = assertOptions(entity, [
             'form',
         ])
 
-        this.formCardVc = this.Controller('forms.card', {
+        const cardVc = this.Controller('forms.card', {
             ...(form as any),
             id: 'details',
             values,
@@ -74,7 +85,7 @@ export default class CrudDetailFormCardViewController extends AbstractViewContro
             onSubmit: this.handleSubmit.bind(this),
         })
 
-        this.triggerRender()
+        return cardVc
     }
 
     private async handleSubmit() {
