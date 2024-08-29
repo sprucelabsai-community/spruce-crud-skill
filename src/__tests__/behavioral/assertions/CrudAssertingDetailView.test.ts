@@ -243,6 +243,65 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
         await this.assertDetailLoadTargetEquals({ recordId, expectedTarget })
     }
 
+    @test()
+    protected static async assertRendersRelatedEntityThrowsWithMissing() {
+        const err = assert.doesThrow(() =>
+            //@ts-ignore
+            crudAssert.detailRendersRelatedEntity()
+        )
+
+        errorAssert.assertError(err, 'MISSING_PARAMETERS', {
+            parameters: ['skillView', 'entityId', 'relatedId'],
+        })
+    }
+
+    @test()
+    protected static async assertRendersRelatedThrowsIfNoEntityId() {
+        this.dropInDetailSkillView()
+
+        assert.doesThrow(
+            () =>
+                crudAssert.detailRendersRelatedEntity({
+                    skillView: this.vc,
+                    entityId: generateId(),
+                    relatedId: generateId(),
+                }),
+            'entityId'
+        )
+    }
+
+    @test()
+    protected static async assertRendersRelatedThrowsIfNoRelatedExists() {
+        this.dropInDetailSkillView()
+
+        assert.doesThrow(
+            () =>
+                crudAssert.detailRendersRelatedEntity({
+                    skillView: this.vc,
+                    entityId: this.firstEntityId,
+                    relatedId: generateId(),
+                }),
+            'related entity'
+        )
+    }
+
+    @test()
+    protected static async passesIfRelatedEntityExists() {
+        const entity = this.buildLocationDetailEntity()
+        const relatedEntity = this.buildLocationListEntity()
+        entity.relatedEntities = [relatedEntity]
+
+        this.dropInDetailSkillView({
+            entities: [entity],
+        })
+
+        crudAssert.detailRendersRelatedEntity({
+            skillView: this.vc,
+            entityId: this.firstEntityId,
+            relatedId: relatedEntity.id,
+        })
+    }
+
     private static assertRendersDetailFewThrowsForMissmatchedOptions(
         options: Partial<DetailSkillViewControllerOptions>
     ) {
@@ -285,16 +344,24 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
         return crudAssert.skillViewRendersDetailView(this.vc, options)
     }
 
+    private static get firstEntityId(): string {
+        return this.entities[0].id
+    }
+
     private static dropInDetailSkillView(
         options?: Partial<DetailSkillViewControllerOptions>
     ) {
         const { entities, ...rest } = options ?? {}
-        this.entities = entities ?? [buildLocationDetailTestEntity()]
+        this.entities = entities ?? [this.buildLocationDetailEntity()]
         this.vc.dropInDetailSkillView({
             cancelDestination: 'crud.root',
             entities: this.entities,
             ...rest,
         })
+    }
+
+    private static buildLocationDetailEntity(): CrudDetailSkillViewEntity {
+        return buildLocationDetailTestEntity()
     }
 
     private static assertRendersDetailThrowsWithMissingView(

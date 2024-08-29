@@ -113,7 +113,7 @@ const crudAssert = {
         assertBeforeEachRan()
         assertOptions({ skillView, id }, ['skillView', 'id'])
 
-        let spyMasterListCard: SpyMasterListCard | undefined
+        let spyMasterListCard: SpyCrudListCard | undefined
 
         try {
             const cardVc = vcAssert.assertSkillViewRendersCard(skillView, id)
@@ -121,7 +121,7 @@ const crudAssert = {
             spyMasterListCard = vcAssert.assertRendersAsInstanceOf(
                 cardVc,
                 CrudListCardViewController
-            ) as SpyMasterListCard
+            ) as SpyCrudListCard
         } catch {
             assert.fail(
                 `Your MasterSkillView is not rendering a list card for the entity with the id of '${id}'.`
@@ -341,6 +341,28 @@ const crudAssert = {
             `The load target does not match the expected.`
         )
     },
+
+    detailRendersRelatedEntity(options: {
+        skillView: SkillViewController
+        entityId: string
+        relatedId: string
+    }) {
+        const { skillView, entityId, relatedId } = assertOptions(options, [
+            'skillView',
+            'entityId',
+            'relatedId',
+        ])
+
+        const detailSvc = this.skillViewRendersDetailView(skillView)
+        const relatedVcs = detailSvc.relatedEntityVcsByEntityId[entityId] as
+            | SpyCrudListCard[]
+            | undefined
+
+        assert.isTruthy(
+            relatedVcs,
+            `I could not find a configuration for the entityId you passed. Make sure you pass it to the constructor of your CrudDetailSkillViewController.`
+        )
+    },
 }
 
 export default crudAssert
@@ -367,7 +389,7 @@ class SpyMasterSkillView extends CrudMasterSkillViewController {
     public addDestinationArgs: Record<string, Record<string, any>> = {}
 }
 
-class SpyMasterListCard extends CrudListCardViewController {
+class SpyCrudListCard extends CrudListCardViewController {
     public entity!: CrudListEntity
     public activeRecordCardVc!: MockActiveRecordCard
 }
@@ -376,6 +398,10 @@ class SpyDetailSkillView extends CrudDetailSkillViewController {
     public options!: DetailSkillViewControllerOptions
     public wasLoaded = false
     public connectToApi!: () => Promise<Client>
+    public relatedEntityVcsByEntityId: Record<
+        string,
+        CrudListCardViewController[]
+    > = {}
 }
 
 export type ExpectedListEntityOptions<
