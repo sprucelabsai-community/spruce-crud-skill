@@ -54,15 +54,12 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
 
     private buildCards(entities: CrudListEntity[]) {
         for (const entity of entities) {
-            this.listCardsById[entity.id] = this.Controller(
-                'crud.list-card',
-                {
-                    entity,
-                    onClickRow: this.handleClickRow.bind(this),
-                    onAddClick:
-                        this.addDestination && this.handleAddClick.bind(this),
-                }
-            )
+            this.listCardsById[entity.id] = this.Controller('crud.list-card', {
+                entity,
+                onClickRow: this.handleClickRow.bind(this),
+                onAddClick:
+                    this.addDestination && this.handleAddClick.bind(this),
+            })
         }
     }
 
