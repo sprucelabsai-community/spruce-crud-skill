@@ -24,6 +24,7 @@ import { CrudMasterListCardViewController } from '../../../index-module'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import { detailFormOptions2 } from '../../support/detailFormOptions'
 import { GetLocationTargetAndPayload } from '../../support/EventFaker'
+import MockCrudListCard from '../../support/MockCrudListCard'
 import MockDetailFormCard from '../../support/MockDetailFormCard'
 import { buildLocationDetailEntity } from '../../support/test.utils'
 
@@ -51,6 +52,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         this.views.setController('forms.card', SpyFormCardViewController)
         this.views.setController('crud.detail-form-card', MockDetailFormCard)
         this.views.setController('crud.detail-skill-view', SpyDetailSkillView)
+        this.views.setController('crud.list-card', MockCrudListCard)
         this.setupWithSingleEntity()
     }
 
@@ -211,7 +213,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
     protected static async populatesFormWithResponseFromGetLocation() {
         this.firstLocation.num = generateId()
 
-        await this.loadWithFirstLocation()
+        await this.setupWithLocationFormAndLoad()
 
         this.assertFormValuesEqual({
             name: this.firstLocation.name,
@@ -292,13 +294,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
 
     @test()
     protected static async rendersCardForSecondRelatedOfFirstEntity() {
-        const entity = this.buildDetailEntity(this.entityId)
-        const relatedId = generateId()
-        entity.relatedEntities = [
-            this.buildLocationListEntity(generateId()),
-            this.buildLocationListEntity(relatedId),
-        ]
-        this.setupDetailView([entity])
+        const relatedId = this.setupWith2RelatedEntitiesAndGetSecondId()
         await this.loadAndAssertRendersCard(relatedId)
     }
 
@@ -308,14 +304,76 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         const relatedId = generateId()
         entity.relatedEntities = [this.buildLocationListEntity(relatedId)]
         this.setupDetailView([this.buildDetailEntity(), entity])
+        this.entityId = entity.id
         await this.loadAndAssertRendersCard(relatedId)
     }
 
     @test()
-    protected static async loadsRelatedEntityListCard() {}
+    protected static async loadsFirstRelatedEntityListCard() {
+        const relatedCard = await this.loadWith2RelatedAndGetFirstRelatedCard()
+        relatedCard.assertWasLoaded()
+    }
+
+    @test()
+    protected static async loadsSecondRelatedCard() {
+        this.setupWith2RelatedEntitiesAndGetSecondId()
+        const relatedCard = this.getRelatedCard(
+            this.entities[0].relatedEntities![1].id
+        )
+        await this.loadWithFirstLocation()
+        relatedCard.assertWasLoaded()
+    }
+
+    @test()
+    protected static async isPassedOptionsAndValuesOnLoad() {
+        const relatedCard = await this.loadWith2RelatedAndGetFirstRelatedCard()
+        const options = this.views.getRouter().buildLoadOptions()
+        const values = this.fakedLocations[0]
+
+        relatedCard.assertWasLoadedWithOptions(options, values)
+    }
+
+    @test()
+    protected static async doesNotRenderRelatedCardsForEntityNotBeingViewed() {
+        const entity = this.buildDetailEntity(generateId())
+        const relatedId = generateId()
+        entity.relatedEntities = [this.buildLocationListEntity(relatedId)]
+        this.setupDetailView([this.buildDetailEntity(), entity])
+        await this.loadWithFirstLocation()
+
+        vcAssert.assertSkillViewDoesNotRenderCard(this.vc, relatedId)
+        const relatedCard = this.getRelatedCard(relatedId)
+        relatedCard.assertWasNotLoaded()
+    }
+
+    private static async loadWith2RelatedAndGetFirstRelatedCard() {
+        const relatedId = this.setupWith2RelatedEntitiesAndGetSecondId()
+        const relatedCard = this.getRelatedCard(relatedId)
+        await this.loadWithFirstLocation()
+        return relatedCard
+    }
+
+    private static async loadWithFirstLocation() {
+        await this.loadWithRecordId(this.fakedLocations[0].id)
+    }
+
+    private static getRelatedCard(relatedId: string) {
+        return this.vc.getRelatedCardVc(relatedId)
+    }
+
+    private static setupWith2RelatedEntitiesAndGetSecondId() {
+        const entity = this.buildDetailEntity(this.entityId)
+        const relatedId = generateId()
+        entity.relatedEntities = [
+            this.buildLocationListEntity(generateId()),
+            this.buildLocationListEntity(relatedId),
+        ]
+        this.setupDetailView([entity])
+        return relatedId
+    }
 
     private static async loadAndAssertRendersCard(relatedId: string) {
-        await this.loadWithRecordId(this.locationId)
+        await this.loadWithFirstLocation()
         return vcAssert.assertSkillViewRendersCard(this.vc, relatedId)
     }
 
@@ -347,7 +405,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         return this.fakedOrganizations[0]
     }
 
-    private static async loadWithFormAndRecordId(
+    private static async setupWithFormAndLoadWithRecordid(
         form: FormViewControllerOptions<any>,
         id: string
     ) {
@@ -458,8 +516,8 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         return this.views.load(this.vc, args)
     }
 
-    private static async loadWithFirstLocation() {
-        await this.loadWithFormAndRecordId(
+    private static async setupWithLocationFormAndLoad() {
+        await this.setupWithFormAndLoadWithRecordid(
             buildForm({
                 id: 'location',
                 schema: locationSchema,
@@ -483,6 +541,23 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
 }
 
 class SpyDetailSkillView extends CrudDetailSkillViewController {
+    public getRelatedCardVc(relatedId: string) {
+        const match = this.getRelatedCardVcs().find(
+            (vc) => vc.getEntityId() === relatedId
+        )
+        assert.isTruthy(match, `Could not find that related card.`)
+
+        return match
+    }
+
+    public getRelatedCardVcs() {
+        const relatedCardVcs = []
+        for (const entities of Object.values(this.relatedEntityVcsByEntityId)) {
+            relatedCardVcs.push(...entities)
+        }
+        return relatedCardVcs as MockCrudListCard[]
+    }
+
     public getDetailFormVc() {
         return this.detailsFormCardVc
     }

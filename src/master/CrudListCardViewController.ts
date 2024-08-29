@@ -85,7 +85,10 @@ export default class CrudListCardViewController extends AbstractViewController<C
         this.activeRecordCardVc.setPayload(payload)
     }
 
-    public async load(_options: SkillViewControllerLoadOptions) {
+    public async load(
+        _options: SkillViewControllerLoadOptions,
+        _values?: Record<string, any>
+    ) {
         await this.activeRecordCardVc.load()
     }
 

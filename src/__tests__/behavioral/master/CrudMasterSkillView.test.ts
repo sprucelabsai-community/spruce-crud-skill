@@ -12,7 +12,7 @@ import {
     CrudListEntity,
 } from '../../../master/CrudMasterSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
-import MockMasterListCard from '../../support/MockMasterListCard'
+import MockCrudListCard from '../../support/MockCrudListCard'
 import SpyMasterSkillView from '../../support/SpyMasterSkillView'
 import { buildLocationListEntity } from '../../support/test.utils'
 
@@ -361,7 +361,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
     }
 
     private static get listCardVcs() {
-        return this.vc.getListCardVcs() as MockMasterListCard[]
+        return this.vc.getListCardVcs() as MockCrudListCard[]
     }
 
     private static async load() {

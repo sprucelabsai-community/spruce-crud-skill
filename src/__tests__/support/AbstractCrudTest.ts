@@ -2,7 +2,7 @@ import { AbstractSpruceFixtureTest } from '@sprucelabs/spruce-test-fixtures'
 import CrudDetailFormCardViewController from '../../detail/CrudDetailFormCardViewController'
 import CrudDetailSkillViewController from '../../detail/CrudDetailSkillViewController'
 import EventFaker from './EventFaker'
-import MockMasterListCard from './MockMasterListCard'
+import MockCrudListCard from './MockCrudListCard'
 import SpyMasterSkillView from './SpyMasterSkillView'
 import { buildLocationListEntity } from './test.utils'
 
@@ -13,7 +13,7 @@ export default abstract class AbstractCrudTest extends AbstractSpruceFixtureTest
         await super.beforeEach()
 
         this.views.setController('crud.master-skill-view', SpyMasterSkillView)
-        this.views.setController('crud.list-card', MockMasterListCard)
+        this.views.setController('crud.list-card', MockCrudListCard)
         this.views.setController(
             'crud.detail-skill-view',
             CrudDetailSkillViewController

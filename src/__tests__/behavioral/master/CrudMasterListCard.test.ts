@@ -4,7 +4,7 @@ import { test, assert, generateId } from '@sprucelabs/test-utils'
 import { ClickAddHandler } from '../../../master/CrudListCardViewController'
 import { CrudListEntity } from '../../../master/CrudMasterSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
-import MockMasterListCard from '../../support/MockMasterListCard'
+import MockCrudListCard from '../../support/MockCrudListCard'
 import {
     buildOrganizationsListEntity,
     buildOrganizationTestEntity,
@@ -13,7 +13,7 @@ import {
 @fake.login()
 export default class MasterListCardTest extends AbstractCrudTest {
     private static entity: CrudListEntity
-    private static vc: MockMasterListCard
+    private static vc: MockCrudListCard
     private static onAddClickHandler?: ClickAddHandler
 
     protected static async beforeEach(): Promise<void> {
@@ -89,14 +89,12 @@ export default class MasterListCardTest extends AbstractCrudTest {
         this.setupWithEntity(buildOrganizationTestEntity())
     }
 
-    private static setupWithEntity(
-        entity: CrudListEntity<any, any>
-    ) {
+    private static setupWithEntity(entity: CrudListEntity<any, any>) {
         this.entity = entity
         this.vc = this.views.Controller('crud.list-card', {
             entity: this.entity,
             onAddClick: this.onAddClickHandler,
-        }) as MockMasterListCard
+        }) as MockCrudListCard
     }
 
     private static async load() {

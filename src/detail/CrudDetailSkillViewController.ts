@@ -21,7 +21,11 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
     private router?: Router
     protected options: DetailSkillViewControllerOptions
     protected wasLoaded = false
-    private relatedCardVcs: CrudListCardViewController[] = []
+    protected relatedEntityVcsByEntityId: Record<
+        string,
+        CrudListCardViewController[]
+    > = {}
+    private entityId?: string
 
     public constructor(
         options: ViewControllerOptions & DetailSkillViewControllerOptions
@@ -43,7 +47,11 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
                     entity: related,
                 })
 
-                this.relatedCardVcs.push(listCardVc)
+                if (!this.relatedEntityVcsByEntityId[entity.id]) {
+                    this.relatedEntityVcsByEntityId[entity.id] = []
+                }
+
+                this.relatedEntityVcsByEntityId[entity.id].push(listCardVc)
             }
         }
     }
@@ -108,13 +116,15 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
     public async load(
         options: SkillViewControllerLoadOptions<CrudDetailSkillViewArgs>
     ) {
-        const { args, router } = options
+        const { args, router, ...restOfOptions } = options
         const { entity: entityId, action } = args
 
         this.assertValidAction(action)
 
         this.router = router
-        const entity = this.findEntity(entityId)
+        this.entityId = entityId
+
+        const entity = this.findEntity(this.entityId)
 
         let values: Record<string, any> | undefined
 
@@ -123,10 +133,25 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
         }
 
         await this.loadDetailsFormCard(entity, values)
+        await this.loadRelatedListCards(
+            { ...restOfOptions, router, args: {} },
+            values
+        )
 
         this.wasLoaded = true
 
         this.triggerRender()
+    }
+
+    private async loadRelatedListCards(
+        relatedOptions: SkillViewControllerLoadOptions,
+        values: Record<string, any> | undefined
+    ) {
+        for (const relatedCardVc of this.relatedEntityVcsByEntityId[
+            this.entityId!
+        ] ?? []) {
+            await relatedCardVc?.load(relatedOptions, values)
+        }
     }
 
     private async loadDetailsFormCard(
@@ -185,7 +210,9 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
             controller: this,
             ...buildSkillViewLayout('big-left', {
                 leftCards: [this.detailsFormCardVc.render()],
-                rightCards: this.relatedCardVcs.map((vc) => vc.render()),
+                rightCards: this.relatedEntityVcsByEntityId[
+                    this.entityId ?? ''
+                ]?.map((vc) => vc.render()),
             }),
         }
     }
