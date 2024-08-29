@@ -5,13 +5,13 @@ import {
     CrudDetailSkillViewEntity,
 } from '../../detail/CrudDetailSkillViewController'
 import {
-    buildCrudMasterListEntity,
-    CrudMasterSkillViewListEntity,
+    buildCrudListEntity,
+    CrudListEntity,
 } from '../../master/CrudMasterSkillViewController'
 import { detailFormOptions1 } from './detailFormOptions'
 
-export function buildLocationTestEntity(id?: string) {
-    return buildCrudMasterListEntity({
+export function buildLocationListEntity(id?: string) {
+    return buildCrudListEntity({
         id: id ?? generateId(),
         pluralTitle: generateId(),
         singularTitle: generateId(),
@@ -33,8 +33,8 @@ export function buildLocationTestEntity(id?: string) {
     })
 }
 
-export function buildLocationTestPagingEntity(id?: string) {
-    return buildCrudMasterListEntity({
+export function buildLocationListPagingEntity(id?: string) {
+    return buildCrudListEntity({
         id: id ?? generateId(),
         pluralTitle: generateId(),
         singularTitle: generateId(),
@@ -61,7 +61,7 @@ export function buildLocationTestPagingEntity(id?: string) {
 }
 
 export function buildOrganizationTestEntity() {
-    return buildCrudMasterListEntity({
+    return buildCrudListEntity({
         id: generateId(),
         pluralTitle: generateId(),
         singularTitle: generateId(),
@@ -83,7 +83,7 @@ export function buildOrganizationTestEntity() {
     })
 }
 
-export function buildLocationTestDetailEntity(
+export function buildLocationDetailEntity(
     id?: string,
     form?: DetailForm
 ): CrudDetailSkillViewEntity {
@@ -102,10 +102,10 @@ export function buildLocationTestDetailEntity(
     }
 }
 
-export function buildOrganizationsListTestEntity(
-    options?: RecursivePartial<CrudMasterSkillViewListEntity>
+export function buildOrganizationsListEntity(
+    options?: RecursivePartial<CrudListEntity>
 ) {
-    return buildCrudMasterListEntity({
+    return buildCrudListEntity({
         id: generateId(),
         pluralTitle: generateId(),
         singularTitle: generateId(),
@@ -117,5 +117,5 @@ export function buildOrganizationsListTestEntity(
             rowTransformer: () => ({ id: generateId(), cells: [] }),
             ...options?.list,
         },
-    }) as CrudMasterSkillViewListEntity<any>
+    }) as CrudListEntity<any>
 }

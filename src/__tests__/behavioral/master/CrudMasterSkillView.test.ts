@@ -6,22 +6,22 @@ import {
 } from '@sprucelabs/heartwood-view-controllers'
 import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
 import { test, assert, errorAssert, generateId } from '@sprucelabs/test-utils'
-import MasterListCardViewController from '../../../master/CrudMasterListCardViewController'
+import CrudListCardViewController from '../../../master/CrudListCardViewController'
 import {
     CrudMasterSkillViewControllerOptions,
-    CrudMasterSkillViewListEntity,
+    CrudListEntity,
 } from '../../../master/CrudMasterSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import MockMasterListCard from '../../support/MockMasterListCard'
 import SpyMasterSkillView from '../../support/SpyMasterSkillView'
-import { buildLocationTestEntity } from '../../support/test.utils'
+import { buildLocationListEntity } from '../../support/test.utils'
 
 @fake.login()
 export default class MasterSkillViewTest extends AbstractCrudTest {
     private static vc: SpyMasterSkillView
     private static clickRowDestination?: SkillViewControllerId
     private static addDestination?: SkillViewControllerId
-    private static lastEntities?: CrudMasterSkillViewListEntity[]
+    private static lastEntities?: CrudListEntity[]
 
     protected static async beforeEach() {
         await super.beforeEach()
@@ -73,7 +73,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
             entities: [
                 {
                     entities: [
-                        buildLocationTestEntity(),
+                        buildLocationListEntity(),
                         //@ts-ignore
                         {},
                     ],
@@ -104,7 +104,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
             this.vc,
             entities[0].id
         )
-        vcAssert.assertRendersAsInstanceOf(cardVc, MasterListCardViewController)
+        vcAssert.assertRendersAsInstanceOf(cardVc, CrudListCardViewController)
     }
 
     @test()
@@ -236,7 +236,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
     protected static async addDestinationRendersAddButtonAndClickingRedirects(
         destination: SkillViewControllerId
     ) {
-        const entity = this.buildLocationTestEntity()
+        const entity = this.buildLocationListEntity()
         this.setAddDestination(destination)
         this.setupWithEntities([entity])
         await this.load()
@@ -329,15 +329,15 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
 
     private static setupWith2EntitiesAndGetSecondId() {
         const id = generateId()
-        const entity = this.buildLocationTestEntity(id)
-        this.setupWithEntities([this.buildLocationTestEntity(), entity])
+        const entity = this.buildLocationListEntity(id)
+        this.setupWithEntities([this.buildLocationListEntity(), entity])
         return id
     }
 
     private static setupWith1EntityAndGetId() {
         const id = generateId()
 
-        const entity = this.buildLocationTestEntity(id)
+        const entity = this.buildLocationListEntity(id)
         this.setupWithEntities([entity])
         return id
     }
@@ -369,16 +369,14 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
     }
 
     private static setupVcWithTotalEntities(total: number) {
-        const entities = this.buildEntities(total)
+        const entities = this.buildLocationListEntities(total)
 
         this.setupWithEntities(entities)
 
         return entities
     }
 
-    private static setupWithEntities(
-        entities: CrudMasterSkillViewListEntity<any, any>[]
-    ) {
+    private static setupWithEntities(entities: CrudListEntity<any, any>[]) {
         this.lastEntities = entities
         this.vc = this.Vc({
             addDestination: this.addDestination,

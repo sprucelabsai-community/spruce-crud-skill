@@ -12,6 +12,8 @@ import { EventName } from '@sprucelabs/mercury-types'
 import { assertOptions, SchemaError } from '@sprucelabs/schema'
 import { FormCardViewControllerOptions } from '@sprucelabs/spruce-form-utils'
 import SpruceError from '../errors/SpruceError'
+import { CrudListEntity } from '../index-module'
+import CrudListCardViewController from '../master/CrudListCardViewController'
 import CrudDetailFormCardViewController from './CrudDetailFormCardViewController'
 
 export default class CrudDetailSkillViewController extends AbstractSkillViewController {
@@ -19,6 +21,7 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
     private router?: Router
     protected options: DetailSkillViewControllerOptions
     protected wasLoaded = false
+    private relatedCardVcs: CrudListCardViewController[] = []
 
     public constructor(
         options: ViewControllerOptions & DetailSkillViewControllerOptions
@@ -33,6 +36,16 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
 
         this.options = removeUniversalViewOptions(options)
         this.detailsFormCardVc = this.DetailFormCardVc()
+
+        for (const entity of entities) {
+            for (const related of entity.relatedEntities ?? []) {
+                const listCardVc = this.Controller('crud.list-card', {
+                    entity: related,
+                })
+
+                this.relatedCardVcs.push(listCardVc)
+            }
+        }
     }
 
     private DetailFormCardVc(): CrudDetailFormCardViewController {
@@ -102,28 +115,43 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
 
         this.router = router
         const entity = this.findEntity(entityId)
+
         let values: Record<string, any> | undefined
 
         if (action === 'edit') {
-            const { recordId } = assertOptions(args, ['recordId'])
-            const { load } = entity
-            const { buildTarget, fqen, responseKey } = load
-
-            const target = await buildTarget(recordId)
-            const client = await this.connectToApi()
-            const [results] = await client.emitAndFlattenResponses(fqen, {
-                //@ts-ignore
-                target,
-            })
-
-            values = results[responseKey]
+            values = await this.loadValues(entity, args)
         }
 
-        await this.detailsFormCardVc.load(entity, values)
+        await this.loadDetailsFormCard(entity, values)
 
         this.wasLoaded = true
 
         this.triggerRender()
+    }
+
+    private async loadDetailsFormCard(
+        entity: CrudDetailSkillViewEntity,
+        values: Record<string, any> | undefined
+    ) {
+        await this.detailsFormCardVc.load(entity, values)
+    }
+
+    private async loadValues(
+        entity: CrudDetailSkillViewEntity,
+        args: CrudDetailSkillViewArgs
+    ) {
+        const { recordId } = assertOptions(args, ['recordId'])
+        const { load } = entity
+        const { buildTarget, fqen, responseKey } = load
+
+        const target = await buildTarget(recordId)
+        const client = await this.connectToApi()
+        const [results] = await client.emitAndFlattenResponses(fqen, {
+            //@ts-ignore
+            target,
+        })
+
+        return results[responseKey]
     }
 
     private assertValidAction(action: string) {
@@ -157,6 +185,7 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
             controller: this,
             ...buildSkillViewLayout('big-left', {
                 leftCards: [this.detailsFormCardVc.render()],
+                rightCards: this.relatedCardVcs.map((vc) => vc.render()),
             }),
         }
     }
@@ -180,6 +209,7 @@ export interface CrudDetailSkillViewEntity {
         ) => Record<string, any> | Promise<Record<string, any>>
     }
     renderTitle?: (record?: any) => string
+    relatedEntities?: CrudListEntity<any, any>[]
 }
 
 export type CrudDetailLoadAction = 'edit' | 'create'

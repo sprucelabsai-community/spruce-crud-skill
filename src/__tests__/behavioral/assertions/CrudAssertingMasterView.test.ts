@@ -12,11 +12,11 @@ import crudAssert, {
 } from '../../../assertions/crudAssert'
 import CrudMasterSkillViewController, {
     CrudMasterSkillViewControllerOptions,
-    CrudMasterSkillViewListEntity,
+    CrudListEntity,
 } from '../../../master/CrudMasterSkillViewController'
 import {
-    buildLocationTestEntity,
-    buildLocationTestPagingEntity,
+    buildLocationListEntity,
+    buildLocationListPagingEntity,
 } from '../../support/test.utils'
 import AbstractAssertTest from './AbstractAssertTest'
 
@@ -66,7 +66,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
     @test()
     protected static async throwsIfMasterListCardHasNotBeenSet() {
         this.assertMissingViewControllerThrowsAsExpected(
-            'crud.master-list-card',
+            'crud.list-card',
             'CrudMasterListCardViewController'
         )
     }
@@ -318,7 +318,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
     @test()
     protected static async passesIfTargetMatchesOnFirstList() {
         const id = generateId()
-        const entity = this.buildLocationTestEntity(id)
+        const entity = this.buildLocationListEntity(id)
         this.dropInMasterSkillView([entity])
 
         const target = { organizationId: generateId() }
@@ -337,7 +337,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
     @test()
     @seed('locations', 10)
     protected static async canAssertIfListRendersRowWithPaging() {
-        const entity = buildLocationTestPagingEntity()
+        const entity = buildLocationListPagingEntity()
         this.dropInMasterSkillView([entity])
         await crudAssert.masterListCardRendersRow(
             this.fakeSvc,
@@ -488,7 +488,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
     }
 
     private static dropInMasterSkillView(
-        entities?: CrudMasterSkillViewListEntity<any, any>[]
+        entities?: CrudListEntity<any, any>[]
     ) {
         this.fakeSvc.dropInMasterSkillView({
             entities,
@@ -530,7 +530,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
 
 class SkillViewWithMasterView extends AbstractSkillViewController {
     private masterSkillView?: CrudMasterSkillViewController
-    public entities?: CrudMasterSkillViewListEntity[]
+    public entities?: CrudListEntity[]
     public onWillLoad?: () => void
     private argsToSetOnLoad: { listId: string; args: Record<string, any> }[] =
         []
@@ -540,8 +540,8 @@ class SkillViewWithMasterView extends AbstractSkillViewController {
     ) {
         const { entities } = options ?? {}
         this.entities = (entities ?? [
-            buildLocationTestEntity(),
-        ]) as CrudMasterSkillViewListEntity[]
+            buildLocationListEntity(),
+        ]) as CrudListEntity[]
         this.masterSkillView = this.Controller('crud.master-skill-view', {
             ...options,
             entities: this.entities as any,

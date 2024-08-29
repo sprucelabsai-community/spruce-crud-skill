@@ -16,10 +16,10 @@ import { assert, RecursivePartial } from '@sprucelabs/test-utils'
 import CrudDetailSkillViewController, {
     DetailSkillViewControllerOptions,
 } from '../detail/CrudDetailSkillViewController'
-import MasterListCardViewController from '../master/CrudMasterListCardViewController'
+import CrudListCardViewController from '../master/CrudListCardViewController'
 import CrudMasterSkillViewController, {
     CrudMasterSkillViewControllerOptions,
-    CrudMasterSkillViewListEntity,
+    CrudListEntity,
 } from '../master/CrudMasterSkillViewController'
 
 let views: ViewFixture | undefined
@@ -48,7 +48,7 @@ const crudAssert = {
         )
 
         assertViewSetToFactory(
-            'crud.master-list-card',
+            'crud.list-card',
             'CrudMasterListCardViewController'
         )
 
@@ -120,7 +120,7 @@ const crudAssert = {
 
             spyMasterListCard = vcAssert.assertRendersAsInstanceOf(
                 cardVc,
-                MasterListCardViewController
+                CrudListCardViewController
             ) as SpyMasterListCard
         } catch {
             assert.fail(
@@ -367,8 +367,8 @@ class SpyMasterSkillView extends CrudMasterSkillViewController {
     public addDestinationArgs: Record<string, Record<string, any>> = {}
 }
 
-class SpyMasterListCard extends MasterListCardViewController {
-    public entity!: CrudMasterSkillViewListEntity
+class SpyMasterListCard extends CrudListCardViewController {
+    public entity!: CrudListEntity
     public activeRecordCardVc!: MockActiveRecordCard
 }
 
@@ -381,7 +381,7 @@ class SpyDetailSkillView extends CrudDetailSkillViewController {
 export type ExpectedListEntityOptions<
     Contract extends EventContract = SkillEventContract,
     Fqen extends EventName<Contract> = EventName<Contract>,
-> = Omit<RecursivePartial<CrudMasterSkillViewListEntity<Contract, Fqen>>, 'id'>
+> = Omit<RecursivePartial<CrudListEntity<Contract, Fqen>>, 'id'>
 
 export type ExpectedDetailSkilViewOptions =
     RecursivePartial<DetailSkillViewControllerOptions>

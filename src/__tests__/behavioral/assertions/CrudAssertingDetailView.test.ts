@@ -12,7 +12,7 @@ import CrudDetailSkillViewController, {
     DetailSkillViewControllerOptions,
 } from '../../../detail/CrudDetailSkillViewController'
 import { crudAssert } from '../../../index-module'
-import { buildLocationTestDetailEntity as buildLocationDetailTestEntity } from '../../support/test.utils'
+import { buildLocationDetailEntity as buildLocationDetailTestEntity } from '../../support/test.utils'
 import AbstractAssertTest from './AbstractAssertTest'
 
 @fake.login()

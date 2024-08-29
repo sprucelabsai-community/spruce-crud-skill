@@ -4,9 +4,9 @@ import {
     SkillView,
     SkillViewControllerLoadOptions,
 } from '@sprucelabs/heartwood-view-controllers'
-import MasterListCardViewController from '../master/CrudMasterListCardViewController'
+import CrudListCardViewController from '../master/CrudListCardViewController'
 import CrudMasterSkillViewController, {
-    buildCrudMasterListEntity,
+    buildCrudListEntity,
 } from '../master/CrudMasterSkillViewController'
 
 export default class RootSkillViewController extends AbstractSkillViewController {
@@ -22,8 +22,8 @@ export default class RootSkillViewController extends AbstractSkillViewController
         )
 
         this.getVcFactory().setController(
-            'crud.master-list-card',
-            MasterListCardViewController
+            'crud.list-card',
+            CrudListCardViewController
         )
 
         this.masterSkillView = this.MasterVc()
@@ -46,7 +46,7 @@ export default class RootSkillViewController extends AbstractSkillViewController
     }
 
     private buildSkillsListEntity() {
-        return buildCrudMasterListEntity({
+        return buildCrudListEntity({
             id: 'skills',
             pluralTitle: 'Skills',
             singularTitle: 'Skill',
@@ -72,7 +72,7 @@ export default class RootSkillViewController extends AbstractSkillViewController
     }
 
     private buildLocationsListEntity() {
-        return buildCrudMasterListEntity({
+        return buildCrudListEntity({
             id: 'locations',
             pluralTitle: 'Locations',
             singularTitle: 'Location',
@@ -101,7 +101,7 @@ export default class RootSkillViewController extends AbstractSkillViewController
     }
 
     private buildOrganizationsListEntity() {
-        return buildCrudMasterListEntity({
+        return buildCrudListEntity({
             id: 'organizations',
             pluralTitle: 'Organizations',
             singularTitle: 'Organization',

@@ -22,10 +22,10 @@ import {
     SchemaError,
     SchemaValues,
 } from '@sprucelabs/schema'
-import MasterListCardViewController from './CrudMasterListCardViewController'
+import CrudListCardViewController from './CrudListCardViewController'
 
 export default class CrudMasterSkillViewController extends AbstractSkillViewController {
-    protected listCardsById: Record<string, MasterListCardViewController> = {}
+    protected listCardsById: Record<string, CrudListCardViewController> = {}
     protected wasLoaded = false
     protected options: CrudMasterSkillViewControllerOptions
     private router?: Router
@@ -42,7 +42,7 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
         this.buildCards(entities)
     }
 
-    private validateEntities(entities: CrudMasterSkillViewListEntity[]) {
+    private validateEntities(entities: CrudListEntity[]) {
         if (entities.length === 0) {
             throw new SchemaError({
                 code: 'INVALID_PARAMETERS',
@@ -52,10 +52,10 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
         }
     }
 
-    private buildCards(entities: CrudMasterSkillViewListEntity[]) {
+    private buildCards(entities: CrudListEntity[]) {
         for (const entity of entities) {
             this.listCardsById[entity.id] = this.Controller(
-                'crud.master-list-card',
+                'crud.list-card',
                 {
                     entity,
                     onClickRow: this.handleClickRow.bind(this),
@@ -148,10 +148,10 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
 export interface CrudMasterSkillViewControllerOptions {
     addDestination?: SkillViewControllerId
     clickRowDestination?: SkillViewControllerId
-    entities: CrudMasterSkillViewListEntity<any, any>[]
+    entities: CrudListEntity<any, any>[]
 }
 
-export interface CrudMasterSkillViewListEntity<
+export interface CrudListEntity<
     Contract extends EventContract = SkillEventContract,
     Fqen extends EventName<Contract> = EventName<Contract>,
     IEventSignature extends EventSignature = Contract['eventSignatures'][Fqen],
@@ -182,7 +182,7 @@ export interface CrudMasterSkillViewListEntity<
     }
 }
 
-type CrudMasterListCardViewControllerBuilder = <
+type CrudListCardViewControllerBuilder = <
     Contract extends EventContract = SkillEventContract,
     Fqen extends EventName<Contract> = EventName<Contract>,
     IEventSignature extends EventSignature = Contract['eventSignatures'][Fqen],
@@ -198,7 +198,7 @@ type CrudMasterListCardViewControllerBuilder = <
         SchemaValues<ResponseSchema> = SchemaValues<ResponseSchema>,
     ResponseKey extends keyof Response = keyof Response,
 >(
-    options: CrudMasterSkillViewListEntity<
+    options: CrudListEntity<
         Contract,
         Fqen,
         IEventSignature,
@@ -207,7 +207,7 @@ type CrudMasterListCardViewControllerBuilder = <
         Response,
         ResponseKey
     >
-) => CrudMasterSkillViewListEntity<
+) => CrudListEntity<
     Contract,
     Fqen,
     IEventSignature,
@@ -217,10 +217,11 @@ type CrudMasterListCardViewControllerBuilder = <
     ResponseKey
 >
 
-export const buildCrudMasterListEntity: CrudMasterListCardViewControllerBuilder =
-    (options) => {
-        return options
-    }
+export const buildCrudListEntity: CrudListCardViewControllerBuilder = (
+    options
+) => {
+    return options
+}
 
 export const buildCrudMasterSkillViewOptions = (
     options: CrudMasterSkillViewControllerOptions

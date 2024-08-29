@@ -9,11 +9,11 @@ import {
 } from '@sprucelabs/heartwood-view-controllers'
 import { SkillEventContract } from '@sprucelabs/mercury-types'
 import { assertOptions } from '@sprucelabs/schema'
-import { CrudMasterSkillViewListEntity } from './CrudMasterSkillViewController'
+import { CrudListEntity } from './CrudMasterSkillViewController'
 
-export default class MasterListCardViewController extends AbstractViewController<Card> {
+export default class CrudListCardViewController extends AbstractViewController<Card> {
     protected activeRecordCardVc: ActiveRecordCardViewController
-    protected entity: CrudMasterSkillViewListEntity
+    protected entity: CrudListEntity
     private onAddClick?: ClickAddHandler
 
     public constructor(
@@ -36,7 +36,7 @@ export default class MasterListCardViewController extends AbstractViewController
     }
 
     private ActiveRecordCard(
-        entity: CrudMasterSkillViewListEntity,
+        entity: CrudListEntity,
         onClickRow?: ClickRowHandler
     ) {
         const { list: load } = entity
@@ -102,21 +102,21 @@ type ClickRowHandler = (
 export type ClickAddHandler = (entityId: string) => void | Promise<void>
 
 export interface MasterListCardViewControllerOptions {
-    entity: CrudMasterSkillViewListEntity<SkillEventContract>
+    entity: CrudListEntity<SkillEventContract>
     onClickRow?: ClickRowHandler
     onAddClick?: ClickAddHandler
 }
 
 declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.types' {
     interface SkillViewControllerMap {
-        'crud.master-list-card': MasterListCardViewController
+        'crud.list-card': CrudListCardViewController
     }
 
     interface ViewControllerMap {
-        'crud.master-list-card': MasterListCardViewController
+        'crud.list-card': CrudListCardViewController
     }
 
     interface ViewControllerOptionsMap {
-        'crud.master-list-card': MasterListCardViewControllerOptions
+        'crud.list-card': MasterListCardViewControllerOptions
     }
 }

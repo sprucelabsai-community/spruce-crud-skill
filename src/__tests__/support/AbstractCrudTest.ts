@@ -4,7 +4,7 @@ import CrudDetailSkillViewController from '../../detail/CrudDetailSkillViewContr
 import EventFaker from './EventFaker'
 import MockMasterListCard from './MockMasterListCard'
 import SpyMasterSkillView from './SpyMasterSkillView'
-import { buildLocationTestEntity } from './test.utils'
+import { buildLocationListEntity } from './test.utils'
 
 export default abstract class AbstractCrudTest extends AbstractSpruceFixtureTest {
     protected static eventFaker: EventFaker
@@ -13,7 +13,7 @@ export default abstract class AbstractCrudTest extends AbstractSpruceFixtureTest
         await super.beforeEach()
 
         this.views.setController('crud.master-skill-view', SpyMasterSkillView)
-        this.views.setController('crud.master-list-card', MockMasterListCard)
+        this.views.setController('crud.list-card', MockMasterListCard)
         this.views.setController(
             'crud.detail-skill-view',
             CrudDetailSkillViewController
@@ -26,13 +26,13 @@ export default abstract class AbstractCrudTest extends AbstractSpruceFixtureTest
         this.eventFaker = new EventFaker()
     }
 
-    protected static buildEntities(total: number) {
+    protected static buildLocationListEntities(total: number) {
         return Array.from({ length: total }, () =>
-            this.buildLocationTestEntity()
+            this.buildLocationListEntity()
         )
     }
 
-    protected static buildLocationTestEntity(id?: string) {
-        return buildLocationTestEntity(id)
+    protected static buildLocationListEntity(id?: string) {
+        return buildLocationListEntity(id)
     }
 }

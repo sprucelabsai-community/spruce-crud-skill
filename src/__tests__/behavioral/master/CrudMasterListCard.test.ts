@@ -1,24 +1,24 @@
 import { activeRecordCardAssert } from '@sprucelabs/heartwood-view-controllers'
 import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
 import { test, assert, generateId } from '@sprucelabs/test-utils'
-import { ClickAddHandler } from '../../../master/CrudMasterListCardViewController'
-import { CrudMasterSkillViewListEntity } from '../../../master/CrudMasterSkillViewController'
+import { ClickAddHandler } from '../../../master/CrudListCardViewController'
+import { CrudListEntity } from '../../../master/CrudMasterSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import MockMasterListCard from '../../support/MockMasterListCard'
 import {
-    buildOrganizationsListTestEntity,
+    buildOrganizationsListEntity,
     buildOrganizationTestEntity,
 } from '../../support/test.utils'
 
 @fake.login()
 export default class MasterListCardTest extends AbstractCrudTest {
-    private static entity: CrudMasterSkillViewListEntity
+    private static entity: CrudListEntity
     private static vc: MockMasterListCard
     private static onAddClickHandler?: ClickAddHandler
 
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
-        this.setupWithEntity(this.buildLocationTestEntity())
+        this.setupWithEntity(this.buildLocationListEntity())
     }
 
     @test()
@@ -55,7 +55,7 @@ export default class MasterListCardTest extends AbstractCrudTest {
         shouldPageClientSide: boolean
     ) {
         this.setupWithEntity(
-            buildOrganizationsListTestEntity({
+            buildOrganizationsListEntity({
                 list: {
                     paging: {
                         shouldPageClientSide,
@@ -76,7 +76,7 @@ export default class MasterListCardTest extends AbstractCrudTest {
         const titleSingular = generateId()
         this.onAddClickHandler = () => {}
         this.setupWithEntity(
-            buildOrganizationsListTestEntity({
+            buildOrganizationsListEntity({
                 singularTitle: titleSingular,
             })
         )
@@ -90,10 +90,10 @@ export default class MasterListCardTest extends AbstractCrudTest {
     }
 
     private static setupWithEntity(
-        entity: CrudMasterSkillViewListEntity<any, any>
+        entity: CrudListEntity<any, any>
     ) {
         this.entity = entity
-        this.vc = this.views.Controller('crud.master-list-card', {
+        this.vc = this.views.Controller('crud.list-card', {
             entity: this.entity,
             onAddClick: this.onAddClickHandler,
         }) as MockMasterListCard

@@ -20,11 +20,12 @@ import CrudDetailSkillViewController, {
     CrudDetailSkillViewEntity,
     CrudDetailLoadAction,
 } from '../../../detail/CrudDetailSkillViewController'
+import { CrudMasterListCardViewController } from '../../../index-module'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import { detailFormOptions2 } from '../../support/detailFormOptions'
 import { GetLocationTargetAndPayload } from '../../support/EventFaker'
 import MockDetailFormCard from '../../support/MockDetailFormCard'
-import { buildLocationTestDetailEntity } from '../../support/test.utils'
+import { buildLocationDetailEntity } from '../../support/test.utils'
 
 @fake.login()
 export default class DetailSkillViewTest extends AbstractCrudTest {
@@ -276,6 +277,48 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         assert.isEqualDeep(passedValues, this.firstLocation)
     }
 
+    @test()
+    protected static async rendersCardForFirstRelatedOfFirstEntity() {
+        const entity = this.buildDetailEntity(this.entityId)
+        const relatedId = generateId()
+        entity.relatedEntities = [this.buildLocationListEntity(relatedId)]
+        this.setupDetailView([entity])
+        const cardVc = await this.loadAndAssertRendersCard(relatedId)
+        vcAssert.assertRendersAsInstanceOf(
+            cardVc,
+            CrudMasterListCardViewController
+        )
+    }
+
+    @test()
+    protected static async rendersCardForSecondRelatedOfFirstEntity() {
+        const entity = this.buildDetailEntity(this.entityId)
+        const relatedId = generateId()
+        entity.relatedEntities = [
+            this.buildLocationListEntity(generateId()),
+            this.buildLocationListEntity(relatedId),
+        ]
+        this.setupDetailView([entity])
+        await this.loadAndAssertRendersCard(relatedId)
+    }
+
+    @test()
+    protected static async rendersCardForFirstRelatedOfSecondEntity() {
+        const entity = this.buildDetailEntity(generateId())
+        const relatedId = generateId()
+        entity.relatedEntities = [this.buildLocationListEntity(relatedId)]
+        this.setupDetailView([this.buildDetailEntity(), entity])
+        await this.loadAndAssertRendersCard(relatedId)
+    }
+
+    @test()
+    protected static async loadsRelatedEntityListCard() {}
+
+    private static async loadAndAssertRendersCard(relatedId: string) {
+        await this.loadWithRecordId(this.locationId)
+        return vcAssert.assertSkillViewRendersCard(this.vc, relatedId)
+    }
+
     private static assertFormCardHeaderTitleEquals(title: string) {
         const card = this.views.render(this.vc.getDetailFormVc())
         assert.isEqual(card.header?.title, title)
@@ -375,7 +418,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         id?: string,
         form?: DetailForm
     ): CrudDetailSkillViewEntity {
-        return buildLocationTestDetailEntity(
+        return buildLocationDetailEntity(
             id ?? this.entityId,
             form ??
                 buildForm({

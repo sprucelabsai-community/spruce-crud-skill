@@ -5,9 +5,9 @@ import {
     SkillViewControllerLoadOptions,
 } from '@sprucelabs/heartwood-view-controllers'
 import { assert } from '@sprucelabs/test-utils'
-import MasterListCardViewController from '../../master/CrudMasterListCardViewController'
+import CrudListCardViewController from '../../master/CrudListCardViewController'
 
-export default class MockMasterListCard extends MasterListCardViewController {
+export default class MockMasterListCard extends CrudListCardViewController {
     private wasLoaded = false
     private loadOptions?: SkillViewControllerLoadOptions
 
