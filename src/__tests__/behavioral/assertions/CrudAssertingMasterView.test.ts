@@ -327,11 +327,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
             this.fakeSvc.setTarget(id, target)
         }
 
-        await crudAssert.masterListLoadsWithTarget(
-            this.fakeSvc,
-            id,
-            target
-        )
+        await crudAssert.masterListLoadsWithTarget(this.fakeSvc, id, target)
     }
 
     @test()
