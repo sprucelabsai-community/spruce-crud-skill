@@ -270,7 +270,7 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
                     recordId: this.locationId,
                     relatedId: generateId(),
                 }),
-            'entityId'
+            'not find any related entities'
         )
     }
 
