@@ -147,9 +147,8 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
         relatedOptions: SkillViewControllerLoadOptions,
         values: Record<string, any> | undefined
     ) {
-        for (const relatedCardVc of this.relatedEntityVcsByEntityId[
-            this.entityId!
-        ] ?? []) {
+        const relatedVcs = this.relatedEntityVcsByEntityId[this.entityId!] ?? []
+        for (const relatedCardVc of relatedVcs) {
             await relatedCardVc?.load(relatedOptions, values)
         }
     }

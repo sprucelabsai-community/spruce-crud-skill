@@ -42,7 +42,7 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
         this.buildCards(entities)
     }
 
-    private validateEntities(entities: CrudListEntity[]) {
+    private validateEntities(entities: CrudListEntity<any>[]) {
         if (entities.length === 0) {
             throw new SchemaError({
                 code: 'INVALID_PARAMETERS',
@@ -52,7 +52,7 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
         }
     }
 
-    private buildCards(entities: CrudListEntity[]) {
+    private buildCards(entities: CrudListEntity<any>[]) {
         for (const entity of entities) {
             this.listCardsById[entity.id] = this.Controller('crud.list-card', {
                 entity,
@@ -175,6 +175,10 @@ export interface CrudListEntity<
         payload?: SchemaValues<EmitSchema>['payload']
         /** @ts-ignore */
         target?: SchemaValues<EmitSchema>['target']
+        buildTarget?: (
+            detailValues?: Record<string, any>
+            /** @ts-ignore */
+        ) => SchemaValues<EmitSchema>['target']
         paging?: ActiveRecordPagingOptions
     }
 }

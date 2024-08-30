@@ -21,7 +21,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
     private static vc: SpyMasterSkillView
     private static clickRowDestination?: SkillViewControllerId
     private static addDestination?: SkillViewControllerId
-    private static lastEntities?: CrudListEntity[]
+    private static lastEntities?: CrudListEntity<any, any>[]
 
     protected static async beforeEach() {
         await super.beforeEach()

@@ -12,7 +12,7 @@ import {
 
 @fake.login()
 export default class MasterListCardTest extends AbstractCrudTest {
-    private static entity: CrudListEntity
+    private static entity: CrudListEntity<any, any>
     private static vc: MockCrudListCard
     private static onAddClickHandler?: ClickAddHandler
 
@@ -43,7 +43,7 @@ export default class MasterListCardTest extends AbstractCrudTest {
     @test()
     @seed('organizations', 1)
     protected static async rendersRowForOrganizationOnLoad() {
-        this.setupWithOneEntity()
+        this.setupWithOrgEntity()
         await this.load()
         this.assertRendersRow(this.fakedOrganizations[0].id)
     }
@@ -85,7 +85,32 @@ export default class MasterListCardTest extends AbstractCrudTest {
         assert.doesInclude(model.footer?.buttons?.[0].label, titleSingular)
     }
 
-    private static setupWithOneEntity() {
+    @test()
+    protected static async buildTargetGetsValuesOnLoad() {
+        this.setupWithOrgEntity()
+        let passedValues: Record<string, any> | undefined
+
+        const values = { [generateId()]: generateId() }
+
+        this.entity.list.buildTarget = (values) => {
+            passedValues = values
+            return {}
+        }
+
+        await this.load(values)
+        assert.isEqualDeep(passedValues, values)
+    }
+
+    @test()
+    protected static async responseToBuildTargetSetsToActiveRecordCardTarget() {
+        this.setupWithEntity(this.buildLocationListEntity())
+        const target = { organizationId: generateId() }
+        this.entity.list.buildTarget = () => target
+        await this.load()
+        this.vc.assertTargetEquals(target)
+    }
+
+    private static setupWithOrgEntity() {
         this.setupWithEntity(buildOrganizationTestEntity())
     }
 
@@ -97,8 +122,9 @@ export default class MasterListCardTest extends AbstractCrudTest {
         }) as MockCrudListCard
     }
 
-    private static async load() {
-        await this.views.load(this.vc)
+    private static async load(values?: Record<string, any>) {
+        const options = this.views.getRouter().buildLoadOptions()
+        await this.vc.load(options, values)
     }
 
     private static assertRendersRow(id: string) {

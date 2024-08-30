@@ -8,6 +8,7 @@ import CrudListCardViewController from '../master/CrudListCardViewController'
 import CrudMasterSkillViewController, {
     buildCrudListEntity,
 } from '../master/CrudMasterSkillViewController'
+import { locationListOptions } from './constants'
 
 export default class RootSkillViewController extends AbstractSkillViewController {
     public static id = 'root'
@@ -76,27 +77,7 @@ export default class RootSkillViewController extends AbstractSkillViewController
             id: 'locations',
             pluralTitle: 'Locations',
             singularTitle: 'Location',
-            list: {
-                fqen: 'list-locations::v2020_12_25',
-                responseKey: 'locations',
-                payload: {
-                    shouldOnlyShowWhereIAmEmployed: true,
-                },
-                paging: {
-                    pageSize: 5,
-                    shouldPageClientSide: true,
-                },
-                rowTransformer: (location) => ({
-                    id: location.id,
-                    cells: [
-                        {
-                            text: {
-                                content: location.name,
-                            },
-                        },
-                    ],
-                }),
-            },
+            list: locationListOptions,
         })
     }
 

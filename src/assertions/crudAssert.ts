@@ -129,8 +129,10 @@ const crudAssert = {
         }
 
         if (expectedOptions) {
+            const actual = spyMasterListCard?.entity
+
             assert.doesInclude(
-                spyMasterListCard?.entity,
+                actual,
                 expectedOptions,
                 'Your configuration does not match!'
             )
@@ -302,18 +304,20 @@ const crudAssert = {
     async detailLoadTargetEquals(options: {
         skillView: SkillViewController
         listCardId: string
-        recordId: string
+        recordId?: string
         expectedTarget: Record<string, any>
     }) {
         const { skillView, recordId, expectedTarget, listCardId } =
             assertOptions(options, [
                 'skillView',
-                'recordId',
                 'listCardId',
+                'recordId',
                 'expectedTarget',
             ])
 
         const detailSvc = this.skillViewRendersDetailView(skillView)
+        detailSvc.relatedEntityVcsByEntityId = {}
+
         const client = await detailSvc.connectToApi()
         let passedTarget: Record<string, any> | undefined
 
@@ -342,16 +346,15 @@ const crudAssert = {
         )
     },
 
-    detailRendersRelatedEntity(options: {
+    async detailRendersRelatedEntity(options: {
         skillView: SkillViewController
         entityId: string
+        recordId?: string
         relatedId: string
+        expectedOptions?: RecursivePartial<CrudListEntity<SkillEventContract>>
     }) {
-        const { skillView, entityId, relatedId } = assertOptions(options, [
-            'skillView',
-            'entityId',
-            'relatedId',
-        ])
+        const { skillView, entityId, relatedId, expectedOptions, recordId } =
+            assertOptions(options, ['skillView', 'entityId', 'relatedId'])
 
         const detailSvc = this.skillViewRendersDetailView(skillView)
         const relatedVcs = detailSvc.relatedEntityVcsByEntityId[entityId] as
@@ -360,8 +363,48 @@ const crudAssert = {
 
         assert.isTruthy(
             relatedVcs,
-            `I could not find a configuration for the entityId you passed. Make sure you pass it to the constructor of your CrudDetailSkillViewController.`
+            `I could not find any related entities for the entityId you passed. Make sure you set the 'relatedEntities' property of your entity configuration.`
         )
+
+        const match = relatedVcs.find((vc) => vc.entity.id === relatedId)
+
+        assert.isTruthy(
+            match,
+            `I could not find a related entity with the id you sent!`
+        )
+
+        if (expectedOptions) {
+            const actual = match.entity
+
+            if (actual?.list.buildTarget && expectedOptions.list?.target) {
+                await views?.load(skillView, {
+                    action: recordId ? 'edit' : 'create',
+                    recordId,
+                    entity: entityId,
+                })
+                assert.isEqualDeep(
+                    match.activeRecordCardVc.getTarget(),
+                    expectedOptions.list?.target,
+                    `The target you expected in your related entity does not match what I found!`
+                )
+
+                delete expectedOptions.list?.target
+
+                if (Object.keys(expectedOptions.list!).length === 0) {
+                    delete expectedOptions.list
+                }
+
+                if (Object.keys(expectedOptions).length === 0) {
+                    return
+                }
+            }
+
+            assert.doesInclude(
+                actual,
+                expectedOptions,
+                `The options you expected in your related entity do not match what I found!`
+            )
+        }
     },
 }
 
@@ -390,7 +433,7 @@ class SpyMasterSkillView extends CrudMasterSkillViewController {
 }
 
 class SpyCrudListCard extends CrudListCardViewController {
-    public entity!: CrudListEntity
+    public entity!: CrudListEntity<any>
     public activeRecordCardVc!: MockActiveRecordCard
 }
 

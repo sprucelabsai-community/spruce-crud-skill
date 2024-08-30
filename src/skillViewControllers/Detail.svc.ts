@@ -16,6 +16,8 @@ import CrudDetailSkillViewController, {
     CrudDetailSkillViewArgs,
     CrudDetailSkillViewEntity,
 } from '../detail/CrudDetailSkillViewController'
+import CrudListCardViewController from '../master/CrudListCardViewController'
+import { locationListOptions } from './constants'
 
 export default class DetailSkillViewController extends AbstractSkillViewController {
     public static id = 'detail'
@@ -34,6 +36,11 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
             CrudDetailFormCardViewController
         )
 
+        this.getVcFactory().setController(
+            'crud.list-card',
+            CrudListCardViewController
+        )
+
         this.detailSkillView = this.Controller('crud.detail-skill-view', {
             cancelDestination: 'crud.root',
             entities: [
@@ -45,6 +52,7 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
 
     private buildOrganizationDetailEntity(): CrudDetailSkillViewEntity {
         return {
+            id: 'organizations',
             form: buildForm({
                 id: 'organizationsForm',
                 schema: organizationSchema,
@@ -56,7 +64,6 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
             }),
             renderTitle: (values?: Organization) =>
                 `${values ? `Update ${values.name}` : `Add Organization`}`,
-            id: 'organizations',
             load: {
                 fqen: 'get-organization::v2020_12_25',
                 responseKey: 'organization',
@@ -64,6 +71,17 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
                     organizationId,
                 }),
             },
+            relatedEntities: [
+                {
+                    id: 'locations',
+                    pluralTitle: 'aoeu',
+                    singularTitle: 'aoeu',
+                    list: {
+                        ...locationListOptions,
+                        payload: undefined,
+                    },
+                },
+            ],
         }
     }
 

@@ -4,14 +4,21 @@ import {
     SkillViewControllerId,
     SkillViewControllerLoadOptions,
 } from '@sprucelabs/heartwood-view-controllers'
+import { SkillEventContract } from '@sprucelabs/mercury-types'
 import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
-import { test, assert, errorAssert, generateId } from '@sprucelabs/test-utils'
+import {
+    test,
+    assert,
+    errorAssert,
+    generateId,
+    RecursivePartial,
+} from '@sprucelabs/test-utils'
 import CrudDetailSkillViewController, {
     CrudDetailSkillViewArgs,
     CrudDetailSkillViewEntity,
     DetailSkillViewControllerOptions,
 } from '../../../detail/CrudDetailSkillViewController'
-import { crudAssert } from '../../../index-module'
+import { crudAssert, CrudListEntity } from '../../../index-module'
 import { buildLocationDetailEntity as buildLocationDetailTestEntity } from '../../support/test.utils'
 import AbstractAssertTest from './AbstractAssertTest'
 
@@ -19,12 +26,16 @@ import AbstractAssertTest from './AbstractAssertTest'
 export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     private static vc: SkillViewWithDetailView
     private static entities: CrudDetailSkillViewEntity[]
+    private static recordId?: string
+
+    @seed('locations', 1)
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
 
         this.entities = []
         this.views.setController('fake-with-detail', SkillViewWithDetailView)
         this.vc = this.views.Controller('fake-with-detail', {})
+        this.recordId = this.fakedLocations[0].id
     }
 
     @test()
@@ -158,15 +169,14 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
         errorAssert.assertError(err, 'MISSING_PARAMETERS', {
             parameters: [
                 'skillView',
-                'recordId',
                 'listCardId',
+                'recordId',
                 'expectedTarget',
             ],
         })
     }
 
     @test()
-    @seed('locations', 1)
     protected static async throwsIfTargetDoesNotMatchLocationId() {
         await this.eventFaker.fakeGetLocation()
         this.dropInDetailSkillView()
@@ -176,7 +186,6 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     }
 
     @test()
-    @seed('organizations', 1)
     protected static async throwsIfTargetDoesNotMatchOrganizationId() {
         await this.eventFaker.fakeGetOrganization()
         const entity = buildLocationDetailTestEntity()
@@ -198,7 +207,6 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     }
 
     @test()
-    @seed('locations', 1)
     protected static async loadTargetMatchesExpectedForLocationId() {
         const entity = buildLocationDetailTestEntity()
 
@@ -211,16 +219,15 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
         })
 
         await this.assertDetailLoadTargetEquals({
-            recordId: this.fakedLocations[0].id,
+            recordId: this.locationId,
             expectedTarget: {
-                locationId: this.fakedLocations[0].id,
+                locationId: this.locationId,
             },
         })
     }
 
     @test()
-    @seed('organizations', 1)
-    protected static async loadtargetMatchesExpectedForOrganizationId() {
+    protected static async loadTargetMatchesExpectedForOrganizationId() {
         const entity = buildLocationDetailTestEntity()
 
         entity.load = {
@@ -245,7 +252,7 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
 
     @test()
     protected static async assertRendersRelatedEntityThrowsWithMissing() {
-        const err = assert.doesThrow(() =>
+        const err = await assert.doesThrowAsync(() =>
             //@ts-ignore
             crudAssert.detailRendersRelatedEntity()
         )
@@ -259,11 +266,12 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     protected static async assertRendersRelatedThrowsIfNoEntityId() {
         this.dropInDetailSkillView()
 
-        assert.doesThrow(
+        await assert.doesThrowAsync(
             () =>
                 crudAssert.detailRendersRelatedEntity({
                     skillView: this.vc,
                     entityId: generateId(),
+                    recordId: this.locationId,
                     relatedId: generateId(),
                 }),
             'entityId'
@@ -272,13 +280,14 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
 
     @test()
     protected static async assertRendersRelatedThrowsIfNoRelatedExists() {
-        this.dropInDetailSkillView()
+        this.dropInDetailViewWithLocationAndOneRelated()
 
-        assert.doesThrow(
+        await assert.doesThrowAsync(
             () =>
                 crudAssert.detailRendersRelatedEntity({
                     skillView: this.vc,
                     entityId: this.firstEntityId,
+                    recordId: this.locationId,
                     relatedId: generateId(),
                 }),
             'related entity'
@@ -287,18 +296,207 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
 
     @test()
     protected static async passesIfRelatedEntityExists() {
+        this.dropInDetailViewWithLocationAndOneRelated()
+        await this.assertRelatedExistsInFirstEntity(this.firstRelatedEntityId)
+    }
+
+    @test()
+    protected static async canFindSecondRelatedEntity() {
+        const entity = this.buildLocationDetailEntity()
+
+        entity.relatedEntities = [
+            this.buildLocationListEntity(),
+            this.buildLocationListEntity(),
+        ]
+
+        this.dropInDetailSkillView({
+            entities: [entity],
+        })
+
+        await this.assertRelatedExistsInFirstEntity(
+            this.entities[0].relatedEntities![1].id
+        )
+    }
+
+    @test()
+    protected static async throwsIfRelatedEntitiesOptionsDontMatch() {
+        this.dropInDetailViewWithLocationAndOneRelated()
+        const expected = {
+            pluralTitle: generateId(),
+        }
+        await this.assertThrowsWhenFirstRelatedOptionsDontMatch(expected)
+    }
+
+    @test()
+    protected static async passesIfRelatedEntityPluralTitleMatches() {
+        this.dropInDetailViewWithLocationAndOneRelated()
+        await this.assertRelatedExistsInFirstEntity(this.firstRelatedEntityId, {
+            pluralTitle: this.firstRelatedEntity.pluralTitle,
+        })
+    }
+
+    @test()
+    protected static async passesIfRelatedEntitySingularTitleMatches() {
+        this.dropInDetailViewWithLocationAndOneRelated()
+        await this.assertRelatedExistsInFirstEntity(this.firstRelatedEntityId, {
+            singularTitle: this.firstRelatedEntity.singularTitle,
+        })
+    }
+
+    @test()
+    protected static async matchesRelatedTargetAfterLoad() {
+        const target = { organizationId: generateId() }
+
+        this.dropInDetailViewWithLocationAndSetFirstRelatedBuiltTarget(target)
+
+        await this.assertRelatedExistsInFirstEntity(this.firstRelatedEntityId, {
+            list: {
+                target: target as any,
+            },
+        })
+    }
+
+    @test()
+    protected static async throwsIfBuiltTargetDoesNotMatch() {
+        this.dropInDetailViewWithLocationAndSetFirstRelatedBuiltTarget({
+            organizationId: generateId(),
+        })
+
+        await this.assertThrowsWhenFirstRelatedOptionsDontMatch({
+            list: {
+                target: { organizationId: generateId() } as any,
+            },
+        })
+    }
+
+    @test()
+    protected static async relatedOptionsCanStillFailEvenIfBuiltTargetMatches() {
+        const target = { organizationId: generateId() }
+        this.dropInDetailViewWithLocationAndSetFirstRelatedBuiltTarget(target)
+        await this.assertThrowsWhenFirstRelatedOptionsDontMatch({
+            pluralTitle: generateId(),
+            list: {
+                target: target as any,
+            },
+        })
+    }
+
+    @test()
+    protected static async relatedOptionsCanThrowIfAnotherListPropertyDoesNotMatch() {
+        const target = { organizationId: generateId() }
+        this.dropInDetailViewWithLocationAndSetFirstRelatedBuiltTarget(target)
+        await this.assertThrowsWhenFirstRelatedOptionsDontMatch({
+            list: {
+                target: target as any,
+                paging: {
+                    pageSize: 0,
+                },
+            },
+        })
+    }
+
+    @test()
+    protected static async assertingRelatedOptionsWithBuildTargetPassWithoutTargetInExpected() {
+        const target = { organizationId: generateId() }
+        this.dropInDetailViewWithLocationAndSetFirstRelatedBuiltTarget(target)
+        await this.assertRelatedExistsInFirstEntity(this.firstRelatedEntityId, {
+            pluralTitle: this.firstRelatedEntity.pluralTitle,
+        })
+    }
+
+    @test()
+    protected static async passesLoadedEntityToBuildTarget() {
+        this.dropInDetailViewWithLocationAndOneRelated()
+        let passedValues: Record<string, any> | undefined
+        const target = { organizationId: generateId() }
+
+        this.firstRelatedEntity.list.buildTarget = (values) => {
+            passedValues = values
+            return target
+        }
+
+        await this.assertRelatedExistsInFirstEntity(this.firstRelatedEntityId, {
+            list: { target: target as any },
+        })
+
+        assert.isEqualDeep(passedValues, this.fakedLocations[0])
+    }
+
+    @test()
+    protected static async canMatchOnTargetWithoutRecordId() {
+        const target = { organizationId: generateId() }
+
+        this.dropInDetailViewWithLocationAndSetFirstRelatedBuiltTarget(target)
+        this.firstRelatedEntity.list.buildTarget = (values) => {
+            assert.isFalsy(values)
+            return target
+        }
+
+        delete this.recordId
+
+        await this.assertRelatedExistsInFirstEntity(this.firstRelatedEntityId, {
+            list: {
+                target: target as any,
+            },
+        })
+    }
+
+    private static dropInDetailViewWithLocationAndSetFirstRelatedBuiltTarget(target: {
+        organizationId: string
+    }) {
+        this.dropInDetailViewWithLocationAndOneRelated()
+        this.setFirstRelatedBuiltTarget(target)
+    }
+
+    private static async assertThrowsWhenFirstRelatedOptionsDontMatch(
+        expected: RecursivePartial<CrudListEntity<SkillEventContract>>
+    ) {
+        await assert.doesThrowAsync(
+            () =>
+                this.assertRelatedExistsInFirstEntity(
+                    this.firstRelatedEntityId,
+                    expected
+                ),
+            /expected/i
+        )
+    }
+
+    private static setFirstRelatedBuiltTarget(target: {
+        organizationId: string
+    }) {
+        this.firstRelatedEntity.list.buildTarget = () => {
+            return target
+        }
+    }
+
+    private static get firstRelatedEntityId(): string {
+        return this.firstRelatedEntity.id
+    }
+
+    private static get firstRelatedEntity() {
+        return this.entities[0].relatedEntities![0]
+    }
+
+    private static async assertRelatedExistsInFirstEntity(
+        related: string,
+        expectedOptions?: RecursivePartial<CrudListEntity<SkillEventContract>>
+    ) {
+        await crudAssert.detailRendersRelatedEntity({
+            skillView: this.vc,
+            entityId: this.firstEntityId,
+            relatedId: related,
+            recordId: this.recordId,
+            expectedOptions,
+        })
+    }
+
+    private static dropInDetailViewWithLocationAndOneRelated() {
         const entity = this.buildLocationDetailEntity()
         const relatedEntity = this.buildLocationListEntity()
         entity.relatedEntities = [relatedEntity]
 
         this.dropInDetailSkillView({
             entities: [entity],
-        })
-
-        crudAssert.detailRendersRelatedEntity({
-            skillView: this.vc,
-            entityId: this.firstEntityId,
-            relatedId: relatedEntity.id,
         })
     }
 
@@ -312,7 +510,7 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     }
 
     private static async assertDetailLoadTargetEquals(options: {
-        recordId: string
+        recordId?: string
         expectedTarget: Record<string, any>
         listCardId?: string
     }) {
@@ -370,6 +568,10 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     ) {
         this.views.setController(id as any, undefined as any)
         assert.doesThrow(() => this.assertRendersDetailView(), className)
+    }
+
+    private static get locationId() {
+        return this.fakedLocations[0].id
     }
 }
 

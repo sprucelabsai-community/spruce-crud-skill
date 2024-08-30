@@ -7,17 +7,16 @@ import {
     SkillViewControllerLoadOptions,
     ViewControllerOptions,
 } from '@sprucelabs/heartwood-view-controllers'
-import { SkillEventContract } from '@sprucelabs/mercury-types'
 import { assertOptions } from '@sprucelabs/schema'
 import { CrudListEntity } from './CrudMasterSkillViewController'
 
 export default class CrudListCardViewController extends AbstractViewController<Card> {
     protected activeRecordCardVc: ActiveRecordCardViewController
-    protected entity: CrudListEntity
+    protected entity: CrudListEntity<any, any>
     private onAddClick?: ClickAddHandler
 
     public constructor(
-        options: ViewControllerOptions & MasterListCardViewControllerOptions
+        options: ViewControllerOptions & CrudListCardViewControllerOptions
     ) {
         super(options)
 
@@ -36,7 +35,7 @@ export default class CrudListCardViewController extends AbstractViewController<C
     }
 
     private ActiveRecordCard(
-        entity: CrudListEntity,
+        entity: CrudListEntity<any, any>,
         onClickRow?: ClickRowHandler
     ) {
         const { list: load } = entity
@@ -87,8 +86,12 @@ export default class CrudListCardViewController extends AbstractViewController<C
 
     public async load(
         _options: SkillViewControllerLoadOptions,
-        _values?: Record<string, any>
+        values?: Record<string, any>
     ) {
+        const builtTarget = this.entity.list.buildTarget?.(values)
+        if (builtTarget) {
+            this.activeRecordCardVc.setTarget(builtTarget)
+        }
         await this.activeRecordCardVc.load()
     }
 
@@ -104,8 +107,8 @@ type ClickRowHandler = (
 
 export type ClickAddHandler = (entityId: string) => void | Promise<void>
 
-export interface MasterListCardViewControllerOptions {
-    entity: CrudListEntity<SkillEventContract>
+export interface CrudListCardViewControllerOptions {
+    entity: CrudListEntity<any, any>
     onClickRow?: ClickRowHandler
     onAddClick?: ClickAddHandler
 }
@@ -120,6 +123,6 @@ declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.typ
     }
 
     interface ViewControllerOptionsMap {
-        'crud.list-card': MasterListCardViewControllerOptions
+        'crud.list-card': CrudListCardViewControllerOptions
     }
 }

@@ -16,6 +16,8 @@ import DetailSkillViewController from '../../skillViewControllers/Detail.svc'
 @fake.login()
 export default class DetailSkillViewTest extends AbstractSpruceFixtureTest {
     private static vc: DetailSkillViewController
+
+    @seed('locations', 1)
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
         crudAssert.beforeEach(this.views)
@@ -39,7 +41,6 @@ export default class DetailSkillViewTest extends AbstractSpruceFixtureTest {
     }
 
     @test()
-    @seed('locations', 1)
     protected static async buildsLocationTarget() {
         const locationId = this.fakedLocations[0].id
         await crudAssert.detailLoadTargetEquals({
@@ -53,7 +54,6 @@ export default class DetailSkillViewTest extends AbstractSpruceFixtureTest {
     }
 
     @test()
-    @seed('organizations', 1)
     protected static async buildsOrganizationTarget() {
         const organizationId = this.fakedOrganizations[0].id
         await crudAssert.detailLoadTargetEquals({
@@ -62,6 +62,27 @@ export default class DetailSkillViewTest extends AbstractSpruceFixtureTest {
             listCardId: 'organizations',
             expectedTarget: {
                 organizationId,
+            },
+        })
+    }
+
+    @test()
+    protected static async organizationEntiteRendersRelatedLocations() {
+        await crudAssert.detailRendersRelatedEntity({
+            skillView: this.vc,
+            entityId: 'organizations',
+            relatedId: 'locations',
+            recordId: this.fakedOrganizations[0].id,
+            expectedOptions: {
+                list: {
+                    fqen: 'list-locations::v2020_12_25',
+                    responseKey: 'locations',
+                    payload: undefined,
+                    paging: {
+                        pageSize: 5,
+                        shouldPageClientSide: true,
+                    },
+                },
             },
         })
     }

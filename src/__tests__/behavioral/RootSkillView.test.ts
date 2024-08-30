@@ -42,7 +42,7 @@ export default class RootSkillViewTest extends AbstractCrudTest {
 
     @test()
     protected static async rendersOrganizationsListCard() {
-        await crudAssert.masterSkillViewRendersList(this.vc, 'organizations', {
+        crudAssert.masterSkillViewRendersList(this.vc, 'organizations', {
             pluralTitle: 'Organizations',
             list: {
                 fqen: 'list-organizations::v2020_12_25',
@@ -67,7 +67,7 @@ export default class RootSkillViewTest extends AbstractCrudTest {
 
     @test()
     protected static async rendersLocationsListCard() {
-        await crudAssert.masterSkillViewRendersList(this.vc, 'locations', {
+        crudAssert.masterSkillViewRendersList(this.vc, 'locations', {
             pluralTitle: 'Locations',
             list: {
                 fqen: 'list-locations::v2020_12_25',
