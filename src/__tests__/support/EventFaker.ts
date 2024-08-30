@@ -3,6 +3,14 @@ import { eventFaker } from '@sprucelabs/spruce-test-fixtures'
 import { generateId } from '@sprucelabs/test-utils'
 
 export default class EventFaker {
+    public async fakeListInstalledSkills() {
+        await eventFaker.on('list-installed-skills::v2020_12_25', () => {
+            return {
+                skills: [],
+            }
+        })
+    }
+
     public async fakeGetOrganization() {
         await eventFaker.on('get-organization::v2020_12_25', () => {
             return {

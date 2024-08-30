@@ -16,6 +16,7 @@ import CrudDetailSkillViewController, {
     CrudDetailSkillViewArgs,
     CrudDetailSkillViewEntity,
 } from '../detail/CrudDetailSkillViewController'
+import { buildCrudListEntity } from '../index-module'
 import CrudListCardViewController from '../master/CrudListCardViewController'
 import { locationListOptions } from './constants'
 
@@ -72,24 +73,52 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
                 }),
             },
             relatedEntities: [
-                {
-                    id: 'locations',
-                    pluralTitle: 'Locations',
-                    singularTitle: 'Location',
+                this.buildLocationListEntity(),
+                buildCrudListEntity({
+                    id: 'skills',
+                    pluralTitle: 'Skills',
+                    singularTitle: 'Skill',
                     list: {
-                        ...locationListOptions,
-                        payload: undefined,
+                        fqen: 'list-installed-skills::v2020_12_25',
+                        responseKey: 'skills',
+                        paging: {
+                            pageSize: 5,
+                            shouldPageClientSide: true,
+                        },
                         buildTarget: (organization) => {
-                            return !organization
-                                ? {}
-                                : {
-                                      organizationId: organization.id,
-                                  }
+                            return {
+                                organizationId: organization!.id,
+                            }
+                        },
+                        rowTransformer: () => {
+                            return {
+                                id: 'aoeu',
+                                cells: [],
+                            }
                         },
                     },
-                },
+                }),
             ],
         }
+    }
+
+    private buildLocationListEntity() {
+        return buildCrudListEntity({
+            id: 'locations',
+            pluralTitle: 'Locations',
+            singularTitle: 'Location',
+            list: {
+                ...locationListOptions,
+                payload: undefined,
+                buildTarget: (organization) => {
+                    return !organization
+                        ? {}
+                        : {
+                              organizationId: organization.id as string,
+                          }
+                },
+            },
+        })
     }
 
     private buildLocationDetailEntity(): CrudDetailSkillViewEntity {

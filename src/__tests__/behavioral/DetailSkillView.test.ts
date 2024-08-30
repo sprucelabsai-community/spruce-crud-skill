@@ -3,24 +3,22 @@ import {
     locationSchema,
     organizationSchema,
 } from '@sprucelabs/spruce-core-schemas'
-import {
-    AbstractSpruceFixtureTest,
-    fake,
-    seed,
-} from '@sprucelabs/spruce-test-fixtures'
+import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
 import { RecursivePartial, test } from '@sprucelabs/test-utils'
 import { CrudDetailSkillViewEntity } from '../../detail/CrudDetailSkillViewController'
 import { crudAssert } from '../../index-module'
 import DetailSkillViewController from '../../skillViewControllers/Detail.svc'
+import AbstractCrudTest from '../support/AbstractCrudTest'
 
 @fake.login()
-export default class DetailSkillViewTest extends AbstractSpruceFixtureTest {
+export default class DetailSkillViewTest extends AbstractCrudTest {
     private static vc: DetailSkillViewController
 
     @seed('locations', 1)
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
         crudAssert.beforeEach(this.views)
+        await this.eventFaker.fakeListInstalledSkills()
         this.vc = this.views.Controller('crud.detail', {})
     }
 
@@ -67,7 +65,7 @@ export default class DetailSkillViewTest extends AbstractSpruceFixtureTest {
     }
 
     @test()
-    protected static async organizationEntiteRendersRelatedLocations() {
+    protected static async organizationEntityRendersRelatedLocations() {
         await crudAssert.detailRendersRelatedEntity({
             skillView: this.vc,
             entityId: 'organizations',
@@ -82,7 +80,32 @@ export default class DetailSkillViewTest extends AbstractSpruceFixtureTest {
                     payload: undefined,
                     target: {
                         organizationId: this.fakedOrganizations[0].id,
+                    } as any,
+                    paging: {
+                        pageSize: 5,
+                        shouldPageClientSide: true,
                     },
+                },
+            },
+        })
+    }
+
+    @test()
+    protected static async organizationEntityRendersInstalledSkills() {
+        await crudAssert.detailRendersRelatedEntity({
+            skillView: this.vc,
+            entityId: 'organizations',
+            relatedId: 'skills',
+            recordId: this.fakedOrganizations[0].id,
+            expectedOptions: {
+                pluralTitle: 'Skills',
+                singularTitle: 'Skill',
+                list: {
+                    fqen: 'list-installed-skills::v2020_12_25',
+                    responseKey: 'skills',
+                    target: {
+                        organizationId: this.fakedOrganizations[0].id,
+                    } as any,
                     paging: {
                         pageSize: 5,
                         shouldPageClientSide: true,
