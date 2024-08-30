@@ -143,22 +143,22 @@ const crudAssert = {
 
     async masterListCardRendersRow(
         skillView: SkillViewController,
-        listCardId: string,
+        entityId: string,
         rowId: string
     ) {
         assertBeforeEachRan()
         assertOptions(
             {
                 skillView,
-                listCardId,
+                entityId,
                 rowId,
             },
-            ['skillView', 'listCardId', 'rowId']
+            ['skillView', 'entityId', 'rowId']
         )
 
         const cardListVc = await this.masterSkillViewRendersList(
             skillView,
-            listCardId
+            entityId
         )
 
         await views?.load(skillView)
@@ -168,7 +168,7 @@ const crudAssert = {
 
     async assertListsLoadTargetAfterMasterLoad(
         skillView: SkillViewController,
-        listCardId: string,
+        entityId: string,
         expectedTarget?: Record<string, any>
     ) {
         assertBeforeEachRan()
@@ -176,23 +176,23 @@ const crudAssert = {
         assertOptions(
             {
                 skillView,
-                listCardId,
+                entityId,
                 expectedTarget,
             },
-            ['skillView', 'listCardId', 'expectedTarget']
+            ['skillView', 'entityId', 'expectedTarget']
         )
 
         await views?.load(skillView)
 
         const cardListVc = await this.masterSkillViewRendersList(
             skillView,
-            listCardId
+            entityId
         )
 
         assert.isEqualDeep(
             cardListVc.activeRecordCardVc.getTarget(),
             expectedTarget,
-            `The target of list ${listCardId} is not being set to the expected value. Try 'this.masterSkillView.setListTarget(...)'`
+            `The target of list ${entityId} is not being set to the expected value. Try 'this.masterSkillView.setListTarget(...)'`
         )
     },
 
@@ -277,43 +277,40 @@ const crudAssert = {
 
     async addDestinationArgsEqual(
         skillView: SkillViewController,
-        listCardId: string,
+        entityId: string,
         expectedArgs: Record<string, any>
     ) {
         assertOptions(
             {
                 skillView,
-                listCardId,
+                entityId,
                 expectedArgs,
             },
-            ['skillView', 'listCardId', 'expectedArgs']
+            ['skillView', 'entityId', 'expectedArgs']
         )
 
-        this.masterSkillViewRendersList(skillView, listCardId)
+        this.masterSkillViewRendersList(skillView, entityId)
         const vc = this.skillViewRendersMasterView(skillView)
 
         await views?.load(skillView)
 
         assert.isEqualDeep(
-            vc.addDestinationArgs[listCardId],
+            vc.addDestinationArgs[entityId],
             expectedArgs,
-            `The args you found do not match. Try calling 'this.masterSkillView.setAddDestinationArgs('${listCardId}', ...)' in your Skill View's load(...) method.`
+            `The args you found do not match. Try calling 'this.masterSkillView.setAddDestinationArgs('${entityId}', ...)' in your Skill View's load(...) method.`
         )
     },
 
     async detailLoadTargetEquals(options: {
         skillView: SkillViewController
-        listCardId: string
+        entityId: string
         recordId?: string
         expectedTarget: Record<string, any>
     }) {
-        const { skillView, recordId, expectedTarget, listCardId } =
-            assertOptions(options, [
-                'skillView',
-                'listCardId',
-                'recordId',
-                'expectedTarget',
-            ])
+        const { skillView, recordId, expectedTarget, entityId } = assertOptions(
+            options,
+            ['skillView', 'entityId', 'recordId', 'expectedTarget']
+        )
 
         const detailSvc = this.skillViewRendersDetailView(skillView)
         detailSvc.relatedEntityVcsByEntityId = {}
@@ -336,7 +333,7 @@ const crudAssert = {
         await views?.load(skillView, {
             action: 'edit',
             recordId,
-            entity: listCardId,
+            entity: entityId,
         })
 
         assert.isEqualDeep(

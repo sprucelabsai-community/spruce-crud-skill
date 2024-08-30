@@ -167,12 +167,7 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
         )
 
         errorAssert.assertError(err, 'MISSING_PARAMETERS', {
-            parameters: [
-                'skillView',
-                'listCardId',
-                'recordId',
-                'expectedTarget',
-            ],
+            parameters: ['skillView', 'entityId', 'recordId', 'expectedTarget'],
         })
     }
 
@@ -512,14 +507,14 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     private static async assertDetailLoadTargetEquals(options: {
         recordId?: string
         expectedTarget: Record<string, any>
-        listCardId?: string
+        entityId?: string
     }) {
-        const { recordId, expectedTarget, listCardId } = options
+        const { recordId, expectedTarget, entityId } = options
         await crudAssert.detailLoadTargetEquals({
             skillView: this.vc,
             recordId,
             expectedTarget,
-            listCardId: listCardId ?? this.entities[0].id,
+            entityId: entityId ?? this.entities[0].id,
         })
     }
 

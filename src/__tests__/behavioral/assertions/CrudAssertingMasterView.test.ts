@@ -250,7 +250,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
         )
 
         errorAssert.assertError(err, 'MISSING_PARAMETERS', {
-            parameters: ['skillView', 'listCardId', 'rowId'],
+            parameters: ['skillView', 'entityId', 'rowId'],
         })
     }
 
@@ -301,7 +301,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
         )
 
         errorAssert.assertError(err, 'MISSING_PARAMETERS', {
-            parameters: ['skillView', 'listCardId', 'expectedTarget'],
+            parameters: ['skillView', 'entityId', 'expectedTarget'],
         })
     }
 
@@ -354,7 +354,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
         )
 
         errorAssert.assertError(err, 'MISSING_PARAMETERS', {
-            parameters: ['skillView', 'listCardId', 'expectedArgs'],
+            parameters: ['skillView', 'entityId', 'expectedArgs'],
         })
     }
 

@@ -46,7 +46,7 @@ export default class DetailSkillViewTest extends AbstractSpruceFixtureTest {
         await crudAssert.detailLoadTargetEquals({
             skillView: this.vc,
             recordId: locationId,
-            listCardId: 'locations',
+            entityId: 'locations',
             expectedTarget: {
                 locationId,
             },
@@ -59,7 +59,7 @@ export default class DetailSkillViewTest extends AbstractSpruceFixtureTest {
         await crudAssert.detailLoadTargetEquals({
             skillView: this.vc,
             recordId: organizationId,
-            listCardId: 'organizations',
+            entityId: 'organizations',
             expectedTarget: {
                 organizationId,
             },
