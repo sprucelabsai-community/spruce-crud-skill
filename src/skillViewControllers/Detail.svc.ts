@@ -74,8 +74,8 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
             relatedEntities: [
                 {
                     id: 'locations',
-                    pluralTitle: 'aoeu',
-                    singularTitle: 'aoeu',
+                    pluralTitle: 'Locations',
+                    singularTitle: 'Location',
                     list: {
                         ...locationListOptions,
                         payload: undefined,
