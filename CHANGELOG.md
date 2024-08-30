@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v3.0.2...v3.1.0) (2024-08-29)
+
+
+### Features
+
+* related cards load, but need to add support for "buildTarget" ([3530600](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/3530600))
+
 ## [3.0.2](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v3.0.1...v3.0.2) (2024-08-28)
 
 ## [3.0.1](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v3.0.0...v3.0.1) (2024-08-27)
