@@ -11,7 +11,7 @@ import {
 } from '../../support/test.utils'
 
 @fake.login()
-export default class MasterListCardTest extends AbstractCrudTest {
+export default class CrudListCardTest extends AbstractCrudTest {
     private static entity: CrudListEntity<any, any>
     private static vc: MockCrudListCard
     private static onAddClickHandler?: ClickAddHandler
