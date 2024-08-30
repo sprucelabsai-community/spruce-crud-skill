@@ -13,12 +13,13 @@ import {
     generateId,
     RecursivePartial,
 } from '@sprucelabs/test-utils'
+import crudAssert from '../../../assertions/crudAssert'
 import CrudDetailSkillViewController, {
     CrudDetailSkillViewArgs,
     CrudDetailSkillViewEntity,
     DetailSkillViewControllerOptions,
 } from '../../../detail/CrudDetailSkillViewController'
-import { crudAssert, CrudListEntity } from '../../../index-module'
+import { CrudListEntity } from '../../../master/CrudMasterSkillViewController'
 import { buildLocationDetailEntity as buildLocationDetailTestEntity } from '../../support/test.utils'
 import AbstractAssertTest from './AbstractAssertTest'
 

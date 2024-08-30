@@ -5,8 +5,8 @@ import {
 } from '@sprucelabs/spruce-core-schemas'
 import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
 import { RecursivePartial, test } from '@sprucelabs/test-utils'
+import crudAssert from '../../assertions/crudAssert'
 import { CrudDetailSkillViewEntity } from '../../detail/CrudDetailSkillViewController'
-import { crudAssert } from '../../index-module'
 import DetailSkillViewController from '../../skillViewControllers/Detail.svc'
 import AbstractCrudTest from '../support/AbstractCrudTest'
 

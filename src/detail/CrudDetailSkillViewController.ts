@@ -12,8 +12,8 @@ import { EventName } from '@sprucelabs/mercury-types'
 import { assertOptions, SchemaError } from '@sprucelabs/schema'
 import { FormCardViewControllerOptions } from '@sprucelabs/spruce-form-utils'
 import SpruceError from '../errors/SpruceError'
-import { CrudListEntity } from '../index-module'
 import CrudListCardViewController from '../master/CrudListCardViewController'
+import { CrudListEntity } from '../master/CrudMasterSkillViewController'
 import CrudDetailFormCardViewController from './CrudDetailFormCardViewController'
 
 export default class CrudDetailSkillViewController extends AbstractSkillViewController {

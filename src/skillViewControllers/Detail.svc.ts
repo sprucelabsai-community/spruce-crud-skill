@@ -16,8 +16,8 @@ import CrudDetailSkillViewController, {
     CrudDetailSkillViewArgs,
     CrudDetailSkillViewEntity,
 } from '../detail/CrudDetailSkillViewController'
-import { buildCrudListEntity } from '../index-module'
 import CrudListCardViewController from '../master/CrudListCardViewController'
+import { buildCrudListEntity } from '../master/CrudMasterSkillViewController'
 import { locationListOptions } from './constants'
 
 export default class DetailSkillViewController extends AbstractSkillViewController {
@@ -87,10 +87,10 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
                         },
                         buildTarget: (organization) => {
                             if (!organization) {
-                                return {}
+                                return {} as any //TODO: move to `list-skills' with a prop on the skill of "isInstalled"
                             }
                             return {
-                                organizationId: organization!.id,
+                                organizationId: organization.id,
                             }
                         },
                         rowTransformer: (skill) => {

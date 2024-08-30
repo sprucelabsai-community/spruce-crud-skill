@@ -20,7 +20,7 @@ import CrudDetailSkillViewController, {
     CrudDetailSkillViewEntity,
     CrudDetailLoadAction,
 } from '../../../detail/CrudDetailSkillViewController'
-import { CrudMasterListCardViewController } from '../../../index-module'
+import CrudListCardViewController from '../../../master/CrudListCardViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import { detailFormOptions2 } from '../../support/detailFormOptions'
 import { GetLocationTargetAndPayload } from '../../support/EventFaker'
@@ -286,10 +286,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         entity.relatedEntities = [this.buildLocationListEntity(relatedId)]
         this.setupDetailView([entity])
         const cardVc = await this.loadAndAssertRendersCard(relatedId)
-        vcAssert.assertRendersAsInstanceOf(
-            cardVc,
-            CrudMasterListCardViewController
-        )
+        vcAssert.assertRendersAsInstanceOf(cardVc, CrudListCardViewController)
     }
 
     @test()
