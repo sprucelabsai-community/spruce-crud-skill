@@ -1,3 +1,10 @@
+# [5.0.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v4.1.0...v5.0.0) (2024-08-30)
+
+
+### Breaking Changes
+
+* exported class name change ([c2fd2ab](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/c2fd2ab))
+
 # [4.1.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v4.0.5...v4.1.0) (2024-08-30)
 
 
