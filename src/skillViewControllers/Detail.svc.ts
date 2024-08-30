@@ -79,6 +79,13 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
                     list: {
                         ...locationListOptions,
                         payload: undefined,
+                        buildTarget: (organization) => {
+                            return !organization
+                                ? {}
+                                : {
+                                      organizationId: organization.id,
+                                  }
+                        },
                     },
                 },
             ],

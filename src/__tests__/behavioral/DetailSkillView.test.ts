@@ -78,6 +78,9 @@ export default class DetailSkillViewTest extends AbstractSpruceFixtureTest {
                     fqen: 'list-locations::v2020_12_25',
                     responseKey: 'locations',
                     payload: undefined,
+                    target: {
+                        organizationId: this.fakedOrganizations[0].id,
+                    },
                     paging: {
                         pageSize: 5,
                         shouldPageClientSide: true,
