@@ -1,3 +1,15 @@
+# [4.0.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v3.1.0...v4.0.0) (2024-08-30)
+
+
+### Breaking Changes
+
+* renames ([679a9ed](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/679a9ed))
+
+
+### Features
+
+* load target asserting ([c393e2a](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/c393e2a))
+
 # [3.1.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v3.0.2...v3.1.0) (2024-08-29)
 
 
