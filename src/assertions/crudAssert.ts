@@ -405,7 +405,7 @@ function getRelatedListCardVc(
 
     assert.isTruthy(
         relatedVcs,
-        `I could not find any related entities for the entityId you passed. Make sure you set the 'relatedEntities' property of your entity configuration.`
+        `I could not find any related entities with the id of '${relatedId}'. Make sure you set the 'relatedEntities' property of your '${entityId}' entity configuration.`
     )
 
     const relatedCardVc = relatedVcs.find((vc) => vc.entity.id === relatedId)
