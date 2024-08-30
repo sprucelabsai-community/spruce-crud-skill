@@ -86,14 +86,26 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
                             shouldPageClientSide: true,
                         },
                         buildTarget: (organization) => {
+                            if (!organization) {
+                                return {}
+                            }
                             return {
                                 organizationId: organization!.id,
                             }
                         },
-                        rowTransformer: () => {
+                        rowTransformer: (skill) => {
                             return {
-                                id: 'aoeu',
-                                cells: [],
+                                id: skill.id,
+                                cells: [
+                                    {
+                                        text: {
+                                            content: skill.name,
+                                        },
+                                        subText: {
+                                            content: skill.slug,
+                                        },
+                                    },
+                                ],
                             }
                         },
                     },
