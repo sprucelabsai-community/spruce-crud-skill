@@ -1,3 +1,10 @@
+# [4.1.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v4.0.5...v4.1.0) (2024-08-30)
+
+
+### Features
+
+* can assert related list renders row ([7a46f81](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/7a46f81))
+
 ## [4.0.5](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v4.0.4...v4.0.5) (2024-08-30)
 
 ## [4.0.4](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v4.0.3...v4.0.4) (2024-08-30)
