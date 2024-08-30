@@ -226,7 +226,7 @@ const crudAssert = {
             ) as SpyDetailSkillView
         } catch {
             assert.fail(`You are not rendering a DetailSkillViewController. Follow these steps:
-1. In your constructor (after setting the Views to the ViewFactory): this.detailSkillView = this.Controller('crud.master-detail-view',{}).
+1. In your constructor (after setting the Views to the ViewFactory): this.detailSkillView = this.Controller('crud.detail-skill-view',{}).
 2. Fix the errors with stub data
 3. Update your SkillView's render method: 
     public render(): SkillView { 
