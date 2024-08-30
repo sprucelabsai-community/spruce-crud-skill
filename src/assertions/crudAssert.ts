@@ -163,7 +163,7 @@ const crudAssert = {
         cardListVc.activeRecordCardVc.assertRendersRow(rowId)
     },
 
-    async assertListsLoadTargetAfterMasterLoad(
+    async masterListLoadsWithTarget(
         skillView: SkillViewController,
         entityId: string,
         expectedTarget?: Record<string, any>

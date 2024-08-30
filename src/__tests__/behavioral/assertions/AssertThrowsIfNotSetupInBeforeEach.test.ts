@@ -36,7 +36,7 @@ export default class AssertThrowsIfNotSetupInBeforeEachTest extends AbstractCrud
     protected static async assertListTargetAfterLoadThrowsWithoutBeforeEach() {
         await assert.doesThrowAsync(
             //@ts-ignore
-            () => crudAssert.assertListsLoadTargetAfterMasterLoad(),
+            () => crudAssert.masterListLoadsWithTarget(),
             'crudAssert.beforeEach'
         )
     }

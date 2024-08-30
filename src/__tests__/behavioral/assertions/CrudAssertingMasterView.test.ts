@@ -297,7 +297,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
         this.dropInMasterSkillView()
         const err = await assert.doesThrowAsync(() =>
             //@ts-ignore
-            crudAssert.assertListsLoadTargetAfterMasterLoad()
+            crudAssert.masterListLoadsWithTarget()
         )
 
         errorAssert.assertError(err, 'MISSING_PARAMETERS', {
@@ -310,7 +310,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
         await assert.doesThrowAsync(
             () =>
                 //@ts-ignore
-                crudAssert.assertListsLoadTargetAfterMasterLoad(),
+                crudAssert.masterListLoadsWithTarget(),
             'target'
         )
     }
@@ -327,7 +327,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
             this.fakeSvc.setTarget(id, target)
         }
 
-        await crudAssert.assertListsLoadTargetAfterMasterLoad(
+        await crudAssert.masterListLoadsWithTarget(
             this.fakeSvc,
             id,
             target
