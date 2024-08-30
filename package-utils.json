@@ -24,10 +24,10 @@
 		"build/esm/master/CrudMasterSkillViewController.js",
 		"build/esm/master/CrudMasterSkillViewController.d.ts",
 
-		"build/master/CrudMasterListCardViewController.js",
-		"build/master/CrudMasterListCardViewController.d.ts",
-		"build/esm/master/CrudMasterListCardViewController.js",
-		"build/esm/master/CrudMasterListCardViewController.d.ts",
+		"build/master/CrudListCardViewController.js",
+		"build/master/CrudListCardViewController.d.ts",
+		"build/esm/master/CrudListCardViewController.js",
+		"build/esm/master/CrudListCardViewController.d.ts",
 		
 		"build/detail/CrudDetailSkillViewController.js",
 		"build/detail/CrudDetailSkillViewController.d.ts",
