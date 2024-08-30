@@ -436,6 +436,9 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
         })
     }
 
+    @test()
+    protected static async rendersRelatedRowThrowsWithMissing() {}
+
     private static dropInDetailViewWithLocationAndSetFirstRelatedBuiltTarget(target: {
         organizationId: string
     }) {

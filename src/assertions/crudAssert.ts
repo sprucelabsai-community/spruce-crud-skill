@@ -156,10 +156,7 @@ const crudAssert = {
             ['skillView', 'entityId', 'rowId']
         )
 
-        const cardListVc = await this.masterSkillViewRendersList(
-            skillView,
-            entityId
-        )
+        const cardListVc = this.masterSkillViewRendersList(skillView, entityId)
 
         await views?.load(skillView)
 
