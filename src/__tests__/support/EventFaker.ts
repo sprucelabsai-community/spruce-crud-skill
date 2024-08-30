@@ -3,10 +3,10 @@ import { eventFaker } from '@sprucelabs/spruce-test-fixtures'
 import { generateId } from '@sprucelabs/test-utils'
 
 export default class EventFaker {
-    public async fakeListInstalledSkills() {
+    public async fakeListInstalledSkills(cb?: () => ListSkill[] | void) {
         await eventFaker.on('list-installed-skills::v2020_12_25', () => {
             return {
-                skills: [],
+                skills: cb?.() ?? [],
             }
         })
     }

@@ -13,12 +13,13 @@ import {
     generateId,
     RecursivePartial,
 } from '@sprucelabs/test-utils'
+import crudAssert from '../../../assertions/crudAssert'
 import CrudDetailSkillViewController, {
     CrudDetailSkillViewArgs,
     CrudDetailSkillViewEntity,
     DetailSkillViewControllerOptions,
 } from '../../../detail/CrudDetailSkillViewController'
-import { crudAssert, CrudListEntity } from '../../../index-module'
+import { CrudListEntity } from '../../../master/CrudMasterSkillViewController'
 import { buildLocationDetailEntity as buildLocationDetailTestEntity } from '../../support/test.utils'
 import AbstractAssertTest from './AbstractAssertTest'
 
@@ -433,6 +434,121 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
             list: {
                 target: target as any,
             },
+        })
+    }
+
+    @test()
+    protected static async rendersRelatedRowThrowsWithMissing() {
+        const err = await assert.doesThrowAsync(() =>
+            //@ts-ignore
+            crudAssert.detailRendersRelatedRow()
+        )
+
+        errorAssert.assertError(err, 'MISSING_PARAMETERS', {
+            parameters: ['skillView', 'entityId', 'relatedId', 'rowId'],
+        })
+    }
+
+    @test()
+    protected static async rendersRelatedRowThrowsWhenNotRenderingDetailView() {
+        await this.assertDetailViewRendersRelatedRowThrows({
+            entityId: generateId(),
+            relatedId: generateId(),
+            rowId: generateId(),
+            message: 'DetailSkillViewController',
+        })
+    }
+
+    @test()
+    protected static async rendersRelatedRowThrowsWhenEntityIdNotFound() {
+        this.dropInDetailSkillView()
+        await this.assertDetailViewRendersRelatedRowThrows({
+            entityId: generateId(),
+            relatedId: generateId(),
+            rowId: generateId(),
+            message: 'entity',
+        })
+    }
+
+    @test()
+    protected static async rendersRelatedRowThrowsWhenRelatedIdNotFound() {
+        this.dropInDetailViewWithLocationAndOneRelated()
+        await this.assertDetailViewRendersRelatedRowThrows({
+            entityId: this.firstEntityId,
+            relatedId: generateId(),
+            rowId: generateId(),
+            message: 'related',
+        })
+    }
+
+    @test()
+    protected static async rendersRelatedRowThrowsWhenRowIdNotFound() {
+        this.dropInDetailViewWithLocationAndOneRelated()
+        await this.assertDetailViewRendersRelatedRowThrows({
+            entityId: this.firstEntityId,
+            relatedId: this.firstRelatedEntityId,
+            rowId: generateId(),
+            message: 'row',
+        })
+    }
+
+    @test()
+    protected static async canAssertRendersRelatedRow() {
+        this.dropInDetailViewWithLocationAndOneRelated()
+        await this.assertFirstEntityAndFirstRelatedRendersRow()
+    }
+
+    @test()
+    protected static async ifPassingRecordIdPassesEntityToBuildTarget() {
+        this.dropInDetailViewWithLocationAndOneRelated()
+
+        let passedValues: Record<string, any> | undefined
+        this.firstRelatedEntity.list.buildTarget = (values) => {
+            passedValues = values
+        }
+
+        await this.assertFirstEntityAndFirstRelatedRendersRow(this.locationId)
+        assert.isEqualDeep(passedValues, this.fakedLocations[0])
+    }
+
+    private static async assertFirstEntityAndFirstRelatedRendersRow(
+        recordId?: string
+    ) {
+        await this.assertDetailViewRendersRelatedRow({
+            entityId: this.firstEntityId,
+            relatedId: this.firstRelatedEntityId,
+            rowId: this.locationId,
+            recordId,
+        })
+    }
+
+    private static async assertDetailViewRendersRelatedRowThrows(options: {
+        entityId: string
+        relatedId: string
+        rowId: string
+        message: string
+    }) {
+        const { entityId, relatedId, rowId, message } = options
+        await assert.doesThrowAsync(
+            () =>
+                this.assertDetailViewRendersRelatedRow({
+                    entityId,
+                    relatedId,
+                    rowId,
+                }),
+            message
+        )
+    }
+
+    private static async assertDetailViewRendersRelatedRow(options: {
+        entityId: string
+        relatedId: string
+        rowId: string
+        recordId?: string
+    }) {
+        await crudAssert.detailRendersRelatedRow({
+            skillView: this.vc,
+            ...options,
         })
     }
 

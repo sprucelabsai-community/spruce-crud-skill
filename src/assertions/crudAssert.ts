@@ -156,10 +156,7 @@ const crudAssert = {
             ['skillView', 'entityId', 'rowId']
         )
 
-        const cardListVc = await this.masterSkillViewRendersList(
-            skillView,
-            entityId
-        )
+        const cardListVc = this.masterSkillViewRendersList(skillView, entityId)
 
         await views?.load(skillView)
 
@@ -253,10 +250,8 @@ const crudAssert = {
 
         const vc = this.skillViewRendersDetailView(skillView)
 
-        await views?.load(skillView, {
-            action: 'create',
-            entity: vc?.options.entities[0].id,
-        })
+        const entityId = vc?.options.entities[0].id
+        await loadSkillViewWithDetailView(skillView, entityId)
 
         assert.isTrue(
             vc?.wasLoaded,
@@ -330,11 +325,7 @@ const crudAssert = {
             return originalEmitAndFlattenResponses(_, targetAndPayload)
         }
 
-        await views?.load(skillView, {
-            action: 'edit',
-            recordId,
-            entity: entityId,
-        })
+        await loadSkillViewWithDetailView(skillView, entityId, recordId)
 
         assert.isEqualDeep(
             passedTarget,
@@ -354,58 +345,107 @@ const crudAssert = {
             assertOptions(options, ['skillView', 'entityId', 'relatedId'])
 
         const detailSvc = this.skillViewRendersDetailView(skillView)
-        const relatedVcs = detailSvc.relatedEntityVcsByEntityId[entityId] as
-            | SpyCrudListCard[]
-            | undefined
-
-        assert.isTruthy(
-            relatedVcs,
-            `I could not find any related entities for the entityId you passed. Make sure you set the 'relatedEntities' property of your entity configuration.`
+        const relatedCardVc = getRelatedListCardVc(
+            detailSvc,
+            entityId,
+            relatedId
         )
 
-        const match = relatedVcs.find((vc) => vc.entity.id === relatedId)
-
-        assert.isTruthy(
-            match,
-            `I could not find a related entity with the id you sent!`
-        )
+        await loadSkillViewWithDetailView(skillView, entityId, recordId)
 
         if (expectedOptions) {
-            const actual = match.entity
-
-            if (actual?.list.buildTarget && expectedOptions.list?.target) {
-                await views?.load(skillView, {
-                    action: recordId ? 'edit' : 'create',
-                    recordId,
-                    entity: entityId,
-                })
-                assert.isEqualDeep(
-                    match.activeRecordCardVc.getTarget(),
-                    expectedOptions.list?.target,
-                    `The target you expected in your related entity does not match what I found!`
-                )
-
-                delete expectedOptions.list?.target
-
-                if (Object.keys(expectedOptions.list!).length === 0) {
-                    delete expectedOptions.list
-                }
-
-                if (Object.keys(expectedOptions).length === 0) {
-                    return
-                }
-            }
-
-            assert.doesInclude(
-                actual,
-                expectedOptions,
-                `The options you expected in your related entity do not match what I found!`
-            )
+            assertRelatedListCardOptionsEqual(relatedCardVc, expectedOptions)
         }
+
+        return relatedCardVc as SpyCrudListCard
+    },
+
+    async detailRendersRelatedRow(options: {
+        skillView: SkillViewController
+        entityId: string
+        recordId?: string
+        relatedId: string
+        rowId: string
+    }) {
+        const { rowId } = assertOptions(options, [
+            'skillView',
+            'entityId',
+            'relatedId',
+            'rowId',
+        ])
+
+        const detailSvc = await this.detailRendersRelatedEntity(options)
+
+        detailSvc.activeRecordCardVc.assertRendersRow(rowId)
     },
 }
 
 export default crudAssert
+
+async function loadSkillViewWithDetailView(
+    skillView: SkillViewController<Record<string, any>>,
+    entityId: string,
+    recordId?: string
+) {
+    await views?.load(skillView, {
+        action: recordId ? 'edit' : 'create',
+        recordId,
+        entity: entityId,
+    })
+}
+
+function getRelatedListCardVc(
+    detailSvc: SpyDetailSkillView,
+    entityId: string,
+    relatedId: string
+) {
+    const relatedVcs = detailSvc.relatedEntityVcsByEntityId[entityId] as
+        | SpyCrudListCard[]
+        | undefined
+
+    assert.isTruthy(
+        relatedVcs,
+        `I could not find any related entities for the entityId you passed. Make sure you set the 'relatedEntities' property of your entity configuration.`
+    )
+
+    const relatedCardVc = relatedVcs.find((vc) => vc.entity.id === relatedId)
+
+    assert.isTruthy(
+        relatedCardVc,
+        `I could not find a related entity with the id you sent!`
+    )
+    return relatedCardVc
+}
+
+function assertRelatedListCardOptionsEqual(
+    relatedCardVc: SpyCrudListCard,
+    expectedOptions: RecursivePartial<CrudListEntity>
+) {
+    const actual = relatedCardVc.entity
+
+    if (actual?.list.buildTarget && expectedOptions.list?.target) {
+        assert.isEqualDeep(
+            relatedCardVc.activeRecordCardVc.getTarget(),
+            expectedOptions.list?.target,
+            `The target you expected in your related entity does not match what I found!`
+        )
+
+        delete expectedOptions.list?.target
+
+        if (Object.keys(expectedOptions.list!).length === 0) {
+            delete expectedOptions.list
+        }
+    }
+
+    if (Object.keys(expectedOptions).length > 0) {
+        assert.doesInclude(
+            actual,
+            expectedOptions,
+            `The options you expected in your related entity do not match what I found!`
+        )
+    }
+}
+
 function assertViewSetToFactory(id: string, className: string) {
     assert.isTrue(
         views?.getFactory().hasController(id),

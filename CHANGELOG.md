@@ -1,3 +1,21 @@
+# [5.0.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v4.1.0...v5.0.0) (2024-08-30)
+
+
+### Breaking Changes
+
+* exported class name change ([c2fd2ab](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/c2fd2ab))
+
+# [4.1.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v4.0.5...v4.1.0) (2024-08-30)
+
+
+### Features
+
+* can assert related list renders row ([7a46f81](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/7a46f81))
+
+## [4.0.5](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v4.0.4...v4.0.5) (2024-08-30)
+
+## [4.0.4](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v4.0.3...v4.0.4) (2024-08-30)
+
 ## [4.0.3](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v4.0.2...v4.0.3) (2024-08-30)
 
 ## [4.0.2](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v4.0.1...v4.0.2) (2024-08-30)

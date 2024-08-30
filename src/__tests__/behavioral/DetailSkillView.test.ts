@@ -5,8 +5,8 @@ import {
 } from '@sprucelabs/spruce-core-schemas'
 import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
 import { RecursivePartial, test } from '@sprucelabs/test-utils'
+import crudAssert from '../../assertions/crudAssert'
 import { CrudDetailSkillViewEntity } from '../../detail/CrudDetailSkillViewController'
-import { crudAssert } from '../../index-module'
 import DetailSkillViewController from '../../skillViewControllers/Detail.svc'
 import AbstractCrudTest from '../support/AbstractCrudTest'
 
@@ -18,7 +18,15 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
         crudAssert.beforeEach(this.views)
-        await this.eventFaker.fakeListInstalledSkills()
+
+        await this.eventFaker.fakeListInstalledSkills(() => {
+            return this.fakedSkills.map((skill) => ({
+                id: skill.id,
+                dateCreated: skill.dateCreated,
+                name: skill.name,
+                slug: skill.slug,
+            }))
+        })
         this.vc = this.views.Controller('crud.detail', {})
     }
 
@@ -112,6 +120,19 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
                     },
                 },
             },
+        })
+    }
+
+    @test()
+    protected static async relatedSkillsOnOrganizationRendersExpectedRow() {
+        await this.skills.seedDemoSkill()
+
+        await crudAssert.detailRendersRelatedRow({
+            skillView: this.vc,
+            entityId: 'organizations',
+            relatedId: 'skills',
+            recordId: this.fakedOrganizations[0].id,
+            rowId: this.fakedSkills[0].id,
         })
     }
 
