@@ -348,7 +348,9 @@ const crudAssert = {
         entityId: string
         recordId?: string
         relatedId: string
-        expectedOptions?: RecursivePartial<CrudListEntity<SkillEventContract>>
+        expectedOptions?: RecursivePartial<
+            CrudListEntity<SkillEventContract, any>
+        >
     }) {
         const { skillView, entityId, relatedId, expectedOptions, recordId } =
             assertOptions(options, ['skillView', 'entityId', 'relatedId'])
