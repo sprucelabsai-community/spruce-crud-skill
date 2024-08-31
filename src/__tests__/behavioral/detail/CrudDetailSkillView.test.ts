@@ -17,7 +17,7 @@ import CrudDetailFormCardViewController from '../../../detail/CrudDetailFormCard
 import CrudDetailSkillViewController, {
     DetailForm,
     CrudDetailSkillViewArgs,
-    CrudDetailSkillViewEntity,
+    CrudDetailEntity,
     CrudDetailLoadAction,
 } from '../../../detail/CrudDetailSkillViewController'
 import CrudListCardViewController from '../../../master/CrudListCardViewController'
@@ -32,7 +32,7 @@ import { buildLocationDetailEntity } from '../../support/test.utils'
 export default class DetailSkillViewTest extends AbstractCrudTest {
     private static vc: SpyDetailSkillView
     private static entityId: string
-    private static entities: CrudDetailSkillViewEntity[]
+    private static entities: CrudDetailEntity[]
     private static cancelDestination: SkillViewControllerId
     private static loadAction: CrudDetailLoadAction
     private static recordId?: string
@@ -442,7 +442,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
     }
 
     private static async assertThrowsMissingOnEntity(
-        entities: Partial<CrudDetailSkillViewEntity>[]
+        entities: Partial<CrudDetailEntity>[]
     ) {
         const err = await assert.doesThrowAsync(() =>
             //@ts-ignore
@@ -472,7 +472,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
     private static buildDetailEntity(
         id?: string,
         form?: DetailForm
-    ): CrudDetailSkillViewEntity {
+    ): CrudDetailEntity {
         return buildLocationDetailEntity(
             id ?? this.entityId,
             form ??
@@ -484,7 +484,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         )
     }
 
-    private static setupDetailView(entities: CrudDetailSkillViewEntity[]) {
+    private static setupDetailView(entities: CrudDetailEntity[]) {
         this.entities = entities
         this.vc = this.views.Controller('crud.detail-skill-view', {
             entities,

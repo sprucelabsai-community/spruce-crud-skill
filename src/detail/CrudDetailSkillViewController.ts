@@ -82,7 +82,7 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
         })
     }
 
-    private validateEntities(entities: CrudDetailSkillViewEntity[]) {
+    private validateEntities(entities: CrudDetailEntity[]) {
         if (entities.length === 0) {
             throw new SchemaError({
                 code: 'INVALID_PARAMETERS',
@@ -94,7 +94,7 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
         entities.forEach((entity) => this.validateEntity(entity))
     }
 
-    private validateEntity(entity: CrudDetailSkillViewEntity) {
+    private validateEntity(entity: CrudDetailEntity) {
         assertOptions({ entity }, [
             'entity.id',
             'entity.form',
@@ -154,14 +154,14 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
     }
 
     private async loadDetailsFormCard(
-        entity: CrudDetailSkillViewEntity,
+        entity: CrudDetailEntity,
         values: Record<string, any> | undefined
     ) {
         await this.detailsFormCardVc.load(entity, values)
     }
 
     private async loadValues(
-        entity: CrudDetailSkillViewEntity,
+        entity: CrudDetailEntity,
         args: CrudDetailSkillViewArgs
     ) {
         const { recordId } = assertOptions(args, ['recordId'])
@@ -218,13 +218,13 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
 }
 
 export interface DetailSkillViewControllerOptions {
-    entities: CrudDetailSkillViewEntity[]
+    entities: CrudDetailEntity[]
     cancelDestination: SkillViewControllerId
 }
 
 export type DetailForm = Omit<FormCardViewControllerOptions<any>, 'id'>
 
-export interface CrudDetailSkillViewEntity {
+export interface CrudDetailEntity {
     id: string
     form: DetailForm
     load: {

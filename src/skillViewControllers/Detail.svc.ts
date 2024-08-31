@@ -14,7 +14,7 @@ import {
 import CrudDetailFormCardViewController from '../detail/CrudDetailFormCardViewController'
 import CrudDetailSkillViewController, {
     CrudDetailSkillViewArgs,
-    CrudDetailSkillViewEntity,
+    CrudDetailEntity,
 } from '../detail/CrudDetailSkillViewController'
 import CrudListCardViewController from '../master/CrudListCardViewController'
 import { buildCrudListEntity } from '../master/CrudMasterSkillViewController'
@@ -51,7 +51,7 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
         })
     }
 
-    private buildOrganizationDetailEntity(): CrudDetailSkillViewEntity {
+    private buildOrganizationDetailEntity(): CrudDetailEntity {
         return {
             id: 'organizations',
             form: buildForm({
@@ -133,7 +133,7 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
         })
     }
 
-    private buildLocationDetailEntity(): CrudDetailSkillViewEntity {
+    private buildLocationDetailEntity(): CrudDetailEntity {
         return {
             id: 'locations',
             renderTitle: (values?: Location) =>

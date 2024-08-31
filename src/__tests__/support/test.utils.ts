@@ -2,7 +2,7 @@ import { ListRow } from '@sprucelabs/heartwood-view-controllers'
 import { generateId, RecursivePartial } from '@sprucelabs/test-utils'
 import {
     DetailForm,
-    CrudDetailSkillViewEntity,
+    CrudDetailEntity,
 } from '../../detail/CrudDetailSkillViewController'
 import {
     buildCrudListEntity,
@@ -86,7 +86,7 @@ export function buildOrganizationTestEntity() {
 export function buildLocationDetailEntity(
     id?: string,
     form?: DetailForm
-): CrudDetailSkillViewEntity {
+): CrudDetailEntity {
     return {
         id: id ?? generateId(),
         form: form ?? detailFormOptions1,
