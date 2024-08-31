@@ -38,17 +38,26 @@ export default class CrudListCardViewController extends AbstractViewController<C
         entity: CrudListEntity<any, any>,
         onClickRow?: ClickRowHandler
     ) {
-        const { list: load } = entity
+        const { list: load, pluralTitle, id } = entity
         const { fqen, rowTransformer, ...activeOptions } = load
 
         return this.Controller(
             'active-record-card',
             buildActiveRecordCard({
-                id: entity.id,
+                id,
                 header: {
-                    title: entity.pluralTitle,
+                    title: pluralTitle,
                 },
                 footer: this.renderFooter(),
+                noResultsRow: {
+                    cells: [
+                        {
+                            text: {
+                                content: `No ${pluralTitle} found!`,
+                            },
+                        },
+                    ],
+                },
                 eventName: fqen,
                 rowTransformer: (record) => {
                     const row = rowTransformer(record)

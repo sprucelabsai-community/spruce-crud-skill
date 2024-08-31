@@ -110,6 +110,17 @@ export default class CrudListCardTest extends AbstractCrudTest {
         this.vc.assertTargetEquals(target)
     }
 
+    @test()
+    protected static async noResultsRowUsesPluralTitle() {
+        await this.load()
+        const row = this.vc.getListVc().getRowVc('no-results')
+        const model = this.views.render(row)
+        assert.isEqual(
+            model.cells[0].text?.content,
+            `No ${this.entity.pluralTitle} found!`
+        )
+    }
+
     private static setupWithOrgEntity() {
         this.setupWithEntity(buildOrganizationTestEntity())
     }
