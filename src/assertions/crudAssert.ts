@@ -412,7 +412,7 @@ function getRelatedListCardVc(
 
     assert.isTruthy(
         relatedCardVc,
-        `I could not find a related entity with the id you sent!`
+        `I could not find a related entity with the id '${relatedId}'!`
     )
     return relatedCardVc
 }
