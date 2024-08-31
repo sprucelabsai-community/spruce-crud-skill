@@ -117,7 +117,7 @@ export default class CrudListCardTest extends AbstractCrudTest {
         const model = this.views.render(row)
         assert.isEqual(
             model.cells[0].text?.content,
-            `No ${this.entity.pluralTitle} found!`
+            `No ${this.entity.pluralTitle} Found`
         )
     }
 

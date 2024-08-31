@@ -53,7 +53,7 @@ export default class CrudListCardViewController extends AbstractViewController<C
                     cells: [
                         {
                             text: {
-                                content: `No ${pluralTitle} found!`,
+                                content: `No ${pluralTitle} Found`,
                             },
                         },
                     ],
