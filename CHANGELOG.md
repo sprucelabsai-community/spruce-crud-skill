@@ -1,3 +1,10 @@
+# [7.0.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v6.0.0...v7.0.0) (2024-08-31)
+
+
+### Breaking Changes
+
+* interface rename to make things simpler ([a619ea3](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/a619ea3))
+
 # [6.0.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v5.0.1...v6.0.0) (2024-08-30)
 
 
