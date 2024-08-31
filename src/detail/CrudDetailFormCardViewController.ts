@@ -6,7 +6,7 @@ import {
 } from '@sprucelabs/heartwood-view-controllers'
 import { assertOptions } from '@sprucelabs/schema'
 import { FormCardViewController } from '@sprucelabs/spruce-form-utils'
-import { CrudDetailSkillViewEntity } from './CrudDetailSkillViewController'
+import { CrudDetailEntity } from './CrudDetailSkillViewController'
 
 export default class CrudDetailFormCardViewController extends AbstractViewController<Card> {
     protected formCardVc?: FormCardViewController
@@ -57,7 +57,7 @@ export default class CrudDetailFormCardViewController extends AbstractViewContro
     }
 
     public async load(
-        entity: Omit<CrudDetailSkillViewEntity, 'load'>,
+        entity: Omit<CrudDetailEntity, 'load'>,
         values?: Record<string, any>
     ) {
         const cardVc = this.FormCardVc(entity, values)
@@ -67,7 +67,7 @@ export default class CrudDetailFormCardViewController extends AbstractViewContro
     }
 
     private FormCardVc(
-        entity: Omit<CrudDetailSkillViewEntity, 'load'>,
+        entity: Omit<CrudDetailEntity, 'load'>,
         values: Record<string, any> | undefined
     ) {
         const { form, renderTitle: generateTitle } = assertOptions(entity, [

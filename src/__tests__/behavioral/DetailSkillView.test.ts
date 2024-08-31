@@ -6,7 +6,7 @@ import {
 import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
 import { RecursivePartial, test } from '@sprucelabs/test-utils'
 import crudAssert from '../../assertions/crudAssert'
-import { CrudDetailSkillViewEntity } from '../../detail/CrudDetailSkillViewController'
+import { CrudDetailEntity } from '../../detail/CrudDetailSkillViewController'
 import DetailSkillViewController from '../../skillViewControllers/Detail.svc'
 import AbstractCrudTest from '../support/AbstractCrudTest'
 
@@ -136,7 +136,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         })
     }
 
-    private static buildExpectedLocationsEntity(): RecursivePartial<CrudDetailSkillViewEntity> {
+    private static buildExpectedLocationsEntity(): RecursivePartial<CrudDetailEntity> {
         return {
             id: 'locations',
             form: buildForm({
@@ -155,7 +155,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         }
     }
 
-    private static buildExpectedOrganizationsEntity(): RecursivePartial<CrudDetailSkillViewEntity> {
+    private static buildExpectedOrganizationsEntity(): RecursivePartial<CrudDetailEntity> {
         return {
             id: 'organizations',
             form: buildForm({

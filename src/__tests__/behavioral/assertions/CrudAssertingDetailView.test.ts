@@ -16,7 +16,7 @@ import {
 import crudAssert from '../../../assertions/crudAssert'
 import CrudDetailSkillViewController, {
     CrudDetailSkillViewArgs,
-    CrudDetailSkillViewEntity,
+    CrudDetailEntity,
     DetailSkillViewControllerOptions,
 } from '../../../detail/CrudDetailSkillViewController'
 import { CrudListEntity } from '../../../master/CrudMasterSkillViewController'
@@ -26,7 +26,7 @@ import AbstractAssertTest from './AbstractAssertTest'
 @fake.login()
 export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     private static vc: SkillViewWithDetailView
-    private static entities: CrudDetailSkillViewEntity[]
+    private static entities: CrudDetailEntity[]
     private static recordId?: string
 
     @seed('locations', 1)
@@ -669,7 +669,7 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
         })
     }
 
-    private static buildLocationDetailEntity(): CrudDetailSkillViewEntity {
+    private static buildLocationDetailEntity(): CrudDetailEntity {
         return buildLocationDetailTestEntity()
     }
 
