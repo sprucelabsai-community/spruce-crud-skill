@@ -175,10 +175,10 @@ export interface CrudListEntity<
         payload?: SchemaValues<EmitSchema>['payload']
         /** @ts-ignore */
         target?: SchemaValues<EmitSchema>['target']
-        buildTarget?: (
-            detailValues?: Record<string, any>
+        buildTarget?: (detailValues?: Record<string, any>) => /** @ts-ignore */
+        | SchemaValues<EmitSchema>['target']
             /** @ts-ignore */
-        ) => SchemaValues<EmitSchema>['target']
+            | Promise<SchemaValues<EmitSchema>['target']>
         paging?: ActiveRecordPagingOptions
     }
 }

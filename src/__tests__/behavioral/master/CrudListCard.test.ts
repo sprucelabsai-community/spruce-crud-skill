@@ -105,7 +105,7 @@ export default class CrudListCardTest extends AbstractCrudTest {
     protected static async responseToBuildTargetSetsToActiveRecordCardTarget() {
         this.setupWithEntity(this.buildLocationListEntity())
         const target = { organizationId: generateId() }
-        this.entity.list.buildTarget = () => target
+        this.entity.list.buildTarget = async () => target
         await this.load()
         this.vc.assertTargetEquals(target)
     }

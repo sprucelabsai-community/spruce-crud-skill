@@ -88,7 +88,7 @@ export default class CrudListCardViewController extends AbstractViewController<C
         _options: SkillViewControllerLoadOptions,
         values?: Record<string, any>
     ) {
-        const builtTarget = this.entity.list.buildTarget?.(values)
+        const builtTarget = await this.entity.list.buildTarget?.(values)
         if (builtTarget) {
             this.activeRecordCardVc.setTarget(builtTarget)
         }
