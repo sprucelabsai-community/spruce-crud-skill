@@ -259,7 +259,7 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     }
 
     @test()
-    protected static async assertRendersRelatedThrowsIfNoEntityId() {
+    protected static async assertRendersRelatedThrowsIfNoRelated() {
         this.dropInDetailSkillView()
 
         await assert.doesThrowAsync(
@@ -270,7 +270,7 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
                     recordId: this.locationId,
                     relatedId: generateId(),
                 }),
-            'not find any related entities'
+            'any related entities on your'
         )
     }
 
