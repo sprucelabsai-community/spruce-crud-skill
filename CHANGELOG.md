@@ -1,3 +1,10 @@
+# [7.1.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.0.4...v7.1.0) (2024-09-01)
+
+
+### Features
+
+* click row destination on list card ([eb8e664](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/eb8e664))
+
 ## [7.0.4](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.0.3...v7.0.4) (2024-09-01)
 
 ## [7.0.3](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.0.2...v7.0.3) (2024-08-31)
