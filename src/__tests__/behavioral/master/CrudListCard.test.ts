@@ -148,6 +148,7 @@ export default class CrudListCardTest extends AbstractCrudTest {
                 args: {
                     entity: entity.id,
                     recordId: this.locationId,
+                    action: 'edit',
                 },
             },
         })

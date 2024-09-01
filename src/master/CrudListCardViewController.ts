@@ -79,6 +79,7 @@ export default class CrudListCardViewController extends AbstractViewController<C
             await this.router?.redirect(this.clickRowDestination, {
                 entity: this.entity.id,
                 recordId: record.id,
+                action: 'edit',
             })
         }
     }
