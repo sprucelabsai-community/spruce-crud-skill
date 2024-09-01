@@ -180,6 +180,7 @@ export interface CrudListEntity<
             /** @ts-ignore */
             | Promise<SchemaValues<EmitSchema>['target']>
         paging?: ActiveRecordPagingOptions
+        clickRowDestination?: SkillViewControllerId
     }
 }
 

@@ -4,6 +4,8 @@ import {
     buildActiveRecordCard,
     Card,
     CardFooter,
+    ListRow,
+    Router,
     SkillViewControllerLoadOptions,
     ViewControllerOptions,
 } from '@sprucelabs/heartwood-view-controllers'
@@ -13,7 +15,9 @@ import { CrudListEntity } from './CrudMasterSkillViewController'
 export default class CrudListCardViewController extends AbstractViewController<Card> {
     protected activeRecordCardVc: ActiveRecordCardViewController
     protected entity: CrudListEntity<any, any>
-    private onAddClick?: ClickAddHandler
+    private onAddClickHandler?: ClickAddHandler
+    private onClickRowHandler?: ClickRowHandler
+    private router?: Router
 
     public constructor(
         options: ViewControllerOptions & CrudListCardViewControllerOptions
@@ -30,16 +34,14 @@ export default class CrudListCardViewController extends AbstractViewController<C
         ])
 
         this.entity = entity
-        this.onAddClick = onAddClick
-        this.activeRecordCardVc = this.ActiveRecordCard(entity, onClickRow)
+        this.onAddClickHandler = onAddClick
+        this.onClickRowHandler = onClickRow
+        this.activeRecordCardVc = this.ActiveRecordCard(entity)
     }
 
-    private ActiveRecordCard(
-        entity: CrudListEntity<any, any>,
-        onClickRow?: ClickRowHandler
-    ) {
+    private ActiveRecordCard(entity: CrudListEntity<any, any>) {
         const { list: load, pluralTitle, id } = entity
-        const { fqen, rowTransformer, ...activeOptions } = load
+        const { fqen, ...activeOptions } = load
 
         return this.Controller(
             'active-record-card',
@@ -59,18 +61,34 @@ export default class CrudListCardViewController extends AbstractViewController<C
                     ],
                 },
                 eventName: fqen,
-                rowTransformer: (record) => {
-                    const row = rowTransformer(record)
-                    row.onClick = () => onClickRow?.(entity.id, record)
-                    return row
-                },
                 ...activeOptions,
+                rowTransformer: this.renderRow.bind(this),
             })
         )
     }
 
+    private renderRow(record: Record<string, any>): ListRow {
+        const row = this.entity.list.rowTransformer(record)
+        row.onClick = () => this.handleClickRow(record)
+        return row
+    }
+
+    private async handleClickRow(record: Record<string, any>) {
+        await this.onClickRowHandler?.(this.entity.id, record)
+        if (this.clickRowDestination) {
+            await this.router?.redirect(this.clickRowDestination, {
+                entity: this.entity.id,
+                recordId: record.id,
+            })
+        }
+    }
+
+    private get clickRowDestination() {
+        return this.entity.list.clickRowDestination
+    }
+
     private renderFooter(): CardFooter | null {
-        if (!this.onAddClick) {
+        if (!this.onAddClickHandler) {
             return null
         }
         return {
@@ -79,7 +97,7 @@ export default class CrudListCardViewController extends AbstractViewController<C
                     id: 'add',
                     label: `Add ${this.entity.singularTitle}`,
                     type: 'primary',
-                    onClick: () => this.onAddClick?.(this.entity.id),
+                    onClick: () => this.onAddClickHandler?.(this.entity.id),
                 },
             ],
         }
@@ -94,9 +112,12 @@ export default class CrudListCardViewController extends AbstractViewController<C
     }
 
     public async load(
-        _options: SkillViewControllerLoadOptions,
+        options: SkillViewControllerLoadOptions,
         values?: Record<string, any>
     ) {
+        const { router } = options
+        this.router = router
+
         const builtTarget = await this.entity.list.buildTarget?.(values)
         if (builtTarget) {
             this.activeRecordCardVc.setTarget(builtTarget)

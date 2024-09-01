@@ -1,4 +1,9 @@
-import { activeRecordCardAssert } from '@sprucelabs/heartwood-view-controllers'
+import {
+    activeRecordCardAssert,
+    interactor,
+    SkillViewControllerId,
+    vcAssert,
+} from '@sprucelabs/heartwood-view-controllers'
 import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
 import { test, assert, generateId } from '@sprucelabs/test-utils'
 import { ClickAddHandler } from '../../../master/CrudListCardViewController'
@@ -7,7 +12,7 @@ import AbstractCrudTest from '../../support/AbstractCrudTest'
 import MockCrudListCard from '../../support/MockCrudListCard'
 import {
     buildOrganizationsListEntity,
-    buildOrganizationTestEntity,
+    buildOrganizationListEntity,
 } from '../../support/test.utils'
 
 @fake.login()
@@ -36,8 +41,8 @@ export default class CrudListCardTest extends AbstractCrudTest {
     @seed('locations', 1)
     protected static async rendersRowForLocationOnLoad() {
         await this.load()
-        const id = this.fakedLocations[0].id
-        this.assertRendersRow(id)
+
+        this.assertRendersRow(this.locationId)
     }
 
     @test()
@@ -75,6 +80,7 @@ export default class CrudListCardTest extends AbstractCrudTest {
     protected static async passesThroughTitleSingularToAddButton() {
         const titleSingular = generateId()
         this.onAddClickHandler = () => {}
+
         this.setupWithEntity(
             buildOrganizationsListEntity({
                 singularTitle: titleSingular,
@@ -121,8 +127,38 @@ export default class CrudListCardTest extends AbstractCrudTest {
         )
     }
 
+    @test('set row click destination redirects to crud.root', 'crud.root')
+    @test('set row click destination redirects to crud.detail', 'crud.detail')
+    @seed('locations', 1)
+    protected static async canSetRowClickDestination(
+        destination: SkillViewControllerId
+    ) {
+        const entity = this.buildLocationListEntity()
+        entity.list.clickRowDestination = destination
+
+        this.setupWithEntity(entity)
+        await this.load()
+
+        await vcAssert.assertActionRedirects({
+            action: () =>
+                interactor.clickRow(this.vc.getListVc(), this.locationId),
+            router: this.views.getRouter(),
+            destination: {
+                id: destination,
+                args: {
+                    entity: entity.id,
+                    recordId: this.locationId,
+                },
+            },
+        })
+    }
+
+    private static get locationId() {
+        return this.fakedLocations[0].id
+    }
+
     private static setupWithOrgEntity() {
-        this.setupWithEntity(buildOrganizationTestEntity())
+        this.setupWithEntity(buildOrganizationListEntity())
     }
 
     private static setupWithEntity(entity: CrudListEntity<any, any>) {

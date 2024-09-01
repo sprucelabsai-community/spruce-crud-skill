@@ -60,7 +60,7 @@ export function buildLocationListPagingEntity(id?: string) {
     })
 }
 
-export function buildOrganizationTestEntity() {
+export function buildOrganizationListEntity() {
     return buildCrudListEntity({
         id: generateId(),
         pluralTitle: generateId(),

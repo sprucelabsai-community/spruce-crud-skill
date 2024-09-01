@@ -41,7 +41,11 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
         this.options = removeUniversalViewOptions(options)
         this.detailsFormCardVc = this.DetailFormCardVc()
 
-        for (const entity of entities) {
+        this.setupRelationshipCards()
+    }
+
+    private setupRelationshipCards() {
+        for (const entity of this.options.entities) {
             for (const related of entity.relatedEntities ?? []) {
                 const listCardVc = this.Controller('crud.list-card', {
                     entity: related,
