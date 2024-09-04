@@ -41,7 +41,6 @@ export default class CrudListCardTest extends AbstractCrudTest {
     @seed('locations', 1)
     protected static async rendersRowForLocationOnLoad() {
         await this.load()
-
         this.assertRendersRow(this.locationId)
     }
 
