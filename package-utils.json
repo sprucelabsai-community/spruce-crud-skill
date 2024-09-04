@@ -68,7 +68,8 @@
 		"@sprucelabs/mercury-types": "latest",
 		"@sprucelabs/schema": "latest",
 		"@sprucelabs/spruce-test-fixtures": "latest",
-		"@sprucelabs/test-utils": "latest"
+		"@sprucelabs/test-utils": "latest",
+		"@sprucelabs/spruce-form-utils": "latest"
 	},
 	"engines": {
 		"yarn": "1.x"
