@@ -3,6 +3,7 @@ import {
     ViewControllerOptions,
     SkillView,
     SkillViewControllerLoadOptions,
+    ActiveRecordPagingOptions,
 } from '@sprucelabs/heartwood-view-controllers'
 import CrudListCardViewController from '../master/CrudListCardViewController'
 import CrudMasterSkillViewController, {
@@ -54,10 +55,7 @@ export default class RootSkillViewController extends AbstractSkillViewController
             list: {
                 fqen: 'list-skills::v2020_12_25',
                 responseKey: 'skills',
-                paging: {
-                    pageSize: 5,
-                    shouldPageClientSide: true,
-                },
+                paging: PAGING,
                 rowTransformer: (skill) => ({
                     id: skill.id,
                     cells: [
@@ -89,10 +87,7 @@ export default class RootSkillViewController extends AbstractSkillViewController
             list: {
                 fqen: 'list-organizations::v2020_12_25',
                 responseKey: 'organizations',
-                paging: {
-                    pageSize: 5,
-                    shouldPageClientSide: true,
-                },
+                paging: PAGING,
                 rowTransformer: (organization) => ({
                     id: organization.id,
                     cells: [
@@ -114,4 +109,10 @@ export default class RootSkillViewController extends AbstractSkillViewController
     public render(): SkillView {
         return this.masterSkillView.render()
     }
+}
+
+const PAGING: ActiveRecordPagingOptions = {
+    pageSize: 5,
+    shouldPageClientSide: true,
+    shouldRenderSearch: true,
 }

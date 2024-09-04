@@ -13,6 +13,7 @@ export const locationListOptions: CrudListEntity<
     paging: {
         pageSize: 5,
         shouldPageClientSide: true,
+        shouldRenderSearch: true,
     },
     rowTransformer: (location) => ({
         id: location.id,

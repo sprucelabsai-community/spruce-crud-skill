@@ -50,6 +50,7 @@ export default class RootSkillViewTest extends AbstractCrudTest {
                 paging: {
                     pageSize: 5,
                     shouldPageClientSide: true,
+                    shouldRenderSearch: true,
                 },
             },
         })
@@ -78,6 +79,7 @@ export default class RootSkillViewTest extends AbstractCrudTest {
                 paging: {
                     pageSize: 5,
                     shouldPageClientSide: true,
+                    shouldRenderSearch: true,
                 },
             },
         })
@@ -103,6 +105,7 @@ export default class RootSkillViewTest extends AbstractCrudTest {
                 paging: {
                     pageSize: 5,
                     shouldPageClientSide: true,
+                    shouldRenderSearch: true,
                 },
             },
         })
