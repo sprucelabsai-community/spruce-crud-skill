@@ -108,6 +108,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
             expectedOptions: {
                 pluralTitle: 'Skills',
                 singularTitle: 'Skill',
+                selectionMode: 'multiple',
                 list: {
                     fqen: 'list-installed-skills::v2020_12_25',
                     responseKey: 'skills',

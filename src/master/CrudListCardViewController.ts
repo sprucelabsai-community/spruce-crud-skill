@@ -69,8 +69,26 @@ export default class CrudListCardViewController extends AbstractViewController<C
 
     private renderRow(record: Record<string, any>): ListRow {
         const row = this.entity.list.rowTransformer(record)
+
         row.onClick = () => this.handleClickRow(record)
+
+        if (this.selectionMode !== 'none') {
+            row.cells.push({
+                toggleInput: {
+                    name: 'isSelected',
+                    onChange: () => {
+                        this.activeRecordCardVc.getListVc
+                    },
+                },
+            })
+            row.columnWidths = ['fill']
+        }
+
         return row
+    }
+
+    private get selectionMode() {
+        return this.entity.selectionMode ?? 'none'
     }
 
     private async handleClickRow(record: Record<string, any>) {

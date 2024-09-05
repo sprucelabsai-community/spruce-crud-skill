@@ -164,6 +164,7 @@ export interface CrudListEntity<
         SchemaValues<ResponseSchema> = SchemaValues<ResponseSchema>,
     ResponseKey extends keyof Response = keyof Response,
 > {
+    selectionMode?: CrudListSelectionMode
     id: string
     pluralTitle: string
     singularTitle: string
@@ -230,6 +231,8 @@ export const buildCrudMasterSkillViewOptions = (
 ) => {
     return options
 }
+
+export type CrudListSelectionMode = 'single' | 'multiple' | 'none'
 
 declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.types' {
     interface SkillViewControllerMap {

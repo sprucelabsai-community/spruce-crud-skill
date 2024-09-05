@@ -1,13 +1,18 @@
 import {
     activeRecordCardAssert,
     interactor,
+    listAssert,
+    ListRow,
     SkillViewControllerId,
     vcAssert,
 } from '@sprucelabs/heartwood-view-controllers'
 import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
 import { test, assert, generateId } from '@sprucelabs/test-utils'
 import { ClickAddHandler } from '../../../master/CrudListCardViewController'
-import { CrudListEntity } from '../../../master/CrudMasterSkillViewController'
+import {
+    CrudListEntity,
+    CrudListSelectionMode,
+} from '../../../master/CrudMasterSkillViewController'
 import AbstractCrudTest from '../../support/AbstractCrudTest'
 import MockCrudListCard from '../../support/MockCrudListCard'
 import {
@@ -118,7 +123,7 @@ export default class CrudListCardTest extends AbstractCrudTest {
     @test()
     protected static async noResultsRowUsesPluralTitle() {
         await this.load()
-        const row = this.vc.getListVc().getRowVc('no-results')
+        const row = this.getRowVc('no-results')
         const model = this.views.render(row)
         assert.isEqual(
             model.cells[0].text?.content,
@@ -139,8 +144,7 @@ export default class CrudListCardTest extends AbstractCrudTest {
         await this.load()
 
         await vcAssert.assertActionRedirects({
-            action: () =>
-                interactor.clickRow(this.vc.getListVc(), this.locationId),
+            action: () => interactor.clickRow(this.listVc, this.locationId),
             router: this.views.getRouter(),
             destination: {
                 id: destination,
@@ -151,6 +155,83 @@ export default class CrudListCardTest extends AbstractCrudTest {
                 },
             },
         })
+    }
+
+    @test()
+    @seed('locations', 1)
+    protected static async rendersToggelIfSelectionModeIsSingle() {
+        await this.loadWithSelectionModel('single')
+        this.vc.assertRendersToggle(this.locationId)
+    }
+
+    @test('does not render toggle if selection mode is not set', undefined)
+    @test('does not render toggle if selection mode is none', 'none')
+    @seed('locations', 1)
+    protected static async doesNotRenderToggleIfSelectionModeIsNotSet(
+        selectionMode?: CrudListSelectionMode
+    ) {
+        await this.loadWithSelectionModel(selectionMode)
+        this.vc.assertDoesNotRenderToggle(this.locationId)
+    }
+
+    @test()
+    @seed('locations', 1)
+    protected static async rowsWithToggleSizeAsExpected() {
+        await this.loadWithSelectionModel('single')
+        this.assertColumnWidths(['fill'])
+    }
+
+    @test()
+    @seed('locations', 1)
+    protected static async doesNotSetColumnWidthsIfNoSelectionMode() {
+        await this.load()
+        this.assertColumnWidths()
+    }
+
+    @test()
+    @seed('locations', 2)
+    protected static async inSingleSelectionModeOnlyOneRowCanBeSelected() {
+        await this.loadWithSelectionModel('single')
+        await this.clickRowToggle(this.locationId)
+        this.assertRowIsSelected(this.locationId)
+        await this.clickRowToggle(this.fakedLocations[1].id)
+        this.assertRowNotSelected(this.locationId)
+    }
+
+    private static assertRowNotSelected(id: string) {
+        const value = this.getRowIsToggled(id)
+        assert.isFalse(value, `Row ${id} should not be selected`)
+    }
+
+    private static assertRowIsSelected(id: string) {
+        const value = this.getRowIsToggled(id)
+        assert.isTrue(value)
+    }
+
+    private static getRowIsToggled(id: string) {
+        return this.getRowVc(id).getValue('isSelected')
+    }
+
+    private static async clickRowToggle(id: string) {
+        await interactor.clickToggleInRow(this.listVc, id)
+    }
+
+    private static assertColumnWidths(columnWidths?: ListRow['columnWidths']) {
+        const list = this.views.render(this.getRowVc(this.locationId))
+        assert.isEqualDeep(list.columnWidths, columnWidths)
+    }
+
+    private static getRowVc(id: string) {
+        return this.listVc.getRowVc(id)
+    }
+
+    private static async loadWithSelectionModel(
+        selectionMode?: CrudListSelectionMode
+    ) {
+        const entity = this.buildLocationListEntity()
+        entity.selectionMode = selectionMode
+        this.setupWithEntity(entity)
+        await this.load()
     }
 
     private static get locationId() {
@@ -176,5 +257,9 @@ export default class CrudListCardTest extends AbstractCrudTest {
 
     private static assertRendersRow(id: string) {
         this.vc.assertRendersRow(id)
+    }
+
+    private static get listVc() {
+        return this.vc.getListVc()
     }
 }

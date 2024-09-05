@@ -89,4 +89,12 @@ export default class MockCrudListCard extends CrudListCardViewController {
     public getEntityId() {
         return this.entity.id
     }
+
+    public assertRendersToggle(rowId: string) {
+        listAssert.rowRendersToggle(this.getListVc(), rowId, 'isSelected')
+    }
+
+    public assertDoesNotRenderToggle(rowId: string) {
+        listAssert.rowDoesNotRenderToggle(this.getListVc(), rowId)
+    }
 }

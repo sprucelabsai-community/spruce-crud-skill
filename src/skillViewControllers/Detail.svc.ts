@@ -45,13 +45,13 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
         this.detailSkillView = this.Controller('crud.detail-skill-view', {
             cancelDestination: 'crud.root',
             entities: [
-                this.buildLocationDetailEntity(),
-                this.buildOrganizationDetailEntity(),
+                this.locationDetailEntity,
+                this.organizationDetailEntity,
             ],
         })
     }
 
-    private buildOrganizationDetailEntity(): CrudDetailEntity {
+    private get organizationDetailEntity(): CrudDetailEntity {
         return {
             id: 'organizations',
             form: buildForm({
@@ -72,49 +72,51 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
                     organizationId,
                 }),
             },
-            relatedEntities: [
-                this.buildLocationListEntity(),
-                buildCrudListEntity({
-                    id: 'skills',
-                    pluralTitle: 'Skills',
-                    singularTitle: 'Skill',
-                    list: {
-                        fqen: 'list-installed-skills::v2020_12_25',
-                        responseKey: 'skills',
-                        paging: {
-                            pageSize: 5,
-                            shouldPageClientSide: true,
-                        },
-                        buildTarget: (organization) => {
-                            if (!organization) {
-                                return {} as any //TODO: move to `list-skills' with a prop on the skill of "isInstalled"
-                            }
-                            return {
-                                organizationId: organization.id,
-                            }
-                        },
-                        rowTransformer: (skill) => {
-                            return {
-                                id: skill.id,
-                                cells: [
-                                    {
-                                        text: {
-                                            content: skill.name,
-                                        },
-                                        subText: {
-                                            content: skill.slug,
-                                        },
-                                    },
-                                ],
-                            }
-                        },
-                    },
-                }),
-            ],
+            relatedEntities: [this.locationListEntity, this.skillListEntity],
         }
     }
 
-    private buildLocationListEntity() {
+    private get skillListEntity() {
+        return buildCrudListEntity({
+            id: 'skills',
+            pluralTitle: 'Skills',
+            singularTitle: 'Skill',
+            selectionMode: 'multiple',
+            list: {
+                fqen: 'list-installed-skills::v2020_12_25',
+                responseKey: 'skills',
+                paging: {
+                    pageSize: 5,
+                    shouldPageClientSide: true,
+                },
+                buildTarget: (organization) => {
+                    if (!organization) {
+                        return {} as any //TODO: move to `list-skills' with a prop on the skill of "isInstalled"
+                    }
+                    return {
+                        organizationId: organization.id,
+                    }
+                },
+                rowTransformer: (skill) => {
+                    return {
+                        id: skill.id,
+                        cells: [
+                            {
+                                text: {
+                                    content: skill.name,
+                                },
+                                subText: {
+                                    content: skill.slug,
+                                },
+                            },
+                        ],
+                    }
+                },
+            },
+        })
+    }
+
+    private get locationListEntity() {
         return buildCrudListEntity({
             id: 'locations',
             pluralTitle: 'Locations',
@@ -133,7 +135,7 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
         })
     }
 
-    private buildLocationDetailEntity(): CrudDetailEntity {
+    private get locationDetailEntity(): CrudDetailEntity {
         return {
             id: 'locations',
             renderTitle: (values?: Location) =>
