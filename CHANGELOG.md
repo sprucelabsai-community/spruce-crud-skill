@@ -1,3 +1,10 @@
+# [7.2.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.1.9...v7.2.0) (2024-09-05)
+
+
+### Features
+
+* selections ([21d8fab](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/21d8fab))
+
 ## [7.1.9](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.1.8...v7.1.9) (2024-09-04)
 
 ## [7.1.8](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.1.7...v7.1.8) (2024-09-04)
