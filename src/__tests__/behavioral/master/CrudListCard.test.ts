@@ -197,6 +197,15 @@ export default class CrudListCardTest extends AbstractCrudTest {
         this.assertRowNotSelected(this.locationId)
     }
 
+    @test()
+    @seed('locations', 2)
+    protected static async canSelectMultipleRowsInMultiSelectionMode() {
+        await this.loadWithSelectionModel('multiple')
+        await this.clickRowToggle(this.locationId)
+        await this.clickRowToggle(this.fakedLocations[1].id)
+        this.assertRowIsSelected(this.locationId)
+    }
+
     private static assertRowNotSelected(id: string) {
         const value = this.getRowIsToggled(id)
         assert.isFalse(value, `Row ${id} should not be selected`)
@@ -204,7 +213,7 @@ export default class CrudListCardTest extends AbstractCrudTest {
 
     private static assertRowIsSelected(id: string) {
         const value = this.getRowIsToggled(id)
-        assert.isTrue(value)
+        assert.isTrue(value, `Row ${id} should be selected`)
     }
 
     private static getRowIsToggled(id: string) {

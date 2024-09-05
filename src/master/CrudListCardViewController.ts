@@ -18,6 +18,7 @@ export default class CrudListCardViewController extends AbstractViewController<C
     private onAddClickHandler?: ClickAddHandler
     private onClickRowHandler?: ClickRowHandler
     private router?: Router
+    private isToggling = false
 
     public constructor(
         options: ViewControllerOptions & CrudListCardViewControllerOptions
@@ -76,8 +77,15 @@ export default class CrudListCardViewController extends AbstractViewController<C
             row.cells.push({
                 toggleInput: {
                     name: 'isSelected',
-                    onChange: () => {
-                        this.activeRecordCardVc.getListVc
+                    value: false,
+                    onChange: async () => {
+                        if (this.isToggling) {
+                            return
+                        }
+
+                        this.isToggling = true
+                        await this.deselectEverythingBut(record.id)
+                        this.isToggling = false
                     },
                 },
             })
@@ -85,6 +93,27 @@ export default class CrudListCardViewController extends AbstractViewController<C
         }
 
         return row
+    }
+    public async deselectEverythingBut(id: string) {
+        if (this.selectionMode !== 'single') {
+            return
+        }
+        const records = this.activeRecordCardVc.getRecords()
+        const promises: Promise<void>[] = []
+
+        for (const record of records) {
+            if (record.id !== id) {
+                promises.push(
+                    this.activeRecordCardVc.setValue(
+                        record.id,
+                        'isSelected',
+                        false
+                    )
+                )
+            }
+        }
+
+        await Promise.all(promises)
     }
 
     private get selectionMode() {
