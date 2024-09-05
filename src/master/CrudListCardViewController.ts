@@ -98,6 +98,7 @@ export default class CrudListCardViewController extends AbstractViewController<C
         if (this.selectionMode !== 'single') {
             return
         }
+
         const records = this.activeRecordCardVc.getRecords()
         const promises: Promise<void>[] = []
 
