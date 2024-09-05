@@ -82,22 +82,27 @@ export default class CrudListCardViewController extends AbstractViewController<C
             row.columnWidths = ['fill']
         }
 
+        console.log('rendering row', row, this.selectedRows)
+
         return row
     }
-    private renderToggleCell(id: any): ListCell {
+
+    private renderToggleCell(id: string): ListCell {
         return {
             toggleInput: {
                 name: 'isSelected',
                 value: this.selectedRows[id] ?? false,
                 onChange: async (value) => {
-                    if (this.selectionMode !== 'single' || this.isToggling) {
+                    if (this.isToggling) {
                         return
                     }
 
-                    this.isToggling = true
                     this.selectedRows[id] = value
-                    await this.deselectEverythingBut(id)
-                    this.isToggling = false
+                    if (this.selectionMode === 'single') {
+                        this.isToggling = true
+                        await this.deselectEverythingBut(id)
+                        this.isToggling = false
+                    }
                 },
             },
         }

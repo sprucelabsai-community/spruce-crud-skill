@@ -221,13 +221,23 @@ export default class CrudListCardTest extends AbstractCrudTest {
 
     @test()
     @seed('locations', 1)
-    protected static async doesNotReselectARowAfterSearch() {
+    protected static async doesNotReselectARowAfterDeselectAndSearch() {
         await this.loadWithPagingAndSearch()
         await this.toggleFirstRow()
         await this.toggleFirstRow()
         await this.randomSearch()
         await this.clearSearch()
         this.assertRowIsNotSelected(this.locationId)
+    }
+
+    @test()
+    @seed('locations', 1)
+    protected static async remembersSelectionWithSelectionModeMultiple() {
+        await this.loadWithPagingAndSearch('multiple')
+        await this.toggleFirstRow()
+        await this.randomSearch()
+        await this.clearSearch()
+        this.assertRowIsSelected(this.locationId)
     }
 
     private static async randomSearch() {
@@ -238,9 +248,11 @@ export default class CrudListCardTest extends AbstractCrudTest {
         await this.search('')
     }
 
-    private static async loadWithPagingAndSearch() {
+    private static async loadWithPagingAndSearch(
+        selectionMode?: CrudListSelectionMode
+    ) {
         const entity = this.buildLocationListEntity()
-        entity.selectionMode = 'single'
+        entity.selectionMode = selectionMode ?? 'single'
         entity.shouldRenderSearch = true
         entity.list.paging = {
             pageSize: 10,
