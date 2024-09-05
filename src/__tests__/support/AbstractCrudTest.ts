@@ -1,3 +1,4 @@
+import { MockActiveRecordCard } from '@sprucelabs/heartwood-view-controllers'
 import { AbstractSpruceFixtureTest } from '@sprucelabs/spruce-test-fixtures'
 import CrudDetailFormCardViewController from '../../detail/CrudDetailFormCardViewController'
 import CrudDetailSkillViewController from '../../detail/CrudDetailSkillViewController'
@@ -12,6 +13,7 @@ export default abstract class AbstractCrudTest extends AbstractSpruceFixtureTest
     protected static async beforeEach() {
         await super.beforeEach()
 
+        this.views.setController('active-record-card', MockActiveRecordCard)
         this.views.setController('crud.master-skill-view', SpyMasterSkillView)
         this.views.setController('crud.list-card', MockCrudListCard)
         this.views.setController(

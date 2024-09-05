@@ -2,6 +2,7 @@ import {
     activeRecordCardAssert,
     ActiveRecordPagingOptions,
     listAssert,
+    MockActiveRecordCard,
     SkillViewControllerLoadOptions,
 } from '@sprucelabs/heartwood-view-controllers'
 import { assert } from '@sprucelabs/test-utils'
@@ -70,6 +71,10 @@ export default class MockCrudListCard extends CrudListCardViewController {
         return this.activeRecordCardVc.getListVc()
     }
 
+    public getListVcs() {
+        return (this.activeRecordCardVc as MockActiveRecordCard).getListVcs()
+    }
+
     public assertTargetEquals(target?: Record<string, any>) {
         assert.isEqualDeep(
             this.activeRecordCardVc.getTarget(),
@@ -96,5 +101,18 @@ export default class MockCrudListCard extends CrudListCardViewController {
 
     public assertDoesNotRenderToggle(rowId: string) {
         listAssert.rowDoesNotRenderToggle(this.getListVc(), rowId)
+    }
+
+    public async search(term: string) {
+        const formVc = (
+            this.activeRecordCardVc as MockActiveRecordCard
+        ).getSearchFormVc()
+
+        assert.isTruthy(
+            formVc,
+            `You have to enable search on the list card to use this method`
+        )
+
+        await formVc.setValue('search', term)
     }
 }

@@ -1,5 +1,6 @@
 import {
     activeRecordCardAssert,
+    ActiveRecordCardViewController,
     interactor,
     ListRow,
     SkillViewControllerId,
@@ -28,6 +29,7 @@ export default class CrudListCardTest extends AbstractCrudTest {
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
         this.setupWithEntity(this.buildLocationListEntity())
+        ActiveRecordCardViewController.searchDebounceMs = 0
     }
 
     @test()
@@ -194,7 +196,7 @@ export default class CrudListCardTest extends AbstractCrudTest {
         await this.clickRowToggle(this.locationId)
         this.assertRowIsSelected(this.locationId)
         await this.clickRowToggle(this.fakedLocations[1].id)
-        this.assertRowNotSelected(this.locationId)
+        this.assertRowIsNotSelected(this.locationId)
     }
 
     @test()
@@ -206,7 +208,48 @@ export default class CrudListCardTest extends AbstractCrudTest {
         this.assertRowIsSelected(this.locationId)
     }
 
-    private static assertRowNotSelected(id: string) {
+    @test()
+    @seed('locations', 1)
+    protected static async searchingDoesNotChangeSelectedRows() {
+        await this.loadWithPagingAndSearch()
+        await this.clickRowToggle(this.locationId)
+        await this.search(generateId())
+        await this.search('')
+
+        this.assertRowIsSelected(this.locationId)
+    }
+
+    @test()
+    @seed('locations', 1)
+    protected static async doesNotReselectARowAfterSearch() {
+        await this.loadWithPagingAndSearch()
+        await this.clickRowToggle(this.locationId)
+        await this.clickRowToggle(this.locationId)
+        await this.search(generateId())
+        await this.search('')
+
+        this.assertRowIsNotSelected(this.locationId)
+    }
+
+    private static async loadWithPagingAndSearch() {
+        const entity = this.buildLocationListEntity()
+        entity.selectionMode = 'single'
+        entity.list.paging = {
+            pageSize: 10,
+            shouldRenderSearch: true,
+        }
+
+        this.setupWithEntity(entity)
+
+        await this.load()
+    }
+
+    private static async search(term: string) {
+        await this.vc.search(term)
+        await this.wait(ActiveRecordCardViewController.searchDebounceMs)
+    }
+
+    private static assertRowIsNotSelected(id: string) {
         const value = this.getRowIsToggled(id)
         assert.isFalse(value, `Row ${id} should not be selected`)
     }
@@ -268,6 +311,8 @@ export default class CrudListCardTest extends AbstractCrudTest {
     }
 
     private static get listVc() {
-        return this.vc.getListVc()
+        return this.entity.list.paging
+            ? this.vc.getListVcs()[0]
+            : this.vc.getListVc()
     }
 }
