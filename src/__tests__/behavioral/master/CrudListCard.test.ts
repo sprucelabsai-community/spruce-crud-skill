@@ -1,7 +1,6 @@
 import {
     activeRecordCardAssert,
     interactor,
-    listAssert,
     ListRow,
     SkillViewControllerId,
     vcAssert,

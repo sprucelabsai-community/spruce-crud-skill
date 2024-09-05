@@ -53,9 +53,9 @@
     "watch.tsc": "tsc -w"
   },
   "dependencies": {
-    "@sprucelabs/error": "^6.0.300",
-    "@sprucelabs/globby": "^2.0.261",
-    "@sprucelabs/heartwood-view-controllers": "^110.12.11",
+    "@sprucelabs/error": "^6.0.301",
+    "@sprucelabs/globby": "^2.0.262",
+    "@sprucelabs/heartwood-view-controllers": "^110.12.13",
     "@sprucelabs/mercury-client": "^42.0.384",
     "@sprucelabs/mercury-core-events": "^24.3.112",
     "@sprucelabs/mercury-types": "^47.0.351",
