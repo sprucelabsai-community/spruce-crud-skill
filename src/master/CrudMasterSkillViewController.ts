@@ -168,6 +168,7 @@ export interface CrudListEntity<
     id: string
     pluralTitle: string
     singularTitle: string
+    shouldRenderSearch?: boolean
     list: {
         fqen: Fqen
         responseKey: ResponseKey
@@ -182,7 +183,6 @@ export interface CrudListEntity<
             | Promise<SchemaValues<EmitSchema>['target']>
         paging?: ActiveRecordPagingOptions
         clickRowDestination?: SkillViewControllerId
-        shouldRenderSearch?: boolean
     }
 }
 

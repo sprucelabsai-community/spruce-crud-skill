@@ -4,6 +4,7 @@ import {
     buildActiveRecordCard,
     Card,
     CardFooter,
+    ListCell,
     ListRow,
     Router,
     SkillViewControllerLoadOptions,
@@ -42,8 +43,8 @@ export default class CrudListCardViewController extends AbstractViewController<C
     }
 
     private ActiveRecordCard(entity: CrudListEntity<any, any>) {
-        const { list: load, pluralTitle, id } = entity
-        const { fqen, ...activeOptions } = load
+        const { list, pluralTitle, id, shouldRenderSearch } = entity
+        const { fqen, ...activeOptions } = list
 
         return this.Controller(
             'active-record-card',
@@ -63,6 +64,7 @@ export default class CrudListCardViewController extends AbstractViewController<C
                     ],
                 },
                 eventName: fqen,
+                shouldRenderSearch,
                 ...activeOptions,
                 rowTransformer: this.renderRow.bind(this),
             })
@@ -75,30 +77,32 @@ export default class CrudListCardViewController extends AbstractViewController<C
         row.onClick = () => this.handleClickRow(record)
 
         if (this.selectionMode !== 'none') {
-            row.cells.push({
-                toggleInput: {
-                    name: 'isSelected',
-                    value: this.selectedRows[record.id] ?? false,
-                    onChange: async (value) => {
-                        if (
-                            this.selectionMode !== 'single' ||
-                            this.isToggling
-                        ) {
-                            return
-                        }
-
-                        this.isToggling = true
-                        this.selectedRows[record.id] = value
-                        await this.deselectEverythingBut(record.id)
-                        this.isToggling = false
-                    },
-                },
-            })
+            const id = record.id
+            row.cells.push(this.renderToggleCell(id))
             row.columnWidths = ['fill']
         }
 
         return row
     }
+    private renderToggleCell(id: any): ListCell {
+        return {
+            toggleInput: {
+                name: 'isSelected',
+                value: this.selectedRows[id] ?? false,
+                onChange: async (value) => {
+                    if (this.selectionMode !== 'single' || this.isToggling) {
+                        return
+                    }
+
+                    this.isToggling = true
+                    this.selectedRows[id] = value
+                    await this.deselectEverythingBut(id)
+                    this.isToggling = false
+                },
+            },
+        }
+    }
+
     public async deselectEverythingBut(id: string) {
         const records = this.activeRecordCardVc.getRecords()
         const promises: Promise<void>[] = []

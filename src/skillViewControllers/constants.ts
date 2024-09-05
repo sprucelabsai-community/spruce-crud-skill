@@ -10,7 +10,6 @@ export const locationListOptions: CrudListEntity<
     payload: {
         shouldOnlyShowWhereIAmEmployed: true,
     },
-    shouldRenderSearch: true,
     paging: {
         pageSize: 5,
         shouldPageClientSide: true,

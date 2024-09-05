@@ -44,10 +44,10 @@ export default class RootSkillViewTest extends AbstractCrudTest {
     protected static async rendersOrganizationsListCard() {
         crudAssert.masterSkillViewRendersList(this.vc, 'organizations', {
             pluralTitle: 'Organizations',
+            shouldRenderSearch: true,
             list: {
                 fqen: 'list-organizations::v2020_12_25',
                 responseKey: 'organizations',
-                shouldRenderSearch: true,
                 paging: {
                     pageSize: 5,
                     shouldPageClientSide: true,
@@ -70,13 +70,13 @@ export default class RootSkillViewTest extends AbstractCrudTest {
     protected static async rendersLocationsListCard() {
         crudAssert.masterSkillViewRendersList(this.vc, 'locations', {
             pluralTitle: 'Locations',
+            shouldRenderSearch: true,
             list: {
                 fqen: 'list-locations::v2020_12_25',
                 responseKey: 'locations',
                 payload: {
                     shouldOnlyShowWhereIAmEmployed: true,
                 },
-                shouldRenderSearch: true,
                 paging: {
                     pageSize: 5,
                     shouldPageClientSide: true,
@@ -99,10 +99,10 @@ export default class RootSkillViewTest extends AbstractCrudTest {
     protected static async rendersSkillsListCard() {
         crudAssert.masterSkillViewRendersList(this.vc, 'skills', {
             pluralTitle: 'Skills',
+            shouldRenderSearch: true,
             list: {
                 fqen: 'list-skills::v2020_12_25',
                 responseKey: 'skills',
-                shouldRenderSearch: true,
                 paging: {
                     pageSize: 5,
                     shouldPageClientSide: true,

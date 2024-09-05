@@ -52,11 +52,11 @@ export default class RootSkillViewController extends AbstractSkillViewController
             id: 'skills',
             pluralTitle: 'Skills',
             singularTitle: 'Skill',
+            shouldRenderSearch: true,
             list: {
                 fqen: 'list-skills::v2020_12_25',
                 responseKey: 'skills',
                 paging: PAGING,
-                shouldRenderSearch: true,
                 rowTransformer: (skill) => ({
                     id: skill.id,
                     cells: [
@@ -76,6 +76,7 @@ export default class RootSkillViewController extends AbstractSkillViewController
             id: 'locations',
             pluralTitle: 'Locations',
             singularTitle: 'Location',
+            shouldRenderSearch: true,
             list: locationListOptions,
         })
     }
@@ -85,11 +86,11 @@ export default class RootSkillViewController extends AbstractSkillViewController
             id: 'organizations',
             pluralTitle: 'Organizations',
             singularTitle: 'Organization',
+            shouldRenderSearch: true,
             list: {
                 fqen: 'list-organizations::v2020_12_25',
                 responseKey: 'organizations',
                 paging: PAGING,
-                shouldRenderSearch: true,
                 rowTransformer: (organization) => ({
                     id: organization.id,
                     cells: [

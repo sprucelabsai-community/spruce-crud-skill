@@ -82,6 +82,7 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
             pluralTitle: 'Skills',
             singularTitle: 'Skill',
             selectionMode: 'multiple',
+            shouldRenderSearch: true,
             list: {
                 fqen: 'list-installed-skills::v2020_12_25',
                 responseKey: 'skills',
