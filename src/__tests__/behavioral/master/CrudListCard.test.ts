@@ -195,7 +195,7 @@ export default class CrudListCardTest extends AbstractCrudTest {
         await this.loadWithSelectionModel('single')
         await this.toggleFirstRow()
         this.assertRowIsSelected(this.locationId)
-        await this.clickRowToggle(this.fakedLocations[1].id)
+        await this.clickRowToggle(this.locationId2)
         this.assertRowIsNotSelected(this.locationId)
     }
 
@@ -204,7 +204,7 @@ export default class CrudListCardTest extends AbstractCrudTest {
     protected static async canSelectMultipleRowsInMultiSelectionMode() {
         await this.loadWithSelectionModel('multiple')
         await this.toggleFirstRow()
-        await this.clickRowToggle(this.fakedLocations[1].id)
+        await this.toggleSecondRow()
         this.assertRowIsSelected(this.locationId)
     }
 
@@ -232,12 +232,27 @@ export default class CrudListCardTest extends AbstractCrudTest {
 
     @test()
     @seed('locations', 1)
-    protected static async remembersSelectionWithSelectionModeMultiple() {
+    protected static async remembersSelectionWithSelectionModeMultipleAndSearchingAndClearing() {
         await this.loadWithPagingAndSearch('multiple')
         await this.toggleFirstRow()
         await this.randomSearch()
         await this.clearSearch()
         this.assertRowIsSelected(this.locationId)
+    }
+
+    @test()
+    @seed('locations', 2)
+    protected static async doesNotReselectAfterSearchWhenSelectionModeIsSingleAndRowIsDeselectedAutomatically() {
+        await this.loadWithPagingAndSearch('single')
+        await this.toggleFirstRow()
+        await this.toggleSecondRow()
+        await this.randomSearch()
+        await this.clearSearch()
+        this.assertRowIsNotSelected(this.locationId)
+    }
+
+    private static get locationId2(): string {
+        return this.fakedLocations[1].id
     }
 
     private static async randomSearch() {
@@ -332,6 +347,10 @@ export default class CrudListCardTest extends AbstractCrudTest {
 
     private static assertRendersRow(id: string) {
         this.vc.assertRendersRow(id)
+    }
+
+    private static async toggleSecondRow() {
+        await this.clickRowToggle(this.locationId2)
     }
 
     private static get listVc() {
