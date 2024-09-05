@@ -193,7 +193,7 @@ export default class CrudListCardTest extends AbstractCrudTest {
     @seed('locations', 2)
     protected static async inSingleSelectionModeOnlyOneRowCanBeSelected() {
         await this.loadWithSelectionModel('single')
-        await this.clickRowToggle(this.locationId)
+        await this.toggleFirstRow()
         this.assertRowIsSelected(this.locationId)
         await this.clickRowToggle(this.fakedLocations[1].id)
         this.assertRowIsNotSelected(this.locationId)
@@ -203,7 +203,7 @@ export default class CrudListCardTest extends AbstractCrudTest {
     @seed('locations', 2)
     protected static async canSelectMultipleRowsInMultiSelectionMode() {
         await this.loadWithSelectionModel('multiple')
-        await this.clickRowToggle(this.locationId)
+        await this.toggleFirstRow()
         await this.clickRowToggle(this.fakedLocations[1].id)
         this.assertRowIsSelected(this.locationId)
     }
@@ -212,9 +212,9 @@ export default class CrudListCardTest extends AbstractCrudTest {
     @seed('locations', 1)
     protected static async searchingDoesNotChangeSelectedRows() {
         await this.loadWithPagingAndSearch()
-        await this.clickRowToggle(this.locationId)
-        await this.search(generateId())
-        await this.search('')
+        await this.toggleFirstRow()
+        await this.randomSearch()
+        await this.clearSearch()
 
         this.assertRowIsSelected(this.locationId)
     }
@@ -223,12 +223,19 @@ export default class CrudListCardTest extends AbstractCrudTest {
     @seed('locations', 1)
     protected static async doesNotReselectARowAfterSearch() {
         await this.loadWithPagingAndSearch()
-        await this.clickRowToggle(this.locationId)
-        await this.clickRowToggle(this.locationId)
-        await this.search(generateId())
-        await this.search('')
-
+        await this.toggleFirstRow()
+        await this.toggleFirstRow()
+        await this.randomSearch()
+        await this.clearSearch()
         this.assertRowIsNotSelected(this.locationId)
+    }
+
+    private static async randomSearch() {
+        await this.search(generateId())
+    }
+
+    private static async clearSearch() {
+        await this.search('')
     }
 
     private static async loadWithPagingAndSearch() {
@@ -291,6 +298,10 @@ export default class CrudListCardTest extends AbstractCrudTest {
 
     private static setupWithOrgEntity() {
         this.setupWithEntity(buildOrganizationListEntity())
+    }
+
+    private static async toggleFirstRow() {
+        await this.clickRowToggle(this.locationId)
     }
 
     private static setupWithEntity(entity: CrudListEntity<any, any>) {
