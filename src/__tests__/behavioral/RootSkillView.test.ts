@@ -97,7 +97,7 @@ export default class RootSkillViewTest extends AbstractCrudTest {
 
     @test()
     protected static async rendersSkillsListCard() {
-        await crudAssert.masterSkillViewRendersList(this.vc, 'skills', {
+        crudAssert.masterSkillViewRendersList(this.vc, 'skills', {
             pluralTitle: 'Skills',
             list: {
                 fqen: 'list-skills::v2020_12_25',
