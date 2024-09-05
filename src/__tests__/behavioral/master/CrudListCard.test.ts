@@ -241,9 +241,10 @@ export default class CrudListCardTest extends AbstractCrudTest {
     private static async loadWithPagingAndSearch() {
         const entity = this.buildLocationListEntity()
         entity.selectionMode = 'single'
+        entity.list.shouldRenderSearch = true
         entity.list.paging = {
             pageSize: 10,
-            shouldRenderSearch: true,
+            shouldPageClientSide: true,
         }
 
         this.setupWithEntity(entity)

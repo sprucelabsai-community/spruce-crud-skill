@@ -182,6 +182,7 @@ export interface CrudListEntity<
             | Promise<SchemaValues<EmitSchema>['target']>
         paging?: ActiveRecordPagingOptions
         clickRowDestination?: SkillViewControllerId
+        shouldRenderSearch?: boolean
     }
 }
 

@@ -56,6 +56,7 @@ export default class RootSkillViewController extends AbstractSkillViewController
                 fqen: 'list-skills::v2020_12_25',
                 responseKey: 'skills',
                 paging: PAGING,
+                shouldRenderSearch: true,
                 rowTransformer: (skill) => ({
                     id: skill.id,
                     cells: [
@@ -88,6 +89,7 @@ export default class RootSkillViewController extends AbstractSkillViewController
                 fqen: 'list-organizations::v2020_12_25',
                 responseKey: 'organizations',
                 paging: PAGING,
+                shouldRenderSearch: true,
                 rowTransformer: (organization) => ({
                     id: organization.id,
                     cells: [
@@ -114,5 +116,4 @@ export default class RootSkillViewController extends AbstractSkillViewController
 const PAGING: ActiveRecordPagingOptions = {
     pageSize: 5,
     shouldPageClientSide: true,
-    shouldRenderSearch: true,
 }
