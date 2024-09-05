@@ -95,11 +95,7 @@ export default class CrudListCardViewController extends AbstractViewController<C
                 onChange: async (value) => {
                     this.selectedRows[id] = value
 
-                    if (this.isToggling) {
-                        return
-                    }
-
-                    if (this.selectionMode === 'single') {
+                    if (!this.isToggling && this.selectionMode === 'single') {
                         this.isToggling = true
                         await this.deselectEverythingBut(id)
                         this.isToggling = false
