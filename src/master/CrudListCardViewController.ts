@@ -65,7 +65,6 @@ export default class CrudListCardViewController extends AbstractViewController<C
                 },
                 eventName: fqen,
                 shouldRenderSearch,
-                //@ts-ignore TODO
                 searchPlaceholder: `Search ${pluralTitle}...`,
                 ...activeOptions,
                 rowTransformer: this.renderRow.bind(this),
