@@ -4,7 +4,9 @@ import {
     SkillView,
     SkillViewControllerId,
     SkillViewControllerLoadOptions,
+    ViewControllerOptions,
 } from '@sprucelabs/heartwood-view-controllers'
+import { assertOptions } from '@sprucelabs/schema'
 import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
 import { test, assert, errorAssert, generateId } from '@sprucelabs/test-utils'
 import crudAssert, {
@@ -25,13 +27,17 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
     private static fakeSvc: SkillViewWithMasterView
     private static clickRowDestination?: SkillViewControllerId
     private static addDestination?: SkillViewControllerId
+    private static currentSkillViewId: SkillViewControllerId
 
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
         delete this.clickRowDestination
         delete this.addDestination
+        this.currentSkillViewId = generateId() as SkillViewControllerId
         this.views.setController('fake-with-master', SkillViewWithMasterView)
-        this.fakeSvc = this.views.Controller('fake-with-master', {})
+        this.fakeSvc = this.views.Controller('fake-with-master', {
+            currentSkillViewId: this.currentSkillViewId,
+        })
     }
 
     @test()
@@ -530,6 +536,15 @@ class SkillViewWithMasterView extends AbstractSkillViewController {
     public onWillLoad?: () => void
     private argsToSetOnLoad: { listId: string; args: Record<string, any> }[] =
         []
+    public currentSkillViewId: SkillViewControllerId
+
+    public constructor(options: ViewControllerOptions & SkillViewOptions) {
+        super(options)
+        const { currentSkillViewId } = assertOptions(options, [
+            'currentSkillViewId',
+        ])
+        this.currentSkillViewId = currentSkillViewId
+    }
 
     public dropInMasterSkillView(
         options: Partial<CrudMasterSkillViewControllerOptions>
@@ -538,8 +553,10 @@ class SkillViewWithMasterView extends AbstractSkillViewController {
         this.entities = (entities ?? [
             buildLocationListEntity(),
         ]) as CrudListEntity[]
+
         this.masterSkillView = this.Controller('crud.master-skill-view', {
             ...options,
+            currentSkillViewId: this.currentSkillViewId,
             entities: this.entities as any,
         })
     }
@@ -577,6 +594,10 @@ class SkillViewWithMasterView extends AbstractSkillViewController {
     }
 }
 
+interface SkillViewOptions {
+    currentSkillViewId?: SkillViewControllerId
+}
+
 declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.types' {
     interface SkillViewControllerMap {
         'fake-with-master': SkillViewWithMasterView
@@ -584,5 +605,9 @@ declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.typ
 
     interface ViewControllerMap {
         'fake-with-master': SkillViewWithMasterView
+    }
+
+    interface ViewControllerOptionsMap {
+        'fake-with-master': SkillViewOptions
     }
 }

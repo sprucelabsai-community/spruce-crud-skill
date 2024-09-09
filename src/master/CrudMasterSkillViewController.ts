@@ -35,6 +35,7 @@ export default class CrudMasterSkillViewController extends AbstractSkillViewCont
         options: ViewControllerOptions & CrudMasterSkillViewControllerOptions
     ) {
         super(options)
+
         const { entities } = assertOptions(options, ['entities'])
 
         this.options = removeUniversalViewOptions(options)
@@ -169,6 +170,7 @@ export interface CrudListEntity<
     pluralTitle: string
     singularTitle: string
     shouldRenderSearch?: boolean
+    addDestination?: CrudDestination
     list: {
         fqen: Fqen
         responseKey: ResponseKey
@@ -247,4 +249,9 @@ declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.typ
     interface ViewControllerOptionsMap {
         'crud.master-skill-view': CrudMasterSkillViewControllerOptions
     }
+}
+
+export interface CrudDestination {
+    id: SkillViewControllerId
+    args?: Record<string, any>
 }

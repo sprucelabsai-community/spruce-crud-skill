@@ -39,11 +39,11 @@ export default class CrudListCardViewController extends AbstractViewController<C
         this.entity = entity
         this.onAddClickHandler = onAddClick
         this.onClickRowHandler = onClickRow
-        this.activeRecordCardVc = this.ActiveRecordCard(entity)
+        this.activeRecordCardVc = this.ActiveRecordCard()
     }
 
-    private ActiveRecordCard(entity: CrudListEntity<any, any>) {
-        const { list, pluralTitle, id, shouldRenderSearch } = entity
+    private ActiveRecordCard() {
+        const { list, pluralTitle, id, shouldRenderSearch } = this.entity
         const { fqen, ...activeOptions } = list
 
         return this.Controller(
@@ -65,6 +65,8 @@ export default class CrudListCardViewController extends AbstractViewController<C
                 },
                 eventName: fqen,
                 shouldRenderSearch,
+                //@ts-ignore TODO
+                searchPlaceholder: `Search ${pluralTitle}...`,
                 ...activeOptions,
                 rowTransformer: this.renderRow.bind(this),
             })
@@ -81,8 +83,6 @@ export default class CrudListCardViewController extends AbstractViewController<C
             row.cells.push(this.renderToggleCell(id))
             row.columnWidths = ['fill']
         }
-
-        console.log('rendering row', row, this.selectedRows)
 
         return row
     }
@@ -144,7 +144,7 @@ export default class CrudListCardViewController extends AbstractViewController<C
     }
 
     private renderFooter(): CardFooter | null {
-        if (!this.onAddClickHandler) {
+        if (!this.onAddClickHandler && !this.entity.addDestination) {
             return null
         }
         return {
@@ -153,9 +153,20 @@ export default class CrudListCardViewController extends AbstractViewController<C
                     id: 'add',
                     label: `Add ${this.entity.singularTitle}`,
                     type: 'primary',
-                    onClick: () => this.onAddClickHandler?.(this.entity.id),
+                    onClick: this.handleClickAdd.bind(this),
                 },
             ],
+        }
+    }
+
+    private async handleClickAdd() {
+        const { id, addDestination } = this.entity
+        await this.onAddClickHandler?.(id)
+        if (addDestination) {
+            await this.router?.redirect(addDestination.id, {
+                action: 'create',
+                entity: id,
+            })
         }
     }
 

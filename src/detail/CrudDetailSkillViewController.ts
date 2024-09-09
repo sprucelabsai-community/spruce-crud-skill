@@ -49,6 +49,7 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
             for (const related of entity.relatedEntities ?? []) {
                 const listCardVc = this.Controller('crud.list-card', {
                     entity: related,
+                    currentSkillViewId: 'aoeu',
                 })
 
                 if (!this.relatedEntityVcsByEntityId[entity.id]) {

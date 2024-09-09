@@ -1,6 +1,7 @@
 import {
     activeRecordCardAssert,
     ActiveRecordCardViewController,
+    buttonAssert,
     interactor,
     ListRow,
     SkillViewControllerId,
@@ -10,6 +11,7 @@ import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
 import { test, assert, generateId } from '@sprucelabs/test-utils'
 import { ClickAddHandler } from '../../../master/CrudListCardViewController'
 import {
+    CrudDestination,
     CrudListEntity,
     CrudListSelectionMode,
 } from '../../../master/CrudMasterSkillViewController'
@@ -28,8 +30,10 @@ export default class CrudListCardTest extends AbstractCrudTest {
 
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
-        this.setupWithEntity(this.buildLocationListEntity())
+
         ActiveRecordCardViewController.searchDebounceMs = 0
+        this.setupWithEntity(this.buildLocationListEntity())
+        delete this.onAddClickHandler
     }
 
     @test()
@@ -40,7 +44,7 @@ export default class CrudListCardTest extends AbstractCrudTest {
 
     @test()
     protected static async rendersAnActiveRecordCard() {
-        activeRecordCardAssert.isActiveRecordCard(this.vc)
+        activeRecordCardAssert.rendersAsActiveRecordCard(this.vc)
     }
 
     @test()
@@ -249,6 +253,63 @@ export default class CrudListCardTest extends AbstractCrudTest {
         await this.randomSearch()
         await this.clearSearch()
         this.assertRowIsNotSelected(this.locationId)
+    }
+
+    @test()
+    protected static async canDropInAddDestination() {
+        const destination: CrudDestination = { id: 'crud.detail' }
+        await this.setupAndLoadWithDestination(destination)
+        buttonAssert.cardRendersButton(this.vc, 'add')
+    }
+
+    @test('add redirects to destination one', 'crud.detail')
+    @test('add redirects to destination two', 'crud.root')
+    protected static async clickingAddRedirectsToAddDestination(
+        destinationId: SkillViewControllerId
+    ) {
+        const destination: CrudDestination = { id: destinationId }
+        await this.setupAndLoadWithDestination(destination)
+        await vcAssert.assertActionRedirects({
+            action: () => interactor.clickButton(this.vc, 'add'),
+            router: this.views.getRouter(),
+            destination,
+        })
+    }
+
+    @test()
+    protected static async passesThroughExpectedArgsToAddRedirect() {
+        await this.setupAndLoadWithDestination({ id: 'crud.detail' })
+        await vcAssert.assertActionRedirects({
+            action: () => interactor.clickButton(this.vc, 'add'),
+            router: this.views.getRouter(),
+            destination: {
+                args: {
+                    entity: this.entity.id,
+                    action: 'create',
+                },
+            },
+        })
+    }
+
+    @test()
+    protected static async rendersExpectedPlaceholderIfSearchIsEnabled() {
+        const entity = this.buildLocationListEntity()
+        entity.shouldRenderSearch = true
+        this.setupWithEntity(entity)
+        await this.load()
+        const expected = `Search ${entity.pluralTitle}...`
+        const formVc = this.vc.getSearchFormVc()
+        const field = formVc.getField('search')
+        assert.isEqual(field.renderOptions.placeholder, expected)
+    }
+
+    private static async setupAndLoadWithDestination(
+        destination: CrudDestination
+    ) {
+        const entity = this.buildLocationListEntity()
+        entity.addDestination = destination
+        this.setupWithEntity(entity)
+        await this.load()
     }
 
     private static get locationId2(): string {

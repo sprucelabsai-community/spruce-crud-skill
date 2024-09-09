@@ -23,13 +23,6 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
     private static addDestination?: SkillViewControllerId
     private static lastEntities?: CrudListEntity<any, any>[]
 
-    protected static async beforeEach() {
-        await super.beforeEach()
-        delete this.lastEntities
-        delete this.clickRowDestination
-        delete this.addDestination
-    }
-
     @test()
     protected static async throwsWithMissingEntities() {
         const err = assert.doesThrow(() =>
@@ -226,6 +219,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
     @test()
     @seed('locations', 1)
     protected static async clickingOnRowDoesNothingIfNoDestinationSet() {
+        delete this.clickRowDestination
         this.setupWith1EntityAndGetId()
         await this.load()
         await this.clickFirstRowOfFirstList()
@@ -248,6 +242,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
 
     @test()
     protected static async doesNotRenderAddButtonIfNoAddDestination() {
+        delete this.addDestination
         this.setupVcWithTotalEntities(1)
         await this.load()
         buttonAssert.cardDoesNotRenderButton(this.listCardVcs[0], 'add')
@@ -388,8 +383,10 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
     private static assertThrowsMissingEntityParameters(
         options: Record<string, any>
     ) {
-        //@ts-ignore
-        const err = assert.doesThrow(() => this.Vc(options))
+        const err = assert.doesThrow(() =>
+            //@ts-ignore
+            this.Vc({ ...options })
+        )
 
         errorAssert.assertError(err, 'MISSING_PARAMETERS', {
             parameters: [

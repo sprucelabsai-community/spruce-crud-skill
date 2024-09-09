@@ -104,6 +104,12 @@ export default class MockCrudListCard extends CrudListCardViewController {
     }
 
     public async search(term: string) {
+        const formVc = this.getSearchFormVc()
+
+        await formVc.setValue('search', term)
+    }
+
+    public getSearchFormVc() {
         const formVc = (
             this.activeRecordCardVc as MockActiveRecordCard
         ).getSearchFormVc()
@@ -113,6 +119,6 @@ export default class MockCrudListCard extends CrudListCardViewController {
             `You have to enable search on the list card to use this method`
         )
 
-        await formVc.setValue('search', term)
+        return formVc
     }
 }
