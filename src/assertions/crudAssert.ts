@@ -181,10 +181,7 @@ const crudAssert = {
 
         await views?.load(skillView)
 
-        const cardListVc = await this.masterSkillViewRendersList(
-            skillView,
-            entityId
-        )
+        const cardListVc = this.masterSkillViewRendersList(skillView, entityId)
 
         if (expectedTarget) {
             assert.isEqualDeep(
@@ -449,10 +446,23 @@ function assertRelatedListCardOptionsEqual(
         )
 
         delete expectedOptions.list?.target
+    }
 
-        if (Object.keys(expectedOptions.list!).length === 0) {
-            delete expectedOptions.list
-        }
+    if (actual?.list.buildPayload) {
+        assert.isEqualDeep(
+            relatedCardVc.activeRecordCardVc.getPayload(),
+            expectedOptions.list?.payload,
+            `The payload you expected in your related entity does not match what I found!`
+        )
+
+        delete expectedOptions.list?.payload
+    }
+
+    if (
+        expectedOptions?.list &&
+        Object.keys(expectedOptions.list!).length === 0
+    ) {
+        delete expectedOptions.list
     }
 
     if (Object.keys(expectedOptions).length > 0) {

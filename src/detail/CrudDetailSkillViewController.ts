@@ -153,9 +153,12 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
         values: Record<string, any> | undefined
     ) {
         const relatedVcs = this.relatedEntityVcsByEntityId[this.entityId!] ?? []
+        const promises: Promise<void>[] = []
         for (const relatedCardVc of relatedVcs) {
-            await relatedCardVc?.load(relatedOptions, values)
+            promises.push(relatedCardVc?.load(relatedOptions, values))
         }
+
+        await Promise.all(promises)
     }
 
     private async loadDetailsFormCard(

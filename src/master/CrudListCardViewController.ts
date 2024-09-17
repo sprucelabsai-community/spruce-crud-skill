@@ -188,6 +188,12 @@ export default class CrudListCardViewController extends AbstractViewController<C
         if (builtTarget) {
             this.activeRecordCardVc.setTarget(builtTarget)
         }
+
+        const builtPayload = await this.entity.list.buildPayload?.(values)
+        if (builtPayload) {
+            this.activeRecordCardVc.setPayload(builtPayload)
+        }
+
         await this.activeRecordCardVc.load()
     }
 

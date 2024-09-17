@@ -571,6 +571,92 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
         })
     }
 
+    @test()
+    protected static async throwsWhenRelatedEntityPayloadDoesNotMatch() {
+        await this.assertDetailListPayloadMissmatchThrows(
+            {
+                shouldOnlyShowWhereIAmEmployed: false,
+            },
+            {
+                shouldOnlyShowWhereIAmEmployed: true,
+            }
+        )
+    }
+
+    @test()
+    protected static async throwsWhenRelatedPayloadDoesNotMatchOnSecondField() {
+        await this.assertDetailListPayloadMissmatchThrows(
+            {
+                shouldOnlyShowWhereIAmEmployed: true,
+                paging: {
+                    pageSize: 3,
+                },
+            },
+            {
+                shouldOnlyShowWhereIAmEmployed: true,
+                paging: {
+                    pageSize: 5,
+                },
+            }
+        )
+    }
+
+    @test()
+    protected static async passesWhenRelatedEntityPayloadMatches() {
+        const payload = {
+            shouldOnlyShowWhereIAmEmployed: true,
+        }
+
+        this.dropInDetailViewWithLocationAndOneRelated()
+        this.setFirstRelatedBuiltPayload(payload)
+
+        await this.assertRelatedExistsInFirstEntity(this.firstRelatedEntityId, {
+            list: {
+                //@ts-ignore
+                payload,
+            },
+        })
+    }
+
+    @test()
+    protected static async assertListPayloadMatchingOnPayloadStillThrowsWhenOtherOptionsDontMatch() {
+        this.dropInDetailViewWithLocationAndOneRelated()
+        const payload = {
+            shouldOnlyShowWhereIAmEmployed: true,
+        }
+
+        this.setFirstRelatedBuiltPayload(payload)
+
+        await this.assertThrowsWhenFirstRelatedOptionsDontMatch({
+            pluralTitle: generateId(),
+            list: {
+                //@ts-ignore
+                payload,
+            },
+        })
+    }
+
+    private static async assertDetailListPayloadMissmatchThrows(
+        actual: SpruceSchemas.Mercury.v2020_12_25.ListLocationsEmitPayload,
+        expected: SpruceSchemas.Mercury.v2020_12_25.ListLocationsEmitPayload
+    ) {
+        this.dropInDetailViewWithLocationAndOneRelated()
+        this.setFirstRelatedBuiltPayload(actual)
+
+        await this.assertThrowsWhenFirstRelatedOptionsDontMatch({
+            list: {
+                //@ts-ignore
+                payload: expected,
+            },
+        })
+    }
+
+    private static setFirstRelatedBuiltPayload(
+        actual: SpruceSchemas.Mercury.v2020_12_25.ListLocationsEmitPayload
+    ) {
+        this.firstRelatedEntity.list.buildPayload = () => actual
+    }
+
     private static async loadAndAssertPayloadsDoNotMatch(
         actual: CreateOrgPayload,
         expected: CreateOrgPayload

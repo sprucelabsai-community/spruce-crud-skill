@@ -117,6 +117,22 @@ export default class CrudListCardTest extends AbstractCrudTest {
     }
 
     @test()
+    protected static async buildPayloadGetsValuesOnLoad() {
+        this.setupWithOrgEntity()
+        let passedValues: Record<string, any> | undefined
+
+        const values = { [generateId()]: generateId() }
+
+        this.entity.list.buildPayload = (values) => {
+            passedValues = values
+            return {}
+        }
+
+        await this.load(values)
+        assert.isEqualDeep(passedValues, values)
+    }
+
+    @test()
     protected static async responseToBuildTargetSetsToActiveRecordCardTarget() {
         this.setupWithEntity(this.buildLocationListEntity())
         const target = { organizationId: generateId() }
