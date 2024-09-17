@@ -183,6 +183,10 @@ export interface CrudListEntity<
         | SchemaValues<EmitSchema>['target']
             /** @ts-ignore */
             | Promise<SchemaValues<EmitSchema>['target']>
+        buildPayload?: (detailValues?: Record<string, any>) => /** @ts-ignore */
+        | SchemaValues<EmitSchema>['payload']
+            /** @ts-ignore */
+            | Promise<SchemaValues<EmitSchema>['payload']>
         paging?: ActiveRecordPagingOptions
         clickRowDestination?: SkillViewControllerId
     }

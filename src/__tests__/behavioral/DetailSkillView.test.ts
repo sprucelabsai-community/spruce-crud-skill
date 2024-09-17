@@ -49,7 +49,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
     @test()
     protected static async buildsLocationTarget() {
         const locationId = this.fakedLocations[0].id
-        await crudAssert.detailLoadTargetEquals({
+        await crudAssert.detailLoadTargetAndPayloadEquals({
             skillView: this.vc,
             recordId: locationId,
             entityId: 'locations',
@@ -62,7 +62,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
     @test()
     protected static async buildsOrganizationTarget() {
         const organizationId = this.fakedOrganizations[0].id
-        await crudAssert.detailLoadTargetEquals({
+        await crudAssert.detailLoadTargetAndPayloadEquals({
             skillView: this.vc,
             recordId: organizationId,
             entityId: 'organizations',

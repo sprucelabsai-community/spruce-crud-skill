@@ -186,11 +186,13 @@ const crudAssert = {
             entityId
         )
 
-        assert.isEqualDeep(
-            cardListVc.activeRecordCardVc.getTarget(),
-            expectedTarget,
-            `The target of list ${entityId} is not being set to the expected value. Try 'this.masterSkillView.setListTarget(...)'`
-        )
+        if (expectedTarget) {
+            assert.isEqualDeep(
+                cardListVc.activeRecordCardVc.getTarget(),
+                expectedTarget,
+                `The target of list ${entityId} is not being set to the expected value. Try 'this.masterSkillView.setListTarget(...)'`
+            )
+        }
     },
 
     skillViewRendersDetailView(
@@ -296,22 +298,27 @@ const crudAssert = {
         )
     },
 
-    async detailLoadTargetEquals(options: {
-        skillView: SkillViewController
-        entityId: string
-        recordId?: string
-        expectedTarget: Record<string, any>
-    }) {
-        const { skillView, recordId, expectedTarget, entityId } = assertOptions(
-            options,
-            ['skillView', 'entityId', 'recordId', 'expectedTarget']
-        )
+    async detailLoadTargetAndPayloadEquals(
+        options: AssertDetailLoadTargetPayloadOptions
+    ) {
+        const {
+            skillView,
+            recordId,
+            expectedTarget,
+            expectedPayload,
+            entityId,
+        } = assertOptions(options, ['skillView', 'entityId', 'recordId'])
+
+        if (!expectedPayload && !expectedTarget) {
+            assertOptions(options, ['expectedTarget', 'expectedPayload'])
+        }
 
         const detailSvc = this.skillViewRendersDetailView(skillView)
         detailSvc.relatedEntityVcsByEntityId = {}
 
         const client = await detailSvc.connectToApi()
         let passedTarget: Record<string, any> | undefined
+        let passedPayload: Record<string, any> | undefined
 
         const originalEmitAndFlattenResponses =
             client.emitAndFlattenResponses.bind(client)
@@ -322,16 +329,27 @@ const crudAssert = {
             targetAndPayload: Record<string, any>
         ) => {
             passedTarget = targetAndPayload?.target
+            passedPayload = targetAndPayload?.payload
             return originalEmitAndFlattenResponses(_, targetAndPayload)
         }
 
         await loadSkillViewWithDetailView(skillView, entityId, recordId)
 
-        assert.isEqualDeep(
-            passedTarget,
-            expectedTarget,
-            `The load target does not match the expected.`
-        )
+        if (expectedPayload) {
+            assert.isEqualDeep(
+                expectedPayload,
+                passedPayload,
+                `The load payload does not match the expected!`
+            )
+        }
+
+        if (expectedTarget) {
+            assert.isEqualDeep(
+                passedTarget,
+                expectedTarget,
+                `The load target does not match the expected.`
+            )
+        }
     },
 
     async detailRendersRelatedEntity(options: {
@@ -491,3 +509,11 @@ export type ExpectedListEntityOptions<
 
 export type ExpectedDetailSkilViewOptions =
     RecursivePartial<DetailSkillViewControllerOptions>
+
+export interface AssertDetailLoadTargetPayloadOptions {
+    skillView: SkillViewController
+    entityId: string
+    recordId?: string
+    expectedTarget?: Record<string, any>
+    expectedPayload?: Record<string, any>
+}

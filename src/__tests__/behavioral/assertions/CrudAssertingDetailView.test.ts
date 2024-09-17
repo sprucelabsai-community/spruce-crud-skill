@@ -4,7 +4,8 @@ import {
     SkillViewControllerId,
     SkillViewControllerLoadOptions,
 } from '@sprucelabs/heartwood-view-controllers'
-import { SkillEventContract } from '@sprucelabs/mercury-types'
+import { MercuryTestClient } from '@sprucelabs/mercury-client'
+import { SkillEventContract, SpruceSchemas } from '@sprucelabs/mercury-types'
 import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
 import {
     test,
@@ -13,7 +14,9 @@ import {
     generateId,
     RecursivePartial,
 } from '@sprucelabs/test-utils'
-import crudAssert from '../../../assertions/crudAssert'
+import crudAssert, {
+    AssertDetailLoadTargetPayloadOptions,
+} from '../../../assertions/crudAssert'
 import CrudDetailSkillViewController, {
     CrudDetailSkillViewArgs,
     CrudDetailEntity,
@@ -160,15 +163,31 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     }
 
     @test()
-    protected static async assertLoadTargetThrowsWithMissing() {
+    protected static async assertLoadTargetAndPayloadThrowsWithMissing() {
         this.dropInDetailSkillView()
         const err = await assert.doesThrowAsync(() =>
             //@ts-ignore
-            crudAssert.detailLoadTargetEquals()
+            crudAssert.detailLoadTargetAndPayloadEquals()
         )
 
         errorAssert.assertError(err, 'MISSING_PARAMETERS', {
-            parameters: ['skillView', 'entityId', 'recordId', 'expectedTarget'],
+            parameters: ['skillView', 'entityId', 'recordId'],
+        })
+    }
+
+    @test()
+    protected static async assertLoadTargetAndPayloadThrowsWithoutOneOrTheOther() {
+        this.dropInDetailSkillView()
+        const err = await assert.doesThrowAsync(() =>
+            crudAssert.detailLoadTargetAndPayloadEquals({
+                skillView: this.vc,
+                entityId: generateId(),
+                recordId: generateId(),
+            })
+        )
+
+        errorAssert.assertError(err, 'MISSING_PARAMETERS', {
+            parameters: ['expectedTarget', 'expectedPayload'],
         })
     }
 
@@ -176,7 +195,7 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     protected static async throwsIfTargetDoesNotMatchLocationId() {
         await this.eventFaker.fakeGetLocation()
         this.dropInDetailSkillView()
-        await this.assertLoadTargetDoesNotMatch({
+        await this.assertLoadTargetAndPayloadDoNotMatch({
             locationId: generateId(),
         })
     }
@@ -197,7 +216,7 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
             entities: [entity],
         })
 
-        await this.assertLoadTargetDoesNotMatch({
+        await this.assertLoadTargetAndPayloadDoNotMatch({
             organizationId: generateId(),
         })
     }
@@ -214,7 +233,7 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
             entities: [{ ...entity }],
         })
 
-        await this.assertDetailLoadTargetEquals({
+        await this.assertDetailLoadTargetAndPayloadEquals({
             recordId: this.locationId,
             expectedTarget: {
                 locationId: this.locationId,
@@ -243,7 +262,10 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
             organizationId: this.fakedOrganizations[0].id,
         }
 
-        await this.assertDetailLoadTargetEquals({ recordId, expectedTarget })
+        await this.assertDetailLoadTargetAndPayloadEquals({
+            recordId,
+            expectedTarget,
+        })
     }
 
     @test()
@@ -317,10 +339,9 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     @test()
     protected static async throwsIfRelatedEntitiesOptionsDontMatch() {
         this.dropInDetailViewWithLocationAndOneRelated()
-        const expected = {
+        await this.assertThrowsWhenFirstRelatedOptionsDontMatch({
             pluralTitle: generateId(),
-        }
-        await this.assertThrowsWhenFirstRelatedOptionsDontMatch(expected)
+        })
     }
 
     @test()
@@ -511,6 +532,66 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
         assert.isEqualDeep(passedValues, this.fakedLocations[0])
     }
 
+    @test()
+    protected static async throwsWhenLoadPayloadDoesNotMatchOnSingleField() {
+        await this.loadAndAssertPayloadsDoNotMatch(
+            {
+                name: generateId(),
+            },
+            {
+                name: generateId(),
+            }
+        )
+    }
+
+    @test()
+    protected static async throwsWhenLoadPayloadDoesNotMatchOnSecondField() {
+        const name = generateId()
+        await this.loadAndAssertPayloadsDoNotMatch(
+            {
+                name,
+                isPublic: true,
+            },
+            {
+                name,
+                isPublic: false,
+            }
+        )
+    }
+
+    @test()
+    protected static async passesWhenLoadPayloadDoesMatch() {
+        const payload = {
+            name: generateId(),
+        }
+
+        this.dropInDetailViewWithCreatOrgEventAndOneRelated(payload)
+
+        await this.assertDetailLoadTargetAndPayloadEquals({
+            expectedPayload: payload,
+        })
+    }
+
+    private static async loadAndAssertPayloadsDoNotMatch(
+        actual: CreateOrgPayload,
+        expected: CreateOrgPayload
+    ) {
+        this.dropInDetailViewWithCreatOrgEventAndOneRelated(actual)
+        await this.assertLoadTargetAndPayloadDoNotMatch(undefined, expected)
+    }
+
+    private static dropInDetailViewWithCreatOrgEventAndOneRelated(
+        payload: CreateOrgPayload
+    ) {
+        this.dropInDetailViewWithLocationAndOneRelated()
+
+        this.firstEntity.load = {
+            fqen: `create-organization::v2020_12_25`,
+            buildPayload: () => payload,
+            responseKey: 'organization',
+        }
+    }
+
     private static async assertFirstEntityAndFirstRelatedRendersRow(
         recordId?: string
     ) {
@@ -620,30 +701,29 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
         )
     }
 
-    private static async assertDetailLoadTargetEquals(options: {
-        recordId?: string
-        expectedTarget: Record<string, any>
-        entityId?: string
-    }) {
-        const { recordId, expectedTarget, entityId } = options
-        await crudAssert.detailLoadTargetEquals({
+    private static async assertDetailLoadTargetAndPayloadEquals(
+        options: Partial<AssertDetailLoadTargetPayloadOptions>
+    ) {
+        await crudAssert.detailLoadTargetAndPayloadEquals({
             skillView: this.vc,
-            recordId,
-            expectedTarget,
-            entityId: entityId ?? this.entities[0].id,
+            entityId: this.firstEntityId,
+            recordId: this.locationId,
+            ...options,
         })
     }
 
-    private static async assertLoadTargetDoesNotMatch(
-        expectedTarget: Record<string, any>
+    private static async assertLoadTargetAndPayloadDoNotMatch(
+        expectedTarget?: Record<string, any>,
+        expectedPayload?: Record<string, any>
     ) {
         await assert.doesThrowAsync(
             () =>
-                this.assertDetailLoadTargetEquals({
+                this.assertDetailLoadTargetAndPayloadEquals({
                     recordId: generateId(),
                     expectedTarget,
+                    expectedPayload,
                 }),
-            'target does not match'
+            expectedPayload ? 'payload does not match' : 'target does not match'
         )
     }
 
@@ -655,6 +735,10 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
 
     private static get firstEntityId(): string {
         return this.entities[0].id
+    }
+
+    private static get firstEntity() {
+        return this.entities[0]
     }
 
     private static dropInDetailSkillView(
@@ -727,3 +811,5 @@ declare module '@sprucelabs/heartwood-view-controllers/build/types/heartwood.typ
         'fake-with-detail': SkillViewWithDetailView
     }
 }
+
+type CreateOrgPayload = SpruceSchemas.Mercury.v2020_12_25.CreateOrgEmitPayload

@@ -173,12 +173,23 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
         const { load } = entity
         const { buildTarget, fqen, responseKey } = load
 
-        const target = await buildTarget(recordId)
+        const target = await buildTarget?.(recordId)
+        const payload = await load.buildPayload?.()
         const client = await this.connectToApi()
-        const [results] = await client.emitAndFlattenResponses(fqen, {
-            //@ts-ignore
-            target,
-        })
+        const targetAndPayload: Record<string, any> = {}
+
+        if (target) {
+            targetAndPayload.target = target
+        }
+
+        if (payload) {
+            targetAndPayload.payload = payload
+        }
+
+        const [results] = await client.emitAndFlattenResponses(
+            fqen,
+            targetAndPayload as any
+        )
 
         return results[responseKey]
     }
@@ -235,7 +246,10 @@ export interface CrudDetailEntity {
     load: {
         fqen: EventName
         responseKey: string
-        buildTarget: (
+        buildTarget?: (
+            recordId: string
+        ) => Record<string, any> | Promise<Record<string, any>>
+        buildPayload?: (
             recordId: string
         ) => Record<string, any> | Promise<Record<string, any>>
     }
