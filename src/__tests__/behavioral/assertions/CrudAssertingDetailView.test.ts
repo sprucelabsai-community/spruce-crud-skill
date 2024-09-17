@@ -4,7 +4,6 @@ import {
     SkillViewControllerId,
     SkillViewControllerLoadOptions,
 } from '@sprucelabs/heartwood-view-controllers'
-import { MercuryTestClient } from '@sprucelabs/mercury-client'
 import { SkillEventContract, SpruceSchemas } from '@sprucelabs/mercury-types'
 import { fake, seed } from '@sprucelabs/spruce-test-fixtures'
 import {
