@@ -1,3 +1,10 @@
+# [7.4.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.3.0...v7.4.0) (2024-09-17)
+
+
+### Features
+
+* related entities in detail view now can build and assert against built payload ([eefe467](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/eefe467))
+
 # [7.3.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.2.17...v7.3.0) (2024-09-17)
 
 
