@@ -42,7 +42,7 @@ jobs:
           name: "Modify package.json for npm"
           command: |
             mv package.json package.json.orig && cp package-utils.json package.json
-            sed -i s/{{version}}/`grep \"version\": package.json.orig|cut -d\" -f4`/ package.json
+            sed -i "s/{{version}}/$(grep -oP '(?<="version": ")[0-9][^"]*' package.json.orig | head -n1)/" package.json
             npm publish
   upgrade:
     docker:
