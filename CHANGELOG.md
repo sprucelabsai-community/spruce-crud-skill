@@ -1,3 +1,10 @@
+# [7.3.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.2.17...v7.3.0) (2024-09-17)
+
+
+### Features
+
+* detail view can assert load payload. detail load target is now optional ([d69ad25](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/d69ad25))
+
 ## [7.2.17](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.2.16...v7.2.17) (2024-09-17)
 
 ## [7.2.16](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.2.15...v7.2.16) (2024-09-13)
