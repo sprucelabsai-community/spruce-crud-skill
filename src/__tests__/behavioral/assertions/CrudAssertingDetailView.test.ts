@@ -331,7 +331,7 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
         })
 
         await this.assertRelatedExistsInFirstEntity(
-            this.entities[0].relatedEntities![1].id
+            this.firstEntity.relatedEntities![1].id
         )
     }
 
@@ -665,7 +665,7 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     }
 
     private static get firstRelatedEntity() {
-        return this.entities[0].relatedEntities![0]
+        return this.firstEntity.relatedEntities![0]
     }
 
     private static async assertRelatedExistsInFirstEntity(

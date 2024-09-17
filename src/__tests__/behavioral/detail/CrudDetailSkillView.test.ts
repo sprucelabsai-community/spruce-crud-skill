@@ -131,7 +131,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
     @test()
     protected static async detailCardSentFirstEntity() {
         await this.loadWithEntity()
-        this.detailFormCardVc.assertFormOptionsEqual(this.entities[0].form)
+        this.detailFormCardVc.assertFormOptionsEqual(this.firstEntity.form)
     }
 
     @test()
@@ -207,6 +207,22 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
     protected static async emitsLoadOrganizationEventOnLoadIfIdSent() {
         this.setupDetailViewWithOrganizationEntity()
         await this.loadWithRecordId(this.organizationId)
+    }
+
+    @test()
+    protected static async loadBuildPayloadGetsTheRecordId() {
+        let passedRecordId: string | undefined
+        this.firstEntity.load.buildPayload = async (recordId) => {
+            passedRecordId = recordId
+            return undefined
+        }
+
+        await this.loadWithRecordId(this.locationId)
+        assert.isEqual(
+            passedRecordId,
+            this.locationId,
+            `Record id not passed to buildPayload`
+        )
     }
 
     @test()
@@ -534,6 +550,10 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
 
     private static get detailFormVc() {
         return this.detailFormCardVc.getFormVc()
+    }
+
+    private static get firstEntity() {
+        return this.entities[0]
     }
 }
 

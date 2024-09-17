@@ -174,7 +174,7 @@ export default class CrudDetailSkillViewController extends AbstractSkillViewCont
         const { buildTarget, fqen, responseKey } = load
 
         const target = await buildTarget?.(recordId)
-        const payload = await load.buildPayload?.()
+        const payload = await load.buildPayload?.(recordId)
         const client = await this.connectToApi()
         const targetAndPayload: Record<string, any> = {}
 
