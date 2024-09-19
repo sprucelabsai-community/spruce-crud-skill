@@ -189,6 +189,7 @@ export interface CrudListEntity<
             | Promise<SchemaValues<EmitSchema>['payload']>
         paging?: ActiveRecordPagingOptions
         clickRowDestination?: SkillViewControllerId
+        isRowSelected?: (row: Response[ResponseKey][number]) => boolean
     }
 }
 

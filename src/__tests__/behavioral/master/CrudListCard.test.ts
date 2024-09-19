@@ -181,7 +181,7 @@ export default class CrudListCardTest extends AbstractCrudTest {
     @test()
     @seed('locations', 1)
     protected static async rendersToggelIfSelectionModeIsSingle() {
-        await this.loadWithSelectionModel('single')
+        await this.loadWithSelectionMode('single')
         this.vc.assertRendersToggle(this.locationId)
     }
 
@@ -191,14 +191,14 @@ export default class CrudListCardTest extends AbstractCrudTest {
     protected static async doesNotRenderToggleIfSelectionModeIsNotSet(
         selectionMode?: CrudListSelectionMode
     ) {
-        await this.loadWithSelectionModel(selectionMode)
+        await this.loadWithSelectionMode(selectionMode)
         this.vc.assertDoesNotRenderToggle(this.locationId)
     }
 
     @test()
     @seed('locations', 1)
     protected static async rowsWithToggleSizeAsExpected() {
-        await this.loadWithSelectionModel('single')
+        await this.loadWithSelectionMode('single')
         this.assertColumnWidths(['fill'])
     }
 
@@ -212,7 +212,7 @@ export default class CrudListCardTest extends AbstractCrudTest {
     @test()
     @seed('locations', 2)
     protected static async inSingleSelectionModeOnlyOneRowCanBeSelected() {
-        await this.loadWithSelectionModel('single')
+        await this.loadWithSelectionMode('single')
         await this.toggleFirstRow()
         this.assertRowIsSelected(this.locationId)
         await this.clickRowToggle(this.locationId2)
@@ -222,7 +222,7 @@ export default class CrudListCardTest extends AbstractCrudTest {
     @test()
     @seed('locations', 2)
     protected static async canSelectMultipleRowsInMultiSelectionMode() {
-        await this.loadWithSelectionModel('multiple')
+        await this.loadWithSelectionMode('multiple')
         await this.toggleFirstRow()
         await this.toggleSecondRow()
         this.assertRowIsSelected(this.locationId)
@@ -311,12 +311,47 @@ export default class CrudListCardTest extends AbstractCrudTest {
     protected static async rendersExpectedPlaceholderIfSearchIsEnabled() {
         const entity = this.buildLocationListEntity()
         entity.shouldRenderSearch = true
-        this.setupWithEntity(entity)
-        await this.load()
+        await this.setupAndLoadWithEntity(entity)
         const expected = `Search ${entity.pluralTitle}...`
         const formVc = this.vc.getSearchFormVc()
         const field = formVc.getField('search')
         assert.isEqual(field.renderOptions.placeholder, expected)
+    }
+
+    @test()
+    @seed('locations', 1)
+    protected static async isRowSelectedGetsHitForFirstRecord() {
+        const entity = this.buildLocationListEntityWithSelectionMode('single')
+        let wasHit = false
+        entity.list.isRowSelected = () => {
+            wasHit = true
+            return true
+        }
+        await this.setupAndLoadWithEntity(entity)
+        this.vc.assertRowSelected(this.locationId)
+        assert.isEqual(wasHit, true, `IsRowSelected was not hit`)
+    }
+
+    @test()
+    @seed('locations', 1)
+    protected static async isRowSelectedGetsRecord() {
+        const entity = this.buildLocationListEntityWithSelectionMode('single')
+        entity.list.isRowSelected = (record) => {
+            assert.isEqualDeep(record, this.fakedLocations[0])
+            return true
+        }
+        await this.setupAndLoadWithEntity(entity)
+    }
+
+    @test()
+    @seed('locations', 1)
+    protected static async canSetRowSelectedToFalse() {
+        const entity = this.buildLocationListEntityWithSelectionMode('single')
+        entity.list.isRowSelected = () => {
+            return false
+        }
+        await this.setupAndLoadWithEntity(entity)
+        this.vc.assertRowNotSelected(this.locationId)
     }
 
     private static async setupAndLoadWithDestination(
@@ -324,6 +359,12 @@ export default class CrudListCardTest extends AbstractCrudTest {
     ) {
         const entity = this.buildLocationListEntity()
         entity.addDestination = destination
+        await CrudListCardTest.setupAndLoadWithEntity(entity)
+    }
+
+    private static async setupAndLoadWithEntity(
+        entity: CrudListEntity<any, any>
+    ) {
         this.setupWithEntity(entity)
         await this.load()
     }
@@ -388,13 +429,21 @@ export default class CrudListCardTest extends AbstractCrudTest {
         return this.listVc.getRowVc(id)
     }
 
-    private static async loadWithSelectionModel(
+    private static async loadWithSelectionMode(
+        selectionMode?: CrudListSelectionMode
+    ) {
+        const entity =
+            this.buildLocationListEntityWithSelectionMode(selectionMode)
+        this.setupWithEntity(entity)
+        await this.load()
+    }
+
+    private static buildLocationListEntityWithSelectionMode(
         selectionMode?: CrudListSelectionMode
     ) {
         const entity = this.buildLocationListEntity()
         entity.selectionMode = selectionMode
-        this.setupWithEntity(entity)
-        await this.load()
+        return entity
     }
 
     private static get locationId() {

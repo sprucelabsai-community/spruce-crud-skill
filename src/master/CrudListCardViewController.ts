@@ -78,19 +78,19 @@ export default class CrudListCardViewController extends AbstractViewController<C
         row.onClick = () => this.handleClickRow(record)
 
         if (this.selectionMode !== 'none') {
-            const id = record.id
-            row.cells.push(this.renderToggleCell(id))
+            row.cells.push(this.renderToggleCell(record))
             row.columnWidths = ['fill']
         }
 
         return row
     }
 
-    private renderToggleCell(id: string): ListCell {
+    private renderToggleCell(record: Record<string, any>): ListCell {
+        const { id } = record
         return {
             toggleInput: {
                 name: 'isSelected',
-                value: this.selectedRows[id] ?? false,
+                value: this.isRowSelected(record),
                 onChange: async (value) => {
                     this.selectedRows[id] = value
 
@@ -102,6 +102,13 @@ export default class CrudListCardViewController extends AbstractViewController<C
                 },
             },
         }
+    }
+
+    private isRowSelected(record: Record<string, any>): boolean {
+        if (this.entity.list.isRowSelected) {
+            return this.entity.list.isRowSelected(record)
+        }
+        return this.selectedRows[record.id] ?? false
     }
 
     public async deselectEverythingBut(id: string) {

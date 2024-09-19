@@ -20,6 +20,22 @@ export default class MockCrudListCard extends CrudListCardViewController {
         )
     }
 
+    public assertRowSelected(locationId: string) {
+        const vc = this.getListVc().getRowVc(locationId)
+        assert.isTrue(
+            vc.getValue('isSelected'),
+            `Row ${locationId} is not selected and should be.`
+        )
+    }
+
+    public assertRowNotSelected(locationId: string) {
+        const vc = this.getListVc().getRowVc(locationId)
+        assert.isFalse(
+            vc.getValue('isSelected'),
+            `Row ${locationId} is selected and should not be.`
+        )
+    }
+
     public assertWasNotLoaded() {
         assert.isFalse(
             this.wasLoaded,
