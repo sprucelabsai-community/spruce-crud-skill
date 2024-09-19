@@ -1,3 +1,10 @@
+# [7.5.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.4.0...v7.5.0) (2024-09-19)
+
+
+### Features
+
+* can set row selected on crud list ([2598ebc](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/2598ebc))
+
 # [7.4.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.3.0...v7.4.0) (2024-09-17)
 
 
