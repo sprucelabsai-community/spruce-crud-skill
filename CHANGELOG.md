@@ -1,3 +1,10 @@
+# [7.6.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.5.0...v7.6.0) (2024-09-20)
+
+
+### Features
+
+* can assert if row is selected ([ec00f67](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/ec00f67))
+
 # [7.5.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.4.0...v7.5.0) (2024-09-19)
 
 
