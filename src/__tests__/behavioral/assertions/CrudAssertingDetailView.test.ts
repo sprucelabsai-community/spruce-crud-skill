@@ -31,7 +31,7 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     private static entities: CrudDetailEntity[]
     private static recordId?: string
 
-    @seed('locations', 1)
+    @seed('locations', 2)
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
 
@@ -564,7 +564,7 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
             name: generateId(),
         }
 
-        this.dropInDetailViewWithCreatOrgEventAndOneRelated(payload)
+        this.dropInDetailViewWithCreateOrgEventAndOneRelated(payload)
 
         await this.assertDetailLoadTargetAndPayloadEquals({
             expectedPayload: payload,
@@ -636,6 +636,89 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
         })
     }
 
+    @test()
+    protected static async assertingIfRowIsSelectedThrowsWithMissing() {
+        const err = await assert.doesThrowAsync(() =>
+            //@ts-ignore
+            crudAssert.relatedEntityRowsSelectAsExpected()
+        )
+
+        errorAssert.assertError(err, 'MISSING_PARAMETERS', {
+            parameters: [
+                'skillView',
+                'entityId',
+                'relatedId',
+                'selectedRecord',
+                'deselectedRecord',
+            ],
+        })
+    }
+
+    @test()
+    protected static async assertingIfRelatedRowIsSelectedThrowsWhenNotSelected() {
+        this.dropInDetailViewWithLocationAndOneRelated()
+        await this.assertRelatedRowIsSelectedThrows('function')
+    }
+
+    @test()
+    protected static async throwsIfRelatedRowSelectedButNotDeselected() {
+        this.dropInDetailViewWithLocationAndOneRelated()
+        this.firstRelatedEntity.list.isRowSelected = () => true
+        await this.assertRelatedRowIsSelectedThrows('not be')
+    }
+
+    @test()
+    protected static async passesIfRelatedRowIsSelected() {
+        this.dropInDetailViewWithLocationAndOneRelated()
+        const selected = [false, true]
+        this.firstRelatedEntity.list.isRowSelected = () => selected.pop()!
+        await this.assertRelatedRowIsSelected()
+    }
+
+    @test()
+    protected static async throwsIfIsSelectedReturnsFalseForSelectedRelatedRow() {
+        this.dropInDetailViewWithLocationAndOneRelated()
+        this.firstRelatedEntity.list.isRowSelected = () => false
+        await this.assertRelatedRowIsSelectedThrows()
+    }
+
+    @test()
+    protected static async assertSelectedRowGetsPassedSelectedAndThenDeselectedRecords() {
+        this.dropInDetailViewWithLocationAndOneRelated()
+
+        const passedRecords: Record<string, any>[] = []
+
+        const selected = [false, true]
+        this.firstRelatedEntity.list.isRowSelected = (record) => {
+            passedRecords.push(record)
+            return selected.pop()!
+        }
+
+        await this.assertRelatedRowIsSelected()
+
+        assert.isEqualDeep(passedRecords, [
+            this.fakedLocations[0],
+            this.fakedLocations[1],
+        ])
+    }
+
+    private static async assertRelatedRowIsSelectedThrows(msg?: string) {
+        await assert.doesThrowAsync(
+            () => this.assertRelatedRowIsSelected(),
+            msg ?? 'not selected'
+        )
+    }
+
+    private static assertRelatedRowIsSelected(): any {
+        return crudAssert.relatedEntityRowsSelectAsExpected({
+            skillView: this.vc,
+            entityId: this.firstEntityId,
+            relatedId: this.firstRelatedEntityId,
+            selectedRecord: this.fakedLocations[0],
+            deselectedRecord: this.fakedLocations[1],
+        })
+    }
+
     private static async assertDetailListPayloadMissmatchThrows(
         actual: SpruceSchemas.Mercury.v2020_12_25.ListLocationsEmitPayload,
         expected: SpruceSchemas.Mercury.v2020_12_25.ListLocationsEmitPayload
@@ -661,12 +744,12 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
         actual: CreateOrgPayload,
         expected: CreateOrgPayload
     ) {
-        this.dropInDetailViewWithCreatOrgEventAndOneRelated(actual)
+        this.dropInDetailViewWithCreateOrgEventAndOneRelated(actual)
         await this.assertLoadTargetAndPayloadDoNotMatch(undefined, expected)
     }
 
-    private static dropInDetailViewWithCreatOrgEventAndOneRelated(
-        payload: CreateOrgPayload
+    private static dropInDetailViewWithCreateOrgEventAndOneRelated(
+        payload?: CreateOrgPayload
     ) {
         this.dropInDetailViewWithLocationAndOneRelated()
 

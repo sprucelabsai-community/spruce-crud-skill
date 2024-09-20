@@ -251,10 +251,18 @@ export interface CrudDetailEntity {
         responseKey: string
         buildTarget?: (
             recordId: string
-        ) => Record<string, any> | Promise<Record<string, any>>
+        ) =>
+            | Record<string, any>
+            | null
+            | undefined
+            | Promise<Record<string, any> | null | undefined>
         buildPayload?: (
             recordId: string
-        ) => Record<string, any> | Promise<Record<string, any>>
+        ) =>
+            | Record<string, any>
+            | null
+            | undefined
+            | Promise<Record<string, any> | null | undefined>
     }
     renderTitle?: (record?: any) => string
     relatedEntities?: CrudListEntity<any, any>[]

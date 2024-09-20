@@ -355,7 +355,7 @@ const crudAssert = {
         recordId?: string
         relatedId: string
         expectedOptions?: RecursivePartial<CrudListEntity>
-    }) {
+    }): Promise<SpyCrudListCard> {
         const { skillView, entityId, relatedId, expectedOptions, recordId } =
             assertOptions(options, ['skillView', 'entityId', 'relatedId'])
 
@@ -392,6 +392,53 @@ const crudAssert = {
         const detailSvc = await this.detailRendersRelatedEntity(options)
 
         detailSvc.activeRecordCardVc.assertRendersRow(rowId)
+    },
+
+    async relatedEntityRowsSelectAsExpected(options: {
+        skillView: SkillViewController
+        entityId: string
+        relatedId: string
+        selectedRecord: Record<string, any>
+        deselectedRecord: Record<string, any>
+    }) {
+        const {
+            selectedRecord,
+            relatedId,
+            skillView,
+            entityId,
+            deselectedRecord,
+        } = assertOptions(options, [
+            'skillView',
+            'entityId',
+            'relatedId',
+            'selectedRecord',
+            'deselectedRecord',
+        ])
+
+        const detailSvc = await this.detailRendersRelatedEntity({
+            skillView,
+            entityId,
+            relatedId,
+        })
+
+        const { isRowSelected } = detailSvc.entity.list
+
+        assert.isFunction(
+            isRowSelected,
+            `You must implement the 'relatedEntity.list.isRowSelected(...)' function in your related entity configuration.`
+        )
+
+        let isSelected = isRowSelected(selectedRecord)
+        assert.isTrue(
+            isSelected,
+            `The row for ${selectedRecord.id ?? '***missing record.id***'} in the related entity ${relatedId} is not selected and should be!. Make sure to implement "relatedEntity.list.isRowSelected(...)" in your related entity configuration.`
+        )
+
+        isSelected = isRowSelected(deselectedRecord)
+        assert.isFalse(
+            isSelected,
+            `The row for ${deselectedRecord.id ?? '***missing record.id***'} in the related entity ${relatedId} is selected and should not be. Make sure you are returning false from 'relatedEntity.list.isRowSelected(...)' in your related entity configuration.`
+        )
     },
 }
 
