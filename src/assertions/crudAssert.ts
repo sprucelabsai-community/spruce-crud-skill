@@ -47,10 +47,7 @@ const crudAssert = {
             'CrudMasterSkillViewController'
         )
 
-        assertViewSetToFactory(
-            'crud.list-card',
-            'CrudMasterListCardViewController'
-        )
+        assertViewSetToFactory('crud.list-card', 'CrudListCardViewController')
 
         assertOptions({ skillView }, ['skillView'])
 
