@@ -1,3 +1,5 @@
+## [7.6.3](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.6.2...v7.6.3) (2024-09-28)
+
 ## [7.6.2](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.6.1...v7.6.2) (2024-09-27)
 
 ## [7.6.1](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.6.0...v7.6.1) (2024-09-26)
