@@ -304,7 +304,11 @@ const crudAssert = {
         } = assertOptions(options, ['skillView', 'entityId', 'recordId'])
 
         if (!expectedPayload && !expectedTarget) {
-            assertOptions(options, ['expectedTarget', 'expectedPayload'])
+            assertOptions(
+                options,
+                ['expectedTarget', 'expectedPayload'],
+                `You have to pass either an expected target or an expectedPayload or expectedTarget.`
+            )
         }
 
         const detailSvc = this.skillViewRendersDetailView(skillView)

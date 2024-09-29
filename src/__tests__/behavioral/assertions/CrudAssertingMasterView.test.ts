@@ -73,7 +73,7 @@ export default class CrudAssertingMasterViewTest extends AbstractAssertTest {
     protected static async throwsIfMasterListCardHasNotBeenSet() {
         this.assertMissingViewControllerThrowsAsExpected(
             'crud.list-card',
-            'CrudMasterListCardViewController'
+            'CrudListCardViewController'
         )
     }
 
