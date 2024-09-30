@@ -1,3 +1,10 @@
+# [8.0.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.6.4...v8.0.0) (2024-09-30)
+
+
+### Breaking Changes
+
+* detail entity id passed to related lists in detail view ([1d3b1d4](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/1d3b1d4))
+
 ## [7.6.4](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.6.3...v7.6.4) (2024-09-29)
 
 ## [7.6.3](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v7.6.2...v7.6.3) (2024-09-28)
