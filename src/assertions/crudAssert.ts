@@ -399,6 +399,7 @@ const crudAssert = {
         skillView: SkillViewController
         entityId: string
         relatedId: string
+        recordId?: string
         selectedRecord: Record<string, any>
         deselectedRecord: Record<string, any>
     }) {
@@ -407,6 +408,7 @@ const crudAssert = {
             relatedId,
             skillView,
             entityId,
+            recordId,
             deselectedRecord,
         } = assertOptions(options, [
             'skillView',
@@ -420,6 +422,7 @@ const crudAssert = {
             skillView,
             entityId,
             relatedId,
+            recordId,
         })
 
         const { isRowSelected } = detailSvc.entity.list

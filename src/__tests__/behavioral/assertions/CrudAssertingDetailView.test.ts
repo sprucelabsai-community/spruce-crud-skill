@@ -714,19 +714,37 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
         ])
     }
 
-    private static async assertRelatedRowIsSelectedThrows(msg?: string) {
+    @test()
+    protected static async assertSelectedPassesThoughRecordId() {
+        let wasHit = false
+        const expected = generateId()
+        await this.eventFaker.fakeGetLocation(() => {
+            wasHit = true
+        })
+
+        this.dropInDetailViewWithLocationAndOneRelated()
+        this.firstRelatedEntity.list.isRowSelected = () => false
+        await this.assertRelatedRowIsSelectedThrows(undefined, expected)
+        assert.isTrue(wasHit)
+    }
+
+    private static async assertRelatedRowIsSelectedThrows(
+        msg?: string,
+        recordId?: string
+    ) {
         await assert.doesThrowAsync(
-            () => this.assertRelatedRowIsSelected(),
+            () => this.assertRelatedRowIsSelected(recordId),
             msg ?? 'not selected'
         )
     }
 
-    private static assertRelatedRowIsSelected(): any {
+    private static assertRelatedRowIsSelected(recordId?: string): any {
         return crudAssert.relatedEntityRowsSelectAsExpected({
             skillView: this.vc,
             entityId: this.firstEntityId,
             relatedId: this.firstRelatedEntityId,
             selectedRecord: this.fakedLocations[0],
+            recordId,
             deselectedRecord: this.fakedLocations[1],
         })
     }
