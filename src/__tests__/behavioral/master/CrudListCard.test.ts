@@ -360,14 +360,12 @@ export default class CrudListCardTest extends AbstractCrudTest {
         this.vc.assertRowNotSelected(this.locationId)
     }
 
-    @test.skip('figure this out later')
-    protected static async loadingWithRequiredDetailValuesButNoValuesDoesNotRenderAddButton() {
+    @test()
+    protected static async loadingWithoutRecordIdWithRequiringOneHidesHeaderSearch() {
         const entity = this.buildLocationListEntity()
-        entity.addDestination = { id: 'crud.detail' }
         entity.doesRequireDetailRecord = true
         await this.setupAndLoadWithEntity(entity)
-        buttonAssert.cardDoesNotRenderButton(this.vc, 'add')
-        this.vc.assertRendersRow('save-first')
+        this.vc.assertDoesNotRenderSearch()
     }
 
     private static async setupAndLoadWithDestination(

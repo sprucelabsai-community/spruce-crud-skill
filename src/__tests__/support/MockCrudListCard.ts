@@ -1,6 +1,7 @@
 import {
     activeRecordCardAssert,
     ActiveRecordPagingOptions,
+    formAssert,
     listAssert,
     MockActiveRecordCard,
     SkillViewControllerLoadOptions,
@@ -124,6 +125,10 @@ export default class MockCrudListCard extends CrudListCardViewController {
         const formVc = this.getSearchFormVc()
 
         await formVc.setValue('search', term)
+    }
+
+    public assertDoesNotRenderSearch() {
+        formAssert.cardDoesNotRenderForm(this, 'search')
     }
 
     public getSearchFormVc() {
