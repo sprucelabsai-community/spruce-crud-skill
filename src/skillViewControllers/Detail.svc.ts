@@ -122,6 +122,7 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
             id: 'locations',
             pluralTitle: 'Locations',
             singularTitle: 'Location',
+            doesRequireDetailRecord: true,
             list: {
                 ...locationListOptions,
                 payload: undefined,

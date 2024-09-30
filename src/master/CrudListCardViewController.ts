@@ -200,6 +200,9 @@ export default class CrudListCardViewController extends AbstractViewController<C
 
         if (!values && this.getDoesRequireDetailRecordId()) {
             this.activeRecordCardVc.setFooter(null)
+            this.activeRecordCardVc.setHeaderSubtitle(
+                `You have to save before you can add a ${this.entity.singularTitle}!`
+            )
             return
         }
 

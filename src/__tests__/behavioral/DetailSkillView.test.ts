@@ -73,7 +73,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
     }
 
     @test()
-    protected static async organizationEntityRendersRelatedLocations() {
+    protected static async organizationDetailRendersRelatedLocations() {
         await crudAssert.detailRendersRelatedEntity({
             skillView: this.vc,
             entityId: 'organizations',
@@ -82,6 +82,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
             expectedOptions: {
                 pluralTitle: 'Locations',
                 singularTitle: 'Location',
+                doesRequireDetailRecord: true,
                 list: {
                     fqen: 'list-locations::v2020_12_25',
                     responseKey: 'locations',
