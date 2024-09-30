@@ -179,11 +179,17 @@ export interface CrudListEntity<
         payload?: SchemaValues<EmitSchema>['payload']
         /** @ts-ignore */
         target?: SchemaValues<EmitSchema>['target']
-        buildTarget?: (detailValues?: Record<string, any>) => /** @ts-ignore */
+        buildTarget?: (
+            detailEntityId?: string,
+            detailValues?: Record<string, any>
+        ) => /** @ts-ignore */
         | SchemaValues<EmitSchema>['target']
             /** @ts-ignore */
             | Promise<SchemaValues<EmitSchema>['target']>
-        buildPayload?: (detailValues?: Record<string, any>) => /** @ts-ignore */
+        buildPayload?: (
+            detailEntityId?: string,
+            detailValues?: Record<string, any>
+        ) => /** @ts-ignore */
         | SchemaValues<EmitSchema>['payload']
             /** @ts-ignore */
             | Promise<SchemaValues<EmitSchema>['payload']>

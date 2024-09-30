@@ -52,9 +52,10 @@ export default class MockCrudListCard extends CrudListCardViewController {
 
     public async load(
         options: SkillViewControllerLoadOptions,
-        values?: Record<string, any>
+        values?: Record<string, any>,
+        detailEntity?: string
     ) {
-        await super.load(options, values)
+        await super.load(options, values, detailEntity)
 
         this.loadOptions = options
         this.wasLoaded = true

@@ -104,32 +104,38 @@ export default class CrudListCardTest extends AbstractCrudTest {
     protected static async buildTargetGetsValuesOnLoad() {
         this.setupWithOrgEntity()
         let passedValues: Record<string, any> | undefined
+        let passedEntity: string | undefined
 
         const values = { [generateId()]: generateId() }
 
-        this.entity.list.buildTarget = (values) => {
+        this.entity.list.buildTarget = (detailEntityId, values) => {
             passedValues = values
+            passedEntity = detailEntityId
             return {}
         }
 
         await this.load(values)
         assert.isEqualDeep(passedValues, values)
+        assert.isEqual(passedEntity, this.entity.id)
     }
 
     @test()
     protected static async buildPayloadGetsValuesOnLoad() {
         this.setupWithOrgEntity()
         let passedValues: Record<string, any> | undefined
+        let passedEntity: string | undefined
 
         const values = { [generateId()]: generateId() }
 
-        this.entity.list.buildPayload = (values) => {
+        this.entity.list.buildPayload = (detailEntityId, values) => {
             passedValues = values
+            passedEntity = detailEntityId
             return {}
         }
 
         await this.load(values)
         assert.isEqualDeep(passedValues, values)
+        assert.isEqual(passedEntity, this.entity.id)
     }
 
     @test()
@@ -468,7 +474,7 @@ export default class CrudListCardTest extends AbstractCrudTest {
 
     private static async load(values?: Record<string, any>) {
         const options = this.views.getRouter().buildLoadOptions()
-        await this.vc.load(options, values)
+        await this.vc.load(options, values, this.entity.id)
     }
 
     private static assertRendersRow(id: string) {

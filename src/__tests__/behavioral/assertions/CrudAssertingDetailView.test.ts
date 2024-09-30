@@ -424,9 +424,12 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
     protected static async passesLoadedEntityToBuildTarget() {
         this.dropInDetailViewWithLocationAndOneRelated()
         let passedValues: Record<string, any> | undefined
+        let passedEntityId: string | undefined
+
         const target = { organizationId: generateId() }
 
-        this.firstRelatedEntity.list.buildTarget = (values) => {
+        this.firstRelatedEntity.list.buildTarget = (detailEntityId, values) => {
+            passedEntityId = detailEntityId
             passedValues = values
             return target
         }
@@ -436,15 +439,18 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
         })
 
         assert.isEqualDeep(passedValues, this.fakedLocations[0])
+        assert.isEqual(passedEntityId, this.firstEntityId)
     }
 
     @test()
     protected static async canMatchOnTargetWithoutRecordId() {
         const target = { organizationId: generateId() }
+        let passedEntity: string | undefined
 
         this.dropInDetailViewWithLocationAndSetFirstRelatedBuiltTarget(target)
-        this.firstRelatedEntity.list.buildTarget = (values) => {
+        this.firstRelatedEntity.list.buildTarget = (detailEntityId, values) => {
             assert.isFalsy(values)
+            passedEntity = detailEntityId
             return target
         }
 
@@ -455,6 +461,8 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
                 target: target as any,
             },
         })
+
+        assert.isEqual(passedEntity, this.firstEntityId)
     }
 
     @test()
@@ -523,12 +531,16 @@ export default class CrudAssertingDetailViewTest extends AbstractAssertTest {
         this.dropInDetailViewWithLocationAndOneRelated()
 
         let passedValues: Record<string, any> | undefined
-        this.firstRelatedEntity.list.buildTarget = (values) => {
+        let passedEntity: string | undefined
+
+        this.firstRelatedEntity.list.buildTarget = (detailEntityId, values) => {
+            passedEntity = detailEntityId
             passedValues = values
         }
 
         await this.assertFirstEntityAndFirstRelatedRendersRow(this.locationId)
         assert.isEqualDeep(passedValues, this.fakedLocations[0])
+        assert.isEqual(passedEntity, this.firstEntityId)
     }
 
     @test()

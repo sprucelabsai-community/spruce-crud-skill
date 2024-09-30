@@ -90,7 +90,7 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
                     pageSize: 5,
                     shouldPageClientSide: true,
                 },
-                buildTarget: (organization) => {
+                buildTarget: (_detailEntityId, organization) => {
                     if (!organization) {
                         return {} as any //TODO: move to `list-skills' with a prop on the skill of "isInstalled"
                     }
@@ -125,7 +125,7 @@ export default class DetailSkillViewController extends AbstractSkillViewControll
             list: {
                 ...locationListOptions,
                 payload: undefined,
-                buildTarget: (organization) => {
+                buildTarget: (_detailEntityId, organization) => {
                     return !organization
                         ? {}
                         : {

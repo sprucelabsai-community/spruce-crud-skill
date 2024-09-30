@@ -188,17 +188,24 @@ export default class CrudListCardViewController extends AbstractViewController<C
 
     public async load(
         options: SkillViewControllerLoadOptions,
-        values?: Record<string, any>
+        values?: Record<string, any>,
+        detailEntityId?: string
     ) {
         const { router } = options
         this.router = router
 
-        const builtTarget = await this.entity.list.buildTarget?.(values)
+        const builtTarget = await this.entity.list.buildTarget?.(
+            detailEntityId,
+            values
+        )
         if (builtTarget) {
             this.activeRecordCardVc.setTarget(builtTarget)
         }
 
-        const builtPayload = await this.entity.list.buildPayload?.(values)
+        const builtPayload = await this.entity.list.buildPayload?.(
+            detailEntityId,
+            values
+        )
         if (builtPayload) {
             this.activeRecordCardVc.setPayload(builtPayload)
         }
