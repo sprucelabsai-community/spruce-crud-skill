@@ -359,6 +359,25 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         relatedCard.assertWasNotLoaded()
     }
 
+    @test()
+    protected static async doesNotLoadRelatedIfRequiresDetailIdAndNoRecordIdPassed() {
+        const entity = this.buildDetailEntity()
+        const related = this.buildLocationListEntity()
+
+        related.doesRequireDetailRecord = true
+
+        entity.relatedEntities = [related]
+
+        this.setupDetailView([entity])
+        delete this.recordId
+
+        this.setLoadAction('create')
+        await this.loadWithEntity()
+
+        const relatedCard = this.getRelatedCard(related.id)
+        relatedCard.assertWasNotLoaded()
+    }
+
     private static async loadWith2RelatedAndGetFirstRelatedCard() {
         const relatedId = this.setupWith2RelatedEntitiesAndGetSecondId()
         const relatedCard = this.getRelatedCard(relatedId)

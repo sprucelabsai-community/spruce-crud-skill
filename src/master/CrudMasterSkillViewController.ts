@@ -171,6 +171,7 @@ export interface CrudListEntity<
     singularTitle: string
     shouldRenderSearch?: boolean
     addDestination?: CrudDestination
+    doesRequireDetailRecord?: boolean
     list: {
         fqen: Fqen
         responseKey: ResponseKey

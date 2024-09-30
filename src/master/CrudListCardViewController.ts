@@ -42,6 +42,10 @@ export default class CrudListCardViewController extends AbstractViewController<C
         this.activeRecordCardVc = this.ActiveRecordCard()
     }
 
+    public getDoesRequireDetailRecordId() {
+        return !!this.entity.doesRequireDetailRecord
+    }
+
     private ActiveRecordCard() {
         const { list, pluralTitle, id, shouldRenderSearch } = this.entity
         const { fqen, ...activeOptions } = list
@@ -194,6 +198,11 @@ export default class CrudListCardViewController extends AbstractViewController<C
         const { router } = options
         this.router = router
 
+        if (!values && this.getDoesRequireDetailRecordId()) {
+            this.activeRecordCardVc.setFooter(null)
+            return
+        }
+
         const builtTarget = await this.entity.list.buildTarget?.(
             detailEntityId,
             values
@@ -206,6 +215,7 @@ export default class CrudListCardViewController extends AbstractViewController<C
             detailEntityId,
             values
         )
+
         if (builtPayload) {
             this.activeRecordCardVc.setPayload(builtPayload)
         }
