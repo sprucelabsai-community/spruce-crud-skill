@@ -364,6 +364,11 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         const entity = this.buildDetailEntity()
         const related = this.buildLocationListEntity()
 
+        let wasHit = false
+        await this.eventFaker.fakeListLocations(() => {
+            wasHit = true
+        })
+
         related.doesRequireDetailRecord = true
 
         entity.relatedEntities = [related]
@@ -374,8 +379,7 @@ export default class DetailSkillViewTest extends AbstractCrudTest {
         this.setLoadAction('create')
         await this.loadWithEntity()
 
-        const relatedCard = this.getRelatedCard(related.id)
-        relatedCard.assertWasNotLoaded()
+        assert.isFalse(wasHit, `Related entity tried to emit list event!`)
     }
 
     private static async loadWith2RelatedAndGetFirstRelatedCard() {
