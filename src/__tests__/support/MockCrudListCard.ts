@@ -123,7 +123,6 @@ export default class MockCrudListCard extends CrudListCardViewController {
 
     public async search(term: string) {
         const formVc = this.getSearchFormVc()
-
         await formVc.setValue('search', term)
     }
 
