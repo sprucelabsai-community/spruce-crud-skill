@@ -45,7 +45,7 @@ export default class MockCrudListCard extends CrudListCardViewController {
     }
 
     public assertPagingOptionsEqual(options: ActiveRecordPagingOptions) {
-        activeRecordCardAssert.assertPagingOptionsEqual(
+        activeRecordCardAssert.pagingOptionsEqual(
             this.activeRecordCardVc,
             options
         )
