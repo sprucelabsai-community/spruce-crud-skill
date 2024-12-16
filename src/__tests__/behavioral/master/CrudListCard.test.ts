@@ -304,6 +304,7 @@ export default class CrudListCardTest extends AbstractCrudTest {
         await vcAssert.assertActionRedirects({
             action: () => interactor.clickButton(this.vc, 'add'),
             router: this.views.getRouter(),
+            //@ts-ignore remove this when you find it
             destination: {
                 args: {
                     entity: this.entity.id,
