@@ -292,7 +292,7 @@ export default class MasterSkillViewTest extends AbstractCrudTest {
                     'add'
                 ),
             destination: {
-                id: this.addDestination,
+                id: this.addDestination!,
                 args: {
                     action: 'create',
                     entity: entityId,

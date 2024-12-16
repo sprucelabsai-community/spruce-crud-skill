@@ -1,10 +1,10 @@
 import {
-    Client,
     MockActiveRecordCard,
     renderUtil,
     SkillViewController,
     vcAssert,
 } from '@sprucelabs/heartwood-view-controllers'
+import { MercuryClient } from '@sprucelabs/mercury-client'
 import {
     EventContract,
     EventName,
@@ -556,7 +556,7 @@ class SpyCrudListCard extends CrudListCardViewController {
 class SpyDetailSkillView extends CrudDetailSkillViewController {
     public options!: DetailSkillViewControllerOptions
     public wasLoaded = false
-    public connectToApi!: () => Promise<Client>
+    public connectToApi!: () => Promise<MercuryClient>
     public relatedEntityVcsByEntityId: Record<
         string,
         CrudListCardViewController[]
