@@ -11,7 +11,7 @@ export declare namespace SpruceErrors.Crud {
 	export interface InvalidEntityId {
 		
 			
-			'entityId'?: string| undefined | null
+			'entityId'?: string | undefined | null
 	}
 
 	export interface InvalidEntityIdSchema extends SpruceSchema.Schema {

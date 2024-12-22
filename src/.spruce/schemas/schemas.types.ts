@@ -82,7 +82,7 @@ declare module '@sprucelabs/spruce-core-schemas/build/.spruce/schemas/core.schem
 		interface DidRegisterSkillViewsEmitTargetAndPayload {
 			
 				/** Source. */
-				'source'?: SpruceSchemas.SpruceEventUtils.v2021_09_13.EventSource| undefined | null
+				'source'?: SpruceSchemas.SpruceEventUtils.v2021_09_13.EventSource | undefined | null
 				
 				'target': SpruceSchemas.Heartwood.v2021_02_11.DidRegisterSkillViewsEmitTarget
 				
@@ -127,7 +127,7 @@ declare module '@sprucelabs/spruce-core-schemas/build/.spruce/schemas/core.schem
 		interface GenerateUrlEmitTarget {
 			
 				/** Skill View Id. */
-				'skillViewId'?: (SkillViewControllerId)| undefined | null
+				'skillViewId'?: (SkillViewControllerId) | undefined | null
 		}
 
 		interface GenerateUrlEmitTargetSchema extends SpruceSchema.Schema {
@@ -157,7 +157,7 @@ declare module '@sprucelabs/spruce-core-schemas/build/.spruce/schemas/core.schem
 		interface GenerateUrlEmitPayload {
 			
 				/** Load args. */
-				'args'?: (Record<string, any>)| undefined | null
+				'args'?: (Record<string, any>) | undefined | null
 		}
 
 		interface GenerateUrlEmitPayloadSchema extends SpruceSchema.Schema {
@@ -245,7 +245,7 @@ declare module '@sprucelabs/spruce-core-schemas/build/.spruce/schemas/core.schem
 		interface GetActiveThemeEmitTargetAndPayload {
 			
 				/** Source. */
-				'source'?: SpruceSchemas.SpruceEventUtils.v2021_09_13.EventSource| undefined | null
+				'source'?: SpruceSchemas.SpruceEventUtils.v2021_09_13.EventSource | undefined | null
 				
 				'target': SpruceSchemas.Heartwood.v2021_02_11.GetActiveThemeEmitTarget
 		}
@@ -282,7 +282,7 @@ declare module '@sprucelabs/spruce-core-schemas/build/.spruce/schemas/core.schem
 		interface GetActiveThemeResponsePayload {
 			
 				
-				'theme'?: SpruceSchemas.Heartwood.v2021_02_11.Theme| undefined | null
+				'theme'?: SpruceSchemas.Heartwood.v2021_02_11.Theme | undefined | null
 		}
 
 		interface GetActiveThemeResponsePayloadSchema extends SpruceSchema.Schema {
@@ -368,7 +368,7 @@ declare module '@sprucelabs/spruce-core-schemas/build/.spruce/schemas/core.schem
 		interface GetSkillViewsEmitTargetAndPayload {
 			
 				/** Source. */
-				'source'?: SpruceSchemas.SpruceEventUtils.v2021_09_13.EventSource| undefined | null
+				'source'?: SpruceSchemas.SpruceEventUtils.v2021_09_13.EventSource | undefined | null
 				
 				'target': SpruceSchemas.Heartwood.v2021_02_11.GetViewControllersEmitTarget
 		}
@@ -409,11 +409,11 @@ declare module '@sprucelabs/spruce-core-schemas/build/.spruce/schemas/core.schem
 				
 				'ids': string[]
 				
-				'source'?: string| undefined | null
+				'source'?: string | undefined | null
 				
-				'sourceUrl'?: string| undefined | null
+				'sourceUrl'?: string | undefined | null
 				
-				'theme'?: SpruceSchemas.HeartwoodViewControllers.v2021_02_11.Theme| undefined | null
+				'theme'?: SpruceSchemas.HeartwoodViewControllers.v2021_02_11.Theme | undefined | null
 		}
 
 		interface GetSkillViewsResponsePayloadSchema extends SpruceSchema.Schema {
@@ -581,11 +581,11 @@ declare module '@sprucelabs/spruce-core-schemas/build/.spruce/schemas/core.schem
 				
 				'ids': string[]
 				
-				'source'?: string| undefined | null
+				'source'?: string | undefined | null
 				
-				'sourceUrl'?: string| undefined | null
+				'sourceUrl'?: string | undefined | null
 				
-				'theme'?: SpruceSchemas.HeartwoodViewControllers.v2021_02_11.Theme| undefined | null
+				'theme'?: SpruceSchemas.HeartwoodViewControllers.v2021_02_11.Theme | undefined | null
 		}
 
 		interface RegisterSkillViewsEmitPayloadSchema extends SpruceSchema.Schema {
@@ -630,7 +630,7 @@ declare module '@sprucelabs/spruce-core-schemas/build/.spruce/schemas/core.schem
 		interface RegisterSkillViewsEmitTargetAndPayload {
 			
 				/** Source. */
-				'source'?: SpruceSchemas.SpruceEventUtils.v2021_09_13.EventSource| undefined | null
+				'source'?: SpruceSchemas.SpruceEventUtils.v2021_09_13.EventSource | undefined | null
 				
 				'payload': SpruceSchemas.Heartwood.v2021_02_11.RegisterSkillViewsEmitPayload
 		}
@@ -697,11 +697,11 @@ declare module '@sprucelabs/spruce-core-schemas/build/.spruce/schemas/core.schem
 		interface GenerateUrlEmitTargetAndPayload {
 			
 				/** Source. */
-				'source'?: SpruceSchemas.SpruceEventUtils.v2021_09_13.EventSource| undefined | null
+				'source'?: SpruceSchemas.SpruceEventUtils.v2021_09_13.EventSource | undefined | null
 				
-				'target'?: SpruceSchemas.Heartwood.v2021_02_11.GenerateUrlEmitTarget| undefined | null
+				'target'?: SpruceSchemas.Heartwood.v2021_02_11.GenerateUrlEmitTarget | undefined | null
 				
-				'payload'?: SpruceSchemas.Heartwood.v2021_02_11.GenerateUrlEmitPayload| undefined | null
+				'payload'?: SpruceSchemas.Heartwood.v2021_02_11.GenerateUrlEmitPayload | undefined | null
 		}
 
 		interface GenerateUrlEmitTargetAndPayloadSchema extends SpruceSchema.Schema {
@@ -843,7 +843,7 @@ declare module '@sprucelabs/spruce-core-schemas/build/.spruce/schemas/core.schem
 		interface UpsertThemeEmitTargetAndPayload {
 			
 				/** Source. */
-				'source'?: SpruceSchemas.SpruceEventUtils.v2021_09_13.EventSource| undefined | null
+				'source'?: SpruceSchemas.SpruceEventUtils.v2021_09_13.EventSource | undefined | null
 				
 				'target': SpruceSchemas.Heartwood.v2021_02_11.UpsertThemeEmitTarget
 				
