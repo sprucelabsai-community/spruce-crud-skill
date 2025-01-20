@@ -8,6 +8,8 @@ const registerSkillViewsEventContract = buildEventContract({
     eventSignatures: {
         'heartwood.register-skill-views::v2021_02_11': {
             isGlobal: true,
+            
+            
             emitPermissions: {"contractId":"heartwood.skill-views","permissionIdsAny":["can-register-skill-views"]},
             
             emitPayloadSchema: registerSkillViewsEmitTargetAndPayloadSchema,

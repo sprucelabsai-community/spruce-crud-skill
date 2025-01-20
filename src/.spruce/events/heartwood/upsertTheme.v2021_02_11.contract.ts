@@ -8,6 +8,8 @@ const upsertThemeEventContract = buildEventContract({
     eventSignatures: {
         'heartwood.upsert-theme::v2021_02_11': {
             isGlobal: true,
+            
+            
             emitPermissions: {"contractId":"heartwood.skill-views","permissionIdsAny":["can-manage-organization-themes"]},
             
             emitPayloadSchema: upsertThemeEmitTargetAndPayloadSchema,

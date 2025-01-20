@@ -8,6 +8,8 @@ const generateUrlEventContract = buildEventContract({
     eventSignatures: {
         'heartwood.generate-url::v2021_02_11': {
             isGlobal: true,
+            
+            
             emitPermissions: {"contractId":"heartwood.skill-views","permissionIdsAny":["can-generate-url"]},
             
             emitPayloadSchema: generateUrlEmitTargetAndPayloadSchema,
