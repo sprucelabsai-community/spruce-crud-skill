@@ -1,3 +1,10 @@
+# [9.0.0](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v8.0.26...v9.0.0) (2025-02-07)
+
+
+### Breaking Changes
+
+* version updates ([94d3f64](https://github.com/sprucelabsai-community/spruce-crud-skill/commit/94d3f64))
+
 ## [8.0.26](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v8.0.25...v8.0.26) (2025-02-01)
 
 ## [8.0.25](https://github.com/sprucelabsai-community/spruce-crud-skill/compare/v8.0.24...v8.0.25) (2025-02-01)
